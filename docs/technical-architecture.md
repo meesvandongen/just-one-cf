@@ -41,10 +41,11 @@ The GameState for Just One includes:
 - `hostId` - ID of the player who is the game host (has administrative privileges)
 - `gameCode` - Unique 8-digit alphanumeric code for joining the session
 - `currentWord` - The word that needs to be guessed (hidden from the guesser)
-- `gamePhase` - Current phase: 'lobby', 'writing-clues', 'reviewing-clues', 'guessing', 'round-end', 'set-end'
+- `gamePhase` - Current phase: 'lobby', 'writing-clues', 'checking-duplicates', 'reviewing-clues', 'guessing', 'round-end', 'set-end'
 - `currentGuesser` - ID of the player who is guessing this round
+- `currentChecker` - ID of the player who is checking for duplicates this round
 - `submittedClues` - All clues submitted by players for the current round
-- `validClues` - Clues remaining after duplicate elimination
+- `validClues` - Clues remaining after both automatic and manual duplicate elimination
 - `setScore` - Team's current score in this set
 - `gamesAttempted` - Number of rounds attempted in the current set
 - `setTarget` - Target number of words for the current set (default: 20)
@@ -58,6 +59,7 @@ Actions available in Just One:
 ### Player Actions (available to all players)
 - `join-session`: Join a session using a game code
 - `submit-clue`: Submit a one-word clue
+- `mark-invalid-clues`: Mark clues as invalid during the duplicate checking phase (only available to the selected checker)
 - `submit-guess`: Make a guess for the current word
 
 ### Host-Only Actions (restricted to game host)
@@ -87,6 +89,7 @@ This function handles all the game logic for Just One and enforces host permissi
 ### Player Actions (available to all players)
 - **join-session**: Validates game code and adds player to the session
 - **submit-clue**: Processes clue submissions and checks for duplicates
+- **mark-invalid-clues**: Allows the selected checker to mark additional clues as invalid (only available during duplicate checking phase)
 - **submit-guess**: Evaluates the guess and updates the set score (only for current guesser)
 
 ### Host-Only Actions (restricted to game host)
@@ -105,9 +108,10 @@ The function automatically handles:
 - **Code Validation**: Ensures entered codes are valid and session exists
 - **Permission Validation**: Ensures only the host can execute administrative actions
 - **Host Transfer**: If the host leaves, automatically promotes another player
-- **Phase Transitions**: Manages flow between lobby, rounds, and set completion
+- **Phase Transitions**: Manages flow between lobby, rounds, and set completion including the duplicate checking phase
+- **Checker Selection**: Automatically selects the next player in rotation (who will be the guesser in the following round) to review clues for duplicates
 - **Set Completion**: Detects when set target is reached and transitions to set-end phase
-- **Duplicate Elimination**: Removes identical clues automatically
+- **Duplicate Elimination**: Removes identical clues automatically, then allows manual review
 - **Score Tracking**: Maintains set score and round history
 
 ## The useGameRoom Hook
@@ -139,8 +143,8 @@ This creates a real-time, synchronized multiplayer experience where all players 
 The main `Game.tsx` component receives the `gameState` and renders different interfaces based on:
 
 - **Connection Status**: Different UI for joining vs. already in game
-- **Game Phase**: Different UI for waiting, writing clues, reviewing clues, guessing, etc.
-- **Player Role**: Different views for the guesser vs. clue-writers
+- **Game Phase**: Different UI for waiting, writing clues, checking duplicates, reviewing clues, guessing, etc.
+- **Player Role**: Different views for the guesser vs. clue-writers vs. duplicate checker
 - **Host Status**: Additional controls and options for the game host
 - **User Permissions**: Only allow relevant actions based on current state and role
 

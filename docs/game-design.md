@@ -68,10 +68,11 @@ Other players can suggest these actions, but only the host can execute them.
 1. **Choose a Guesser**: One player becomes the "Guesser" for this round
 2. **Reveal the Word**: All other players can see the mystery word, but the Guesser cannot
 3. **Write Clues**: Each non-guessing player writes exactly ONE word as a clue on their device
-4. **Eliminate Duplicates**: Any identical clues are automatically removed from the round
-5. **Present Clues**: The Guesser sees all remaining (unique) clues
-6. **Make a Guess**: The Guesser has ONE attempt to guess the word
-7. **Score**: The team scores a point if the guess is correct, then moves to the next round
+4. **Automatic Duplicate Check**: The system automatically identifies and removes identical clues
+5. **Manual Duplicate Check**: The next player in rotation (who will guess in the following round) reviews all submitted clues and can mark additional ones as invalid (multiple words, duplicates the system missed, illegal clues, etc.)
+6. **Present Clues**: The Guesser sees all remaining valid clues after both automatic and manual filtering
+7. **Make a Guess**: The Guesser has ONE attempt to guess the word
+8. **Score**: The team scores a point if the guess is correct, then moves to the next round
 
 #### Clue Writing Rules
 - **One Word Only**: Clues must be exactly one word (no phrases, no hyphenated words)
@@ -79,6 +80,17 @@ Other players can suggest these actions, but only the host can execute them.
 - **No Proper Nouns**: Generally avoid names of people, places, brands, etc.
 - **No Numbers**: Stick to words, not numerical clues
 - **Be Creative**: Think of unique angles since duplicate clues will be eliminated!
+
+#### Duplicate Checking Process
+After all players submit their clues, the game follows a two-step validation process:
+1. **Automatic Check**: The system automatically removes identical clues
+2. **Manual Review**: The next player in rotation (who will be the guesser in the following round) reviews all submitted clues and can mark additional ones as invalid for reasons such as:
+   - Multiple words in a single clue
+   - Subtle duplicates the system missed (synonyms, related words)
+   - Rule violations (proper nouns, variants of the mystery word, etc.)
+   - Inappropriate or confusing clues
+
+The manual reviewer sees all original clues with clear marking tools to cross off invalid ones before they're shown to the guesser. This rotation ensures every player gets equal responsibility for maintaining clue quality.
 
 #### Winning Conditions
 - **Cooperative Gameplay**: The team works together to score as many points as possible in each set
@@ -103,8 +115,10 @@ Other players can suggest these actions, but only the host can execute them.
 2. **Set Start**: Host initiates a set, first word is selected and shown to all players except the guesser
 3. **Round Play**: 
    - **Clue Writing**: Non-guessing players submit one-word clues, host can pass word if needed
-   - **Clue Review**: System eliminates duplicate clues and shows remaining clues
-   - **Guessing**: The guesser sees the unique clues and makes their guess, or passes
+   - **Automatic Filtering**: System eliminates identical duplicate clues
+   - **Manual Review**: A selected player reviews all clues and marks invalid ones
+   - **Clue Reveal**: The guesser sees all remaining valid clues after filtering
+   - **Guessing**: The guesser makes their guess or passes
    - **Round End**: Success/failure is displayed, set score updated
 4. **Next Round**: New guesser is selected and the cycle continues with a new word
 5. **Set Completion**: When target words are reached (or host ends set), final results are shown
