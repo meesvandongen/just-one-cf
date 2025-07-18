@@ -1,33 +1,39 @@
-import type * as Party from "partykit/server";
+import { routePartykitRequest, Server } from "partyserver";
 
 import { gameUpdater, initialGame, Action, ServerAction } from "../game/logic";
 import { GameState } from "../game/logic";
 
-interface ServerMessage {
-  state: GameState;
-}
+import type { Connection, WSMessage } from "partyserver";
 
-export default class Server implements Party.Server {
+type Env = { 
+  GameServer: DurableObjectNamespace<GameServer>;
+};
+
+
+export class GameServer extends Server<Env> {
   private gameState: GameState;
 
-  constructor(readonly party: Party.Party) {
+  constructor(ctx: DurableObjectState, env: Env) {
+    super(ctx, env);
     this.gameState = initialGame();
-    console.log("Room created:", party.id);
+    // Note: this.name is not available in constructor, will be set later by routePartykitRequest
+    console.log("Room created");
     console.log("Room target", this.gameState.target);
-    // party.storage.put;
   }
-  onConnect(connection: Party.Connection, ctx: Party.ConnectionContext) {
+
+  onConnect(connection: Connection) {
     // A websocket just connected!
+    console.log("Connection to room:", this.name, "from user:", connection.id);
 
     // let's send a message to the connection
-    // conn.send();
     this.gameState = gameUpdater(
       { type: "UserEntered", user: { id: connection.id } },
       this.gameState
     );
-    this.party.broadcast(JSON.stringify(this.gameState));
+    this.broadcast(JSON.stringify(this.gameState));
   }
-  onClose(connection: Party.Connection) {
+
+  onClose(connection: Connection) {
     this.gameState = gameUpdater(
       {
         type: "UserExit",
@@ -35,17 +41,25 @@ export default class Server implements Party.Server {
       },
       this.gameState
     );
-    this.party.broadcast(JSON.stringify(this.gameState));
+    this.broadcast(JSON.stringify(this.gameState));
   }
-  onMessage(message: string, sender: Party.Connection) {
+
+  onMessage(connection: Connection, message: WSMessage) {
     const action: ServerAction = {
-      ...(JSON.parse(message) as Action),
-      user: { id: sender.id },
+      ...(JSON.parse(message as string) as Action),
+      user: { id: connection.id },
     };
-    console.log(`Received action ${action.type} from user ${sender.id}`);
+    console.log(`Received action ${action.type} from user ${connection.id}`);
     this.gameState = gameUpdater(action, this.gameState);
-    this.party.broadcast(JSON.stringify(this.gameState));
+    this.broadcast(JSON.stringify(this.gameState));
   }
 }
 
-Server satisfies Party.Worker;
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    return (
+      (await routePartykitRequest(request, env)) ||
+      new Response("Not Found", { status: 404 })
+    );
+  }
+} satisfies ExportedHandler<Env>;

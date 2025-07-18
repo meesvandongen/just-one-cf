@@ -34,5 +34,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# partykit
+# wrangler
+.wrangler/
+dist/
+
+# partykit (legacy)
 .partykit

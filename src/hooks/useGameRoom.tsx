@@ -6,7 +6,8 @@ export const useGameRoom = (username: string, roomId: string) => {
   const [gameState, setGameState] = useState<GameState | null>(null);
 
   const socket = usePartySocket({
-    host: process.env.NEXT_PUBLIC_SERVER_URL || "127.0.0.1:1999",
+    host: process.env.NEXT_PUBLIC_SERVER_URL || "127.0.0.1:8787",
+    party: "game-server", // kebab-case version of GameServer
     room: roomId,
     id: username,
     onMessage(event: MessageEvent<string>) {

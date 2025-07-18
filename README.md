@@ -1,14 +1,20 @@
-# 🎉 PartyKit Starter
+# 🎉 PartyKit Starter (Cloudflare PartyKit)
 
 ## A starter template made to develop turn-based multiplayer games!
 
-This project is setup as a monorepo contains both a client (written in [Next.js](https://nextjs.org/)) and a server (written in [PartyKit](https://www.partykit.io/)).
+This project is setup as a monorepo contains both a client (written in [Next.js](https://nextjs.org/)) and a server (written in [Cloudflare PartyKit](https://github.com/cloudflare/partykit) using [PartyServer](https://github.com/cloudflare/partykit/tree/main/packages/partyserver)).
 
 The client and server share types and the game logic is updated using a 'reducer' pattern (similar to React's `useReducer` and [Redux](https://redux.js.org/)).
 
 ## Getting Started
 
-First, run the client's development server:
+First, install dependencies:
+
+```bash
+npm install
+```
+
+Then, run the client's development server:
 
 ```bash
 npm run dev
@@ -99,3 +105,55 @@ To build your own game we recommend:
 - Start rendering the `GameState` in the `Game.tsx` component and add some buttons to dispatch the `GameActions`
 
 Happy coding! Make it a party 🎈
+
+## Migration from Original PartyKit
+
+This project has been migrated from the original PartyKit to **Cloudflare PartyKit**. Here are the key changes:
+
+### Dependencies Changed
+- `partykit` → `partyserver` (in devDependencies)
+- `partysocket` updated to latest version (^1.1.0)
+- Added `wrangler` for deployment and development
+- Added `@cloudflare/workers-types` for TypeScript support
+
+### Configuration Changes
+- `partykit.json` → `wrangler.toml`
+- Server now runs on port 8787 (default Wrangler port) instead of 1999
+- Durable Object bindings must be explicitly configured in `wrangler.toml`
+
+### Server API Changes
+- Import from `partyserver` instead of `partykit/server`
+- Extend `Server` class instead of implementing `Party.Server`
+- Constructor takes `(ctx: DurableObjectState, env: Env)` instead of `party: Party.Party`
+- Use `this.name` instead of `party.id`
+- Use `this.broadcast()` instead of `party.broadcast()`
+- Export a default fetch handler using `routePartykitRequest`
+
+### Client Changes
+- Updated PartySocket configuration to use `party` parameter
+- Uses kebab-case server names (e.g., "game-server" for `GameServer`)
+- Updated default host to use port 8787
+
+### Development Commands
+- `npm run dev:server` now uses `wrangler dev` instead of `partykit dev`
+- Both commands can run simultaneously for full-stack development
+
+The migration maintains the same game logic and user experience while leveraging Cloudflare's infrastructure for better performance and scalability.
+
+## Deployment
+
+### Server Deployment
+Deploy your PartyServer to Cloudflare Workers:
+
+```bash
+npm run deploy:server
+```
+
+### Client Deployment
+For production, update your `NEXT_PUBLIC_SERVER_URL` environment variable to point to your deployed PartyServer URL:
+
+```env
+NEXT_PUBLIC_SERVER_URL=your-worker.your-subdomain.workers.dev
+```
+
+Then deploy your Next.js application to your preferred hosting platform (Vercel, Netlify, Cloudflare Pages, etc.).

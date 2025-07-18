@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "dev:server": "partykit dev",
+    "dev:server": "wrangler dev",
     "build": "next build",
+    "build:server": "wrangler deploy --dry-run",
+    "deploy:server": "wrangler deploy",
     "start": "next start",
     "lint": "next lint"
   },
@@ -17,7 +19,7 @@
     "eslint": "8.48.0",
     "eslint-config-next": "13.4.19",
     "next": "13.4.19",
-    "partysocket": "0.0.4",
+    "partysocket": "^1.1.0",
     "postcss": "8.4.29",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -26,6 +28,8 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
-    "partykit": "0.0.10"
+    "@cloudflare/workers-types": "^4.20250718.0",
+    "partyserver": "^0.0.72",
+    "wrangler": "^3.0.0"
   }
 }
