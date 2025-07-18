@@ -51,6 +51,8 @@ The GameState for Just One includes:
 - `setTarget` - Target number of words for the current set (default: 20)
 - `setHistory` - Results from previous completed sets
 - `gameSettings` - Configurable options (set targets, time limits, etc.)
+- `timers` - Optional timer settings for each game phase
+- `currentTimer` - Active timer state (remaining time, phase, enabled/disabled)
 
 ## GameAction Type
 
@@ -72,6 +74,9 @@ Actions available in Just One:
 - `pass-word`: Allow skipping a difficult word
 - `pause-game`/`resume-game`: Temporarily halt/continue progression
 - `update-settings`: Modify set parameters
+- `update-timers`: Configure timer settings for each phase (clue writing, duplicate checking, guessing)
+- `extend-timer`: Add extra time to current phase if needed
+- `timer-update`: Broadcast timer state to all players (host-only, automatic)
 
 **Host Privileges**: Only the game host can execute host-only actions. If a non-host player attempts these actions, they will be ignored by the server.
 
@@ -102,6 +107,9 @@ This function handles all the game logic for Just One and enforces host permissi
 - **pass-word**: Allows skipping a difficult word (same as end-round)
 - **pause-game/resume-game**: Temporarily halt/continue game progression
 - **update-settings**: Modify set parameters like target word count or time limits
+- **update-timers**: Configure optional timer settings for each game phase
+- **extend-timer**: Give players additional time during the current phase if needed
+- **timer-update**: Broadcast current timer state to all players (automatic host action)
 
 The function automatically handles:
 - **Game Code Generation**: Creates unique 8-digit codes for new sessions
@@ -109,10 +117,12 @@ The function automatically handles:
 - **Permission Validation**: Ensures only the host can execute administrative actions
 - **Host Transfer**: If the host leaves, automatically promotes another player
 - **Phase Transitions**: Manages flow between lobby, rounds, and set completion including the duplicate checking phase
+- **Guesser Rotation**: Automatically selects the next player in sequence to be the guesser each round
 - **Checker Selection**: Automatically selects the next player in rotation (who will be the guesser in the following round) to review clues for duplicates
 - **Set Completion**: Detects when set target is reached and transitions to set-end phase
 - **Duplicate Elimination**: Removes identical clues automatically, then allows manual review
 - **Score Tracking**: Maintains set score and round history
+- **Timer Management**: Host manages timer state and broadcasts updates to all players
 
 ## The useGameRoom Hook
 
@@ -196,3 +206,44 @@ Game codes are generated server-side using a character set that avoids confusing
 ## Word List
 
 The game uses `/src/wordlist.txt` which should contain one word per line. You can customize this file with your own words of varying difficulty levels.
+
+## Timer System Implementation
+
+### Non-Distracting Timer Design
+The timer system is designed to keep the game flowing without creating stress or pressure for players:
+
+#### Timer UI Guidelines
+- **Subtle Visual Indicators**: Use gentle progress bars or small countdown displays rather than large, prominent timers
+- **Soft Color Transitions**: Avoid harsh red warnings; use calm color progressions (green → yellow → orange)
+- **No Sudden Alerts**: No jarring sounds or pop-ups when time is running low
+- **Graceful Auto-Advance**: When time expires, smoothly transition to the next phase without penalties
+- **Progress-Based Display**: Show completion progress rather than countdown anxiety ("3 of 4 players submitted clues")
+
+#### Stress-Free Timer Implementation
+- **Chunked Time Display**: Update timer every 10 seconds to avoid anxiety-inducing countdown
+  - 90s → "About 1 minute 30 seconds left"
+  - 60s → "About 1 minute left" 
+  - 30s → "About 30 seconds left"
+  - 10s → Switch to precise countdown: "10, 9, 8..." for final urgency
+- **Natural Language**: Use friendly phrases like "Plenty of time", "Getting close", "Almost done"
+- **Progress Bar Alternative**: Visual fill/empty progress indicator instead of numbers
+- **Contextual Messaging**: 
+  - "Waiting for 2 more clues..." (focus on completion, not time pressure)
+  - "Take your time thinking of a unique clue"
+  - "Almost ready to reveal clues!"
+- **Gentle Transitions**: Fade between time states rather than jarring updates
+
+#### Timer Configuration
+- **Flexible Durations**: Host can adjust timer lengths based on group preferences
+  - **Clue Writing**: 60-90 seconds (adjustable 30-180s)
+  - **Duplicate Checking**: 30-45 seconds (adjustable 15-90s) 
+  - **Guessing**: 60-90 seconds (adjustable 30-180s)
+- **Disable Option**: Timers can be completely disabled for casual play
+- **Extension Capability**: Host can add extra time during any phase if needed
+
+#### Implementation Considerations
+- **Host-Based Processing**: Timer logic runs on the host's client to leverage serverless architecture efficiently
+- **Timer Synchronization**: Host broadcasts timer updates to all players for synchronized experience
+- **Host Override**: Host can manually advance phases or extend time as needed
+- **Player Feedback**: Clear but unobtrusive indication of remaining time
+- **Accessibility**: Support for users who may need additional time or have different needs

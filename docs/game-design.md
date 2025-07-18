@@ -57,6 +57,7 @@ The game host has exclusive control over these actions:
 - **End Set**: Terminate the current set early and show results
 - **End Round**: Skip the current word/round and move to next
 - **Game Settings**: Adjust set parameters (word count target, time limits, etc.)
+- **Time Limit Controls**: Enable/disable timers and adjust duration for each phase
 - **Next Round**: Force advance to the next word if needed
 - **Pause/Resume**: Pause the current round temporarily
 
@@ -65,7 +66,7 @@ Other players can suggest these actions, but only the host can execute them.
 ### Game Rules
 
 #### Round Structure (Single Word)
-1. **Choose a Guesser**: One player becomes the "Guesser" for this round
+1. **Choose a Guesser**: Players rotate in order - each player takes turns being the guesser in sequential rounds
 2. **Reveal the Word**: All other players can see the mystery word, but the Guesser cannot
 3. **Write Clues**: Each non-guessing player writes exactly ONE word as a clue on their device
 4. **Automatic Duplicate Check**: The system automatically identifies and removes identical clues
@@ -73,6 +74,13 @@ Other players can suggest these actions, but only the host can execute them.
 6. **Present Clues**: The Guesser sees all remaining valid clues after both automatic and manual filtering
 7. **Make a Guess**: The Guesser has ONE attempt to guess the word
 8. **Score**: The team scores a point if the guess is correct, then moves to the next round
+
+#### Guesser Rotation
+- **Fair Rotation**: Players take turns being the guesser in the order they joined the game
+- **Sequential Order**: Round 1: Player A guesses, Round 2: Player B guesses, Round 3: Player C guesses, etc.
+- **Continuous Cycle**: After the last player in the list, rotation returns to the first player
+- **New Players**: If someone joins mid-set, they're added to the end of the rotation
+- **Player Leaves**: If the current guesser leaves, the next player in rotation immediately becomes the guesser
 
 #### Clue Writing Rules
 - **One Word Only**: Clues must be exactly one word (no phrases, no hyphenated words)
@@ -101,7 +109,19 @@ The manual reviewer sees all original clues with clear marking tools to cross of
 #### Special Situations
 - **Invalid Clues**: Clues that break the rules are eliminated (same as duplicates)
 - **Pass Option**: The Guesser can choose to pass if the clues are too confusing
-- **Time Limit**: Optional 60-second time limit for writing clues and guessing
+- **Time Limits**: Optional time constraints can be enabled by the host
+
+#### Time Limit Settings
+The host can optionally enable time limits to keep the game moving at a steady pace:
+- **Clue Writing Timer**: 60-90 seconds for all players to submit their clues
+- **Duplicate Checking Timer**: 30-45 seconds for the checker to review and mark invalid clues
+- **Guessing Timer**: 60-90 seconds for the guesser to make their guess
+- **Auto-Advance**: When time expires, the game automatically moves to the next phase
+- **Gentle Visual Indicators**: Subtle progress bars and calm color transitions (no harsh warnings)
+- **Chunked Time Display**: Shows approximate time ("About 1 minute left") updating every 10 seconds, with precise countdown only in final 10 seconds
+- **Natural Language**: Uses friendly phrases like "Plenty of time" and "Getting close" instead of stressful numbers
+- **Host Override**: The host can manually advance phases or extend time even with timers enabled
+- **Stress-Free Design**: Timers are designed to maintain flow without creating pressure or anxiety
 
 ### Strategy Tips
 - **Think Uniquely**: Avoid obvious clues that others might write
