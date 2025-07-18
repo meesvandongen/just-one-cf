@@ -69,7 +69,7 @@ Actions available in Just One:
 - `end-session`: Terminate the entire session
 - `end-set`: End the current set early
 - `end-round`: Skip the current word/round
-- `kick-player`: Remove a player from the session
+- `remove-player`: Remove a player from the session
 - `next-round`: Force advance to the next word
 - `pass-word`: Allow skipping a difficult word
 - `pause-game`/`resume-game`: Temporarily halt/continue progression
@@ -102,7 +102,7 @@ This function handles all the game logic for Just One and enforces host permissi
 - **end-session**: Terminates the entire session and removes all players
 - **end-set**: Completes the current set early and shows final results
 - **end-round**: Skips the current word and moves to the next round in the set
-- **kick-player**: Removes a player from the session (with host transfer if needed)
+- **remove-player**: Removes a player from the session (with host transfer if needed)
 - **next-round**: Advances to the next round with a new guesser and word
 - **pass-word**: Allows skipping a difficult word (same as end-round)
 - **pause-game/resume-game**: Temporarily halt/continue game progression
@@ -247,3 +247,318 @@ The timer system is designed to keep the game flowing without creating stress or
 - **Host Override**: Host can manually advance phases or extend time as needed
 - **Player Feedback**: Clear but unobtrusive indication of remaining time
 - **Accessibility**: Support for users who may need additional time or have different needs
+
+## Disconnect and Reconnect Handling
+
+The game implements a robust disconnect/reconnect system designed around the assumption that players intend to return to the session.
+
+### Core Disconnect Philosophy
+- **Optimistic Continuity**: Players are expected to return, so their slot remains reserved
+- **Graceful Degradation**: Game continues with disconnected players' slots preserved
+- **Host Oversight**: Host has control over removing disconnected players when necessary
+- **Seamless Rejoining**: Players can rejoin at any time using the same game code
+
+### Player Disconnect Behavior
+
+#### Automatic Slot Preservation
+- **Game State Persistence**: Disconnected players remain in the `users` array with their role and progress intact
+- **Round Participation**: Their turn in guesser/checker rotation is preserved
+- **Clue Submissions**: Any submitted clues remain valid and visible
+- **Score Tracking**: Their contributions to set score are maintained
+
+#### Timer Considerations with Disconnected Players
+- **Patient Timer Logic**: Timers wait for ALL players, including disconnected ones, assuming they will return
+  - **Clue Writing Phase**: Timer waits for ALL players (connected + disconnected) to submit clues
+  - **Duplicate Checking**: If checker is disconnected, timer waits indefinitely for their return
+  - **Guessing Phase**: If guesser is disconnected, timer pauses and waits for their return
+- **Progress Calculation**: "3 of 5 players submitted clues" counts ALL players, showing disconnected players as pending
+- **Phase Completion**: Phases only complete when ALL players (including disconnected) have completed their actions OR host manually overrides
+
+#### Guesser/Checker Role Handling
+- **Disconnected Guesser**: 
+  - Timer pauses and waits indefinitely for their return
+  - Host receives notification: "Current guesser [Name] has disconnected. Game is waiting for their return."
+  - Host options: "Skip Round", "Remove Player" (only then does game continue)
+- **Disconnected Checker**: 
+  - Duplicate checking phase pauses and waits for checker to return
+  - Host can override: "Skip duplicate check" or "Remove player and auto-advance"
+- **Future Roles**: Disconnected players remain in rotation, and game waits when it's their turn
+
+### Host Disconnect Notifications
+
+#### Real-Time Disconnect Alerts
+When a player disconnects, the host receives an unobtrusive notification:
+
+```
+⚠️ [Player Name] has disconnected
+└─ Remove from session? [Yes] [No]
+   └─ They can still rejoin if you choose No
+```
+
+#### Notification Behavior
+- **Non-Blocking**: Notifications don't interrupt game flow
+- **Dismissible**: Host can dismiss without taking action
+- **Persistent**: Notifications remain until host makes a decision
+- **Contextual**: Different messages based on player's current role
+
+#### Host Decision Options
+- **Remove Player**: Permanently removes player from session (they can rejoin using the same game code)
+- **Keep Slot**: Maintains player's slot for potential return
+- **Auto-Dismiss**: Notifications auto-dismiss after 60 seconds, defaulting to "keep slot"
+
+#### What Happens When a Player Gets Removed
+
+##### During Different Game Phases
+- **Lobby Phase**: 
+  - Player is immediately removed from the session
+  - Other players see "[Player] has been removed by the host"
+  - No impact on game progression
+
+- **Writing Clues Phase**:
+  - Player's submitted clue (if any) is removed from the round
+  - Progress updates immediately: "2 of 4 players submitted clues" (adjusted count)
+  - Phase can complete with remaining players
+  - If all remaining players have submitted, phase auto-advances
+
+- **Checking Duplicates Phase**:
+  - If removed player was the checker: Phase auto-completes with automatic duplicate removal only
+  - If removed player was not the checker: Their clue (if submitted) is removed, checker continues normally
+  - Progress updates to reflect new player count
+
+- **Guessing Phase**:
+  - If removed player was the guesser: Round immediately advances to next player in rotation
+  - If removed player was not the guesser: No immediate impact, round continues normally
+  - Any clues they submitted earlier in the round remain removed
+
+##### Role Rotation Impact
+- **Guesser Rotation**: Removed player is removed from rotation, next player in line becomes guesser
+- **Checker Rotation**: Removed player is removed from rotation, rotation adjusts automatically
+- **Future Rounds**: Removed player no longer participates in any future role assignments
+
+##### Score and Progress Impact
+- **Set Score**: No penalty for removing a player - team score remains unchanged
+- **Round History**: Previous successful rounds where removed player participated remain counted
+- **Target Adjustment**: Set target remains the same regardless of reduced player count
+
+### Manual Player Management
+
+#### Host Controls for Player Management
+The host has access to manual player management tools at all times:
+
+- **Player List Management**: 
+  - View all players with connection status indicators
+  - "Connected" (green dot), "Disconnected" (amber dot), "Removed" (red X)
+- **Manual Removal**: 
+  - Remove any player regardless of connection status
+  - Confirm dialog: "Remove [Player Name]? They will not be able to rejoin this session."
+- **Force Skip Turn**: 
+  - Skip disconnected player's turn as guesser/checker
+  - "Skip [Player Name]'s turn and continue to next player?"
+
+#### Removing Players vs. Skipping Turns
+
+##### Manual Removal (Remove)
+- **Permanent Action**: Player is removed from the session but can rejoin using the same game code
+- **Immediate Effect**: Player is removed from all rotations and game state
+- **Progress Impact**: Game adjusts immediately to new player count
+- **Notification**: All players see "[Player] has been removed from the session"
+
+##### Skip Turn (Temporary)
+- **Temporary Action**: Player remains in session but their current turn is skipped
+- **Future Participation**: Player can still participate in future rounds when they reconnect
+- **Rotation Preserved**: Player stays in guesser/checker rotation for subsequent rounds
+- **Notification**: All players see "[Player]'s turn has been skipped"
+
+##### When to Use Each Option
+- **Use Remove**: When player has left permanently or is causing disruption
+- **Use Skip**: When player is temporarily disconnected but expected to return
+- **Host Guidance**: UI suggests "Skip Turn" for recent disconnects, "Remove" for longer absences
+
+#### Player Management UI
+```
+Players (4/8)
+├─ 🟢 Host (You)
+├─ 🟢 Alice         [Remove]
+├─ 🟠 Bob (disconnected) [Remove] [Skip Turn]
+└─ 🟢 Charlie       [Remove]
+
+[+ Invite More Players]
+```
+
+#### Removed Player Experience
+
+##### Immediate Removal Response
+When a player gets removed, they immediately receive:
+```
+┌─────────────────────────────────────┐
+│ You have been removed from the game │
+├─────────────────────────────────────┤
+│ The host has removed you from this  │
+│ session. You can rejoin using the   │
+│ same game code if you'd like.       │
+│                                     │
+│ [Rejoin Game] [Start New Game] [Join Different Game] │
+└─────────────────────────────────────┘
+```
+
+##### Post-Removal Experience
+- **Rejoin Capability**: Player can immediately rejoin using the same game code
+- **Fresh Start**: When rejoining, player is treated as a new participant
+- **No Penalties**: No restrictions or penalties for being removed and rejoining
+
+### Reconnection System
+
+#### Seamless Rejoin Process
+- **Same Game Code**: Players rejoin using the original 8-digit code
+- **State Restoration**: Player rejoins exactly where they left off
+- **Role Continuity**: All roles and progress are immediately restored
+- **No Penalties**: No score deduction or role reassignment for disconnections
+
+#### Reconnection User Experience
+1. Player opens game URL or enters game code again
+2. System recognizes returning player automatically
+3. Game state loads showing current phase and their role
+4. Player can immediately participate in current or next phase
+
+#### Mid-Phase Reconnection
+- **Writing Clues**: Can immediately submit clue if time remains
+- **Checking Duplicates**: Can review and mark clues if they are the checker
+- **Guessing**: Can make guess if they are the guesser and time remains
+- **Between Phases**: Rejoins smoothly during transitions
+
+### In-Game Invite System
+
+#### Persistent Invite Access
+Players have continuous access to invite new players during the game:
+
+```
+[Game Interface]
+├─ Current Phase: Writing Clues
+├─ [Your Clue Input]
+└─ [⊕ Invite Players] ← Always visible button
+```
+
+#### Invite Modal/Overlay
+When clicked, shows a non-disruptive overlay:
+
+```
+┌─────────────────────────────────────┐
+│ Invite More Players                 │
+├─────────────────────────────────────┤
+│ Game Code: ABC12DEF                 │
+│ [Copy Code] [Share Link]            │
+│                                     │
+│ [QR Code Display]                   │
+│                                     │
+│ Players can join at any time!       │
+│ [Close]                             │
+└─────────────────────────────────────┘
+```
+
+#### New Player Mid-Game Joining
+- **Lobby Phase**: New players join normally and can participate from the start
+- **Active Set**: New players join as observers initially
+  - Automatically added to guesser rotation for next round
+  - Can participate in clue writing immediately if round is active
+- **Between Sets**: New players fully integrated for next set
+
+### Technical Implementation
+
+#### Connection State Management
+```typescript
+interface User {
+  id: string;
+  name: string;
+  connected: boolean;          // Real-time connection status
+  lastSeen: number;           // Timestamp of last activity
+  sessionStartTime: number;   // When they first joined
+  disconnectNotified: boolean; // Whether host has been notified of disconnect
+}
+```
+
+#### New GameAction Types
+```typescript
+// Host actions for player management
+| { type: 'remove-player'; playerId: string }
+| { type: 'skip-player-turn'; playerId: string }
+| { type: 'dismiss-disconnect-notification'; playerId: string }
+
+// System actions for connection management
+| { type: 'player-disconnected'; playerId: string }
+| { type: 'player-reconnected'; playerId: string }
+```
+
+#### GameState Changes for Removed Players
+```typescript
+interface GameState {
+  // ... existing properties
+  pendingActions: {            // Actions waiting for disconnected players
+    playerId: string;
+    actionType: 'clue' | 'guess' | 'check';
+    timeoutAt?: number;
+  }[];
+}
+```
+
+#### Remove Action Processing
+When `remove-player` action is processed:
+
+1. **Immediate State Changes**:
+   - Player removed from `users` array
+   - Any pending actions for that player are cleared
+   - Progress counters recalculated
+
+2. **Role-Specific Handling**:
+   - **Current Guesser**: Advance to next player in rotation
+   - **Current Checker**: Auto-complete duplicate checking phase
+   - **Clue Writer**: Remove their clue if submitted, update progress
+
+3. **Broadcast Changes**:
+   - New game state sent to all remaining players
+   - Removed player receives removal message with rejoin option
+   - Host receives confirmation of successful removal
+
+#### Timer Logic with Disconnections
+- **Wait-for-All Logic**: Calculate total players including disconnected ones
+- **Phase Completion**: Check if ALL players (connected + disconnected) have completed their actions
+- **Auto-Advance Conditions**: Never auto-advance when disconnected players haven't completed their actions
+- **Host Override Required**: Only manual host actions can skip disconnected players or advance phases early
+
+### Error Recovery and Edge Cases
+
+#### Host Disconnection
+- **Host Transfer**: Automatic promotion of longest-connected player to host
+- **Host Reconnection**: Original host can reclaim host status if rejoining within 5 minutes
+- **Multiple Disconnections**: System handles cascading disconnections gracefully
+
+#### Edge Case: Removing Players During Critical Moments
+
+##### Host Gets Removed (Impossible Scenario)
+- Host cannot remove themselves
+- Only way for host to leave is voluntary departure, which triggers host transfer
+
+##### Removed Player Was About to Win/Lose Round
+- **Correct Guess Submitted**: If guesser submits correct guess then gets removed, the guess still counts
+- **Timer Expires Simultaneously**: Remove action takes precedence over timer expiration
+- **Mid-Action Remove**: Any action in progress when remove occurs is cancelled
+
+##### Mass Removal Scenarios
+- **Minimum Players**: Host cannot remove players if it would reduce game below minimum (typically 3 players)
+- **Solo Host**: If only host and one other player remain, remove action shows warning about ending session
+- **All Players Removed**: Impossible scenario - host cannot remove all players, would end session instead
+
+##### Removed Player Had Special Items/State
+- **Submitted Clues**: Removed from current round
+- **Future Rotation**: Completely removed from all future role assignments
+- **Persistent Data**: Any game history or statistics preserved for remaining players
+- **Rejoin Status**: If they rejoin, they start fresh in the next available rotation slot
+
+#### Network Issues
+- **Connection Retries**: Automatic reconnection attempts with exponential backoff
+- **State Synchronization**: Full state resync on successful reconnection
+- **Partial Connectivity**: Handle cases where some players connect/disconnect repeatedly
+
+#### Session Recovery
+- **Persistent Sessions**: Game state maintained on server even with all players disconnected (up to 1 hour)
+- **Mass Disconnection**: If all players disconnect, session enters "hibernation" mode
+- **Revival Window**: Players can revive hibernated sessions by rejoining within the time limit
