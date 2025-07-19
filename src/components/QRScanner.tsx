@@ -15,10 +15,10 @@ export default function QRScanner({ isOpen, onClose, onScan }: QRScannerProps) {
 	const handleScan = (result: any) => {
 		if (result && result.length > 0) {
 			const text = result[0]?.rawValue || "";
-			
+
 			// Try to extract room code from different QR code formats
 			let roomCode = "";
-			
+
 			// If it's a URL with join parameter
 			try {
 				const url = new URL(text);
@@ -32,12 +32,14 @@ export default function QRScanner({ isOpen, onClose, onScan }: QRScannerProps) {
 					roomCode = text.toUpperCase();
 				}
 			}
-			
+
 			if (roomCode) {
 				onScan(roomCode);
 				onClose();
 			} else {
-				setError("Invalid QR code. Please scan a valid room code or join link.");
+				setError(
+					"Invalid QR code. Please scan a valid room code or join link.",
+				);
 			}
 		}
 	};
@@ -62,9 +64,11 @@ export default function QRScanner({ isOpen, onClose, onScan }: QRScannerProps) {
 		>
 			<Stack gap="md">
 				<Text size="sm" c="dimmed">
-					<Trans>Point your camera at a QR code to automatically enter the room code</Trans>
+					<Trans>
+						Point your camera at a QR code to automatically enter the room code
+					</Trans>
 				</Text>
-				
+
 				{isOpen && (
 					<div style={{ position: "relative", width: "100%", height: "300px" }}>
 						<Scanner
@@ -83,13 +87,13 @@ export default function QRScanner({ isOpen, onClose, onScan }: QRScannerProps) {
 						/>
 					</div>
 				)}
-				
+
 				{error && (
 					<Text size="sm" c="red">
 						{error}
 					</Text>
 				)}
-				
+
 				<Button variant="light" onClick={handleClose} fullWidth>
 					<Trans>Cancel</Trans>
 				</Button>

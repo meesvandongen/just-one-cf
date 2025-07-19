@@ -6,7 +6,16 @@ import {
 	initialGame,
 	type ServerAction,
 	type User,
-} from "../game/logic";
+} from "../party/logic";
+
+// Helper functions for testing with the new ClueWithSubmitter structure
+const clueExists = (validClues: any[], clueText: string): boolean => {
+	return validClues.some((clueWithSubmitter) => clueWithSubmitter.clue === clueText);
+};
+
+const clueDoesNotExist = (validClues: any[], clueText: string): boolean => {
+	return !clueExists(validClues, clueText);
+};
 
 describe("Game Logic Tests", () => {
 	let gameState: GameState;
@@ -300,13 +309,13 @@ describe("Game Logic Tests", () => {
 			// Should only keep the unique clues
 			const expectedUniqueClues = nonGuessers.length > 3 ? 2 : 1;
 			expect(state.validClues).toHaveLength(expectedUniqueClues);
-			expect(state.validClues).toContain("ocean");
+			expect(clueExists(state.validClues, "ocean")).toBe(true);
 			if (nonGuessers.length > 3) {
-				expect(state.validClues).toContain("blue");
+				expect(clueExists(state.validClues, "blue")).toBe(true);
 			}
 			// Should NOT contain any "water" variants
-			expect(state.validClues).not.toContain("water");
-			expect(state.validClues).not.toContain("Water");
+			expect(clueDoesNotExist(state.validClues, "water")).toBe(true);
+			expect(clueDoesNotExist(state.validClues, "Water")).toBe(true);
 		});
 	});
 
@@ -355,8 +364,8 @@ describe("Game Logic Tests", () => {
 			const newState = gameUpdater(action, stateWithClues);
 
 			expect(newState.gamePhase).toBe("guessing");
-			expect(newState.validClues).not.toContain("clue0");
-			expect(newState.validClues).toContain("clue1");
+			expect(clueDoesNotExist(newState.validClues, "clue0")).toBe(true);
+			expect(clueExists(newState.validClues, "clue1")).toBe(true);
 		});
 
 		it("should not allow non-checker to mark invalid clues", () => {

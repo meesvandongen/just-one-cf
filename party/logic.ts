@@ -170,6 +170,12 @@ export interface SetResult {
 	completed: boolean;
 }
 
+export interface ClueWithSubmitter {
+	clue: string;
+	submitterId: string;
+	submitterName: string;
+}
+
 // This interface holds all the information about your game
 export interface GameState extends BaseGameState {
 	// Core game state
@@ -183,7 +189,7 @@ export interface GameState extends BaseGameState {
 
 	// Round state
 	submittedClues: { [userId: string]: string };
-	validClues: string[];
+	validClues: ClueWithSubmitter[];
 	lastGuess: string | null;
 	lastGuessCorrect: boolean | null;
 
@@ -291,26 +297,32 @@ const allCluesSubmitted = (
 };
 
 // Automatically remove duplicate clues
-const removeDuplicateClues = (submittedClues: {
-	[userId: string]: string;
-}): string[] => {
-	const clueValues = Object.values(submittedClues);
-	const clueFrequency = new Map<string, string[]>();
+const removeDuplicateClues = (
+	submittedClues: { [userId: string]: string },
+	users: User[],
+): ClueWithSubmitter[] => {
+	const clueFrequency = new Map<string, Array<{ userId: string; clue: string }>>();
 
-	// Count occurrences of each normalized clue and keep original versions
-	clueValues.forEach((clue) => {
+	// Count occurrences of each normalized clue and keep original versions with submitter info
+	Object.entries(submittedClues).forEach(([userId, clue]) => {
 		const normalizedClue = clue.toLowerCase().trim();
 		if (!clueFrequency.has(normalizedClue)) {
 			clueFrequency.set(normalizedClue, []);
 		}
-		clueFrequency.get(normalizedClue)!.push(clue);
+		clueFrequency.get(normalizedClue)!.push({ userId, clue });
 	});
 
-	// Return only clues that appear exactly once
-	const uniqueClues: string[] = [];
-	clueFrequency.forEach((originalClues) => {
-		if (originalClues.length === 1) {
-			uniqueClues.push(originalClues[0]);
+	// Return only clues that appear exactly once with submitter information
+	const uniqueClues: ClueWithSubmitter[] = [];
+	clueFrequency.forEach((submissions) => {
+		if (submissions.length === 1) {
+			const submission = submissions[0];
+			const user = users.find((u) => u.id === submission.userId);
+			uniqueClues.push({
+				clue: submission.clue,
+				submitterId: submission.userId,
+				submitterName: user?.name || submission.userId,
+			});
 		}
 	});
 
@@ -461,7 +473,7 @@ export const gameUpdater = (
 				allCluesSubmitted(state.users, state.currentGuesser, newSubmittedClues)
 			) {
 				const automaticallyFilteredClues =
-					removeDuplicateClues(newSubmittedClues);
+					removeDuplicateClues(newSubmittedClues, state.users);
 				const nextChecker = getNextPlayer(state.users, state.currentGuesser);
 
 				return {
@@ -493,7 +505,7 @@ export const gameUpdater = (
 			}
 
 			const finalValidClues = state.validClues.filter(
-				(clue) => !action.invalidClues.includes(clue),
+				(clueWithSubmitter) => !action.invalidClues.includes(clueWithSubmitter.clue),
 			);
 
 			return {
