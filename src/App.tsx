@@ -1,6 +1,14 @@
 import { Trans, useLingui } from "@lingui/react/macro";
-import { Box, Button, Stack, TextInput, Title } from "@mantine/core";
-import { useEffect } from "react";
+import {
+	Box,
+	Button,
+	PinInput,
+	Stack,
+	Text,
+	TextInput,
+	Title,
+} from "@mantine/core";
+import { useEffect, useState } from "react";
 import {
 	Route,
 	Routes,
@@ -11,24 +19,27 @@ import {
 import { z } from "zod";
 import Game from "@/components/Game";
 import Layout from "@/components/Layout";
+import { isValidRoomCode } from "@/utils";
 import "@mantine/core/styles.css";
 
 const queryParamsValidator = z.object({
 	username: z.string().min(1),
-	roomId: z.string().min(1),
+	roomId: z.string().regex(/^\d{6}$/, "Room code must be 6 digits"),
 });
 
 function Home() {
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
 	const { t } = useLingui();
+	const [username, setUsername] = useState("");
+	const [roomCode, setRoomCode] = useState("");
 
 	useEffect(() => {
 		// Check if joining via QR code or direct link
 		const joinCode = searchParams.get("join");
-		if (joinCode && joinCode.length === 8) {
+		if (joinCode && joinCode.length === 6 && /^\d{6}$/.test(joinCode)) {
 			// Redirect to join page with pre-filled room code
-			navigate(`/join/${joinCode.toUpperCase()}`);
+			navigate(`/join/${joinCode}`);
 			return;
 		}
 
@@ -47,14 +58,9 @@ function Home() {
 
 	const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		const formData = new FormData(event.currentTarget);
-		const username = formData.get("username") as string;
-		const roomId = formData.get("roomId") as string;
 
-		if (username && roomId) {
-			navigate(
-				`/game/${roomId.toUpperCase()}?username=${encodeURIComponent(username)}`,
-			);
+		if (username && roomCode && isValidRoomCode(roomCode)) {
+			navigate(`/game/${roomCode}?username=${encodeURIComponent(username)}`);
 		}
 	};
 
@@ -89,7 +95,8 @@ function Home() {
 							<TextInput
 								label={<Trans>Your Name</Trans>}
 								placeholder={t`Enter your name`}
-								name="username"
+								value={username}
+								onChange={(e) => setUsername(e.target.value)}
 								required
 								size="lg"
 								styles={{
@@ -100,21 +107,23 @@ function Home() {
 								}}
 							/>
 
-							<TextInput
-								label={<Trans>Room Code</Trans>}
-								placeholder={t`Enter room code`}
-								name="roomId"
-								maxLength={8}
-								tt="uppercase"
-								required
-								size="lg"
-								styles={{
-									input: {
-										height: "48px",
-										fontSize: "16px",
-									},
-								}}
-							/>
+							<Stack gap="xs">
+								<Text fw={500} size="sm">
+									<Trans>Room Code</Trans>
+								</Text>
+								<PinInput
+									value={roomCode}
+									onChange={setRoomCode}
+									length={6}
+									type="number"
+									size="lg"
+									style={{ justifyContent: "center" }}
+									error={roomCode.length > 0 && !isValidRoomCode(roomCode)}
+								/>
+								<Text size="xs" c="dimmed" ta="center">
+									<Trans>Enter 6-digit room code</Trans>
+								</Text>
+							</Stack>
 						</Stack>
 
 						<Box
@@ -132,6 +141,7 @@ function Home() {
 								fullWidth
 								variant="filled"
 								style={{ height: "56px", fontSize: "18px" }}
+								disabled={!username || !isValidRoomCode(roomCode)}
 							>
 								Join Game
 							</Button>
@@ -148,17 +158,14 @@ function JoinGame() {
 	const navigate = useNavigate();
 	const { roomId: paramRoomId } = useParams<{ roomId?: string }>();
 	const { t } = useLingui();
+	const [username, setUsername] = useState("");
+	const [roomCode, setRoomCode] = useState(paramRoomId || "");
 
 	const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		const formData = new FormData(event.currentTarget);
-		const username = formData.get("username") as string;
-		const roomId = formData.get("roomId") as string;
 
-		if (username && roomId) {
-			navigate(
-				`/game/${roomId.toUpperCase()}?username=${encodeURIComponent(username)}`,
-			);
+		if (username && roomCode && isValidRoomCode(roomCode)) {
+			navigate(`/game/${roomCode}?username=${encodeURIComponent(username)}`);
 		}
 	};
 
@@ -193,7 +200,8 @@ function JoinGame() {
 							<TextInput
 								label={<Trans>Your Name</Trans>}
 								placeholder={t`Enter your name`}
-								name="username"
+								value={username}
+								onChange={(e) => setUsername(e.target.value)}
 								required
 								size="lg"
 								styles={{
@@ -204,22 +212,23 @@ function JoinGame() {
 								}}
 							/>
 
-							<TextInput
-								label={<Trans>Room Code</Trans>}
-								placeholder={t`Enter room code`}
-								name="roomId"
-								defaultValue={paramRoomId || ""}
-								maxLength={8}
-								tt="uppercase"
-								required
-								size="lg"
-								styles={{
-									input: {
-										height: "48px",
-										fontSize: "16px",
-									},
-								}}
-							/>
+							<Stack gap="xs">
+								<Text fw={500} size="sm">
+									<Trans>Room Code</Trans>
+								</Text>
+								<PinInput
+									value={roomCode}
+									onChange={setRoomCode}
+									length={6}
+									type="number"
+									size="lg"
+									style={{ justifyContent: "center" }}
+									error={roomCode.length > 0 && !isValidRoomCode(roomCode)}
+								/>
+								<Text size="xs" c="dimmed" ta="center">
+									<Trans>Enter 6-digit room code</Trans>
+								</Text>
+							</Stack>
 						</Stack>
 
 						<Box
@@ -237,6 +246,7 @@ function JoinGame() {
 								fullWidth
 								variant="filled"
 								style={{ height: "56px", fontSize: "18px" }}
+								disabled={!username || !isValidRoomCode(roomCode)}
 							>
 								<Trans>Join Game</Trans>
 							</Button>
@@ -256,14 +266,22 @@ function GamePage() {
 
 	const username = searchParams.get("username");
 
+	// Validate room code format
+	useEffect(() => {
+		if (roomId && !isValidRoomCode(roomId)) {
+			navigate("/");
+			return;
+		}
+	}, [roomId, navigate]);
+
 	// If no username provided, redirect to join page
 	useEffect(() => {
-		if (!username && roomId) {
+		if (!username && roomId && isValidRoomCode(roomId)) {
 			navigate(`/join/${roomId}`);
 		}
 	}, [username, roomId, navigate]);
 
-	if (!username || !roomId) {
+	if (!username || !roomId || !isValidRoomCode(roomId)) {
 		return null; // Will redirect
 	}
 

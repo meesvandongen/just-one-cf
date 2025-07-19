@@ -21,7 +21,6 @@ export class GameServer extends Server<Env> {
 		this.gameState = initialGame();
 		// Note: this.name is not available in constructor, will be set later by routePartykitRequest
 		console.log("Room created");
-		console.log("Game code:", this.gameState.gameCode);
 	}
 
 	onConnect(connection: Connection) {

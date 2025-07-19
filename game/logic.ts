@@ -174,7 +174,6 @@ export interface SetResult {
 export interface GameState extends BaseGameState {
 	// Core game state
 	hostId: string | null;
-	gameCode: string;
 	currentWord: string | null;
 	gamePhase: GamePhase;
 
@@ -205,16 +204,6 @@ export interface GameState extends BaseGameState {
 	usedWords: string[];
 }
 
-// Generate a random 8-digit game code
-const generateGameCode = (): string => {
-	const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	let result = "";
-	for (let i = 0; i < 8; i++) {
-		result += chars.charAt(Math.floor(Math.random() * chars.length));
-	}
-	return result;
-};
-
 // Load word list
 const loadWordList = (): string[] => {
 	// In a Cloudflare Workers environment, we use the default word list
@@ -229,7 +218,6 @@ export const initialGame = (): GameState => ({
 
 	// Core game state
 	hostId: null,
-	gameCode: generateGameCode(),
 	currentWord: null,
 	gamePhase: "lobby",
 
@@ -332,7 +320,7 @@ const removeDuplicateClues = (submittedClues: {
 // Here are all the actions we can dispatch for a user
 export type GameAction =
 	// Player actions
-	| { type: "join-session"; gameCode: string; playerName: string }
+	| { type: "join-session"; playerName: string }
 	| { type: "submit-clue"; clue: string }
 	| { type: "mark-invalid-clues"; invalidClues: string[] }
 	| { type: "submit-guess"; guess: string }
