@@ -1,6 +1,6 @@
 import { Trans, useLingui } from "@lingui/react/macro";
-import { Box, Button, Stack, TextInput, Title } from "@mantine/core";
-import { useEffect } from "react";
+import { ActionIcon, Box, Button, Group, Stack, TextInput, Title } from "@mantine/core";
+import { useEffect, useState } from "react";
 import {
 	Route,
 	Routes,
@@ -8,9 +8,11 @@ import {
 	useParams,
 	useSearchParams,
 } from "react-router-dom";
+import { MdQrCodeScanner } from "react-icons/md";
 import { z } from "zod";
 import Game from "@/components/Game";
 import Layout from "@/components/Layout";
+import QRScanner from "@/components/QRScanner";
 import "@mantine/core/styles.css";
 
 const queryParamsValidator = z.object({
@@ -148,6 +150,8 @@ function JoinGame() {
 	const navigate = useNavigate();
 	const { roomId: paramRoomId } = useParams<{ roomId?: string }>();
 	const { t } = useLingui();
+	const [qrScannerOpen, setQrScannerOpen] = useState(false);
+	const [roomCode, setRoomCode] = useState(paramRoomId || "");
 
 	const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -160,6 +164,10 @@ function JoinGame() {
 				`/game/${roomId.toUpperCase()}?username=${encodeURIComponent(username)}`,
 			);
 		}
+	};
+
+	const handleQRScan = (scannedCode: string) => {
+		setRoomCode(scannedCode);
 	};
 
 	return (
@@ -204,22 +212,38 @@ function JoinGame() {
 								}}
 							/>
 
-							<TextInput
-								label={<Trans>Room Code</Trans>}
-								placeholder={t`Enter room code`}
-								name="roomId"
-								defaultValue={paramRoomId || ""}
-								maxLength={8}
-								tt="uppercase"
-								required
-								size="lg"
-								styles={{
-									input: {
+							<Group align="end" gap="xs">
+								<TextInput
+									label={<Trans>Room Code</Trans>}
+									placeholder={t`Enter room code`}
+									name="roomId"
+									value={roomCode}
+									onChange={(event) => setRoomCode(event.currentTarget.value)}
+									maxLength={8}
+									tt="uppercase"
+									required
+									size="lg"
+									style={{ flex: 1 }}
+									styles={{
+										input: {
+											height: "48px",
+											fontSize: "16px",
+										},
+									}}
+								/>
+								<ActionIcon
+									size="lg"
+									variant="light"
+									onClick={() => setQrScannerOpen(true)}
+									title={t`Scan QR Code`}
+									style={{
 										height: "48px",
-										fontSize: "16px",
-									},
-								}}
-							/>
+										width: "48px",
+									}}
+								>
+									<MdQrCodeScanner size="20" />
+								</ActionIcon>
+							</Group>
 						</Stack>
 
 						<Box
@@ -244,6 +268,11 @@ function JoinGame() {
 					</form>
 				</Box>
 			</Box>
+			<QRScanner
+				isOpen={qrScannerOpen}
+				onClose={() => setQrScannerOpen(false)}
+				onScan={handleQRScan}
+			/>
 		</Layout>
 	);
 }
