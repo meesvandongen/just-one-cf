@@ -6,7 +6,7 @@ import {
 	initialGame,
 	type ServerAction,
 	type User,
-} from "../game/logic";
+} from "../party/logic";
 
 describe("Game Logic Tests", () => {
 	let gameState: GameState;

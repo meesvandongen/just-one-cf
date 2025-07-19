@@ -5,7 +5,7 @@ import {
 	initialGame,
 	type ServerAction,
 	type User,
-} from "../game/logic";
+} from "../party/logic";
 
 describe("Game Logic Edge Cases", () => {
 	let gameState: GameState;
