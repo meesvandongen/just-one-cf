@@ -40,3 +40,6 @@ dist/
 
 # partykit (legacy)
 .partykit
+
+# swc cache
+.swc/
