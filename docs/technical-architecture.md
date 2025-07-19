@@ -5,6 +5,7 @@
 This multiplayer implementation is built using:
 - [Next.js](https://nextjs.org/) for the client
 - [Cloudflare PartyKit](https://github.com/cloudflare/partykit) for real-time multiplayer functionality
+- [Mantine UI 8+](https://mantine.dev/) as the component library for consistent and accessible UI components
 
 ## Getting Started
 
