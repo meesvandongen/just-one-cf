@@ -9,7 +9,7 @@ import { LanguageProvider } from "./contexts/LanguageContext";
 import { defaultLocale, loadCatalog } from "./i18n";
 
 // Initialize i18n with default locale
-await loadCatalog(defaultLocale);
+loadCatalog(defaultLocale);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>
