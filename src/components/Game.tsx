@@ -16,14 +16,8 @@ import {
 	TextInput,
 	Title,
 } from "@mantine/core";
-import {
-	IconCheck,
-	IconLogout,
-	IconPlayerSkipForward,
-	IconPlayerStop,
-	IconSend,
-} from "@tabler/icons-react";
 import { useState } from "react";
+import { MdCheck, MdLogout, MdSend, MdSkipNext, MdStop } from "react-icons/md";
 import QRCode from "react-qr-code";
 import { useGameRoom } from "@/hooks/useGameRoom";
 
@@ -607,7 +601,7 @@ const Game = ({ username, roomId }: GameProps) => {
 								type="submit"
 								size="lg"
 								color="blue"
-								rightSection={<IconSend size={16} />}
+								rightSection={<MdSend size={16} />}
 							>
 								<Trans>Submit</Trans>
 							</Button>
@@ -622,7 +616,7 @@ const Game = ({ username, roomId }: GameProps) => {
 						onClick={() => dispatch({ type: "pass-word" })}
 						color="yellow"
 						variant="light"
-						leftSection={<IconPlayerSkipForward size={16} />}
+						leftSection={<MdSkipNext size={16} />}
 					>
 						<Trans>Skip</Trans>
 					</Button>,
@@ -639,7 +633,7 @@ const Game = ({ username, roomId }: GameProps) => {
 					color="green"
 					size="lg"
 					style={{ flex: 1 }}
-					rightSection={<IconCheck size={16} />}
+					rightSection={<MdCheck size={16} />}
 				>
 					<Trans>Finish Checking ({selectedInvalidClues.length} marked)</Trans>
 				</Button>,
@@ -663,7 +657,7 @@ const Game = ({ username, roomId }: GameProps) => {
 							type="submit"
 							size="lg"
 							color="green"
-							rightSection={<IconSend size={16} />}
+							rightSection={<MdSend size={16} />}
 						>
 							<Trans>Guess!</Trans>
 						</Button>
@@ -716,7 +710,7 @@ const Game = ({ username, roomId }: GameProps) => {
 					onClick={() => dispatch({ type: "end-session" })}
 					size="lg"
 					color="red"
-					leftSection={<IconLogout size={16} />}
+					leftSection={<MdLogout size={16} />}
 				>
 					<Trans>End</Trans>
 				</Button>,
@@ -733,7 +727,7 @@ const Game = ({ username, roomId }: GameProps) => {
 						onClick={() => dispatch({ type: "end-set" })}
 						color="yellow"
 						variant="light"
-						leftSection={<IconPlayerStop size={16} />}
+						leftSection={<MdStop size={16} />}
 					>
 						<Trans>End Set</Trans>
 					</Button>,
@@ -744,7 +738,7 @@ const Game = ({ username, roomId }: GameProps) => {
 						onClick={() => dispatch({ type: "end-session" })}
 						color="red"
 						variant="light"
-						leftSection={<IconLogout size={16} />}
+						leftSection={<MdLogout size={16} />}
 					>
 						<Trans>End Session</Trans>
 					</Button>,
@@ -759,7 +753,7 @@ const Game = ({ username, roomId }: GameProps) => {
 						color="yellow"
 						variant="light"
 					>
-						<IconPlayerStop size={16} />
+						<MdStop size={16} />
 					</Button>,
 				);
 				actions.push(
@@ -770,7 +764,7 @@ const Game = ({ username, roomId }: GameProps) => {
 						color="red"
 						variant="light"
 					>
-						<IconLogout size={16} />
+						<MdLogout size={16} />
 					</Button>,
 				);
 			}
