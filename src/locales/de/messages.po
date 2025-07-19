@@ -1,0 +1,282 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-07-19 18:44+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: de\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#. placeholder {0}: gameState.lastGuessCorrect ? "Correct!" : "Incorrect"
+#. placeholder {0}: gameState.setScore >= 13 ? "Excellent!" : gameState.setScore >= 11 ? "Very Good!" : gameState.setScore >= 8 ? "Good!" : "Keep trying!"
+#: src/components/Game.tsx:501
+#: src/components/Game.tsx:548
+msgid "{0}"
+msgstr "{0}"
+
+#. placeholder {0}: gameState.users.find( (u) => u.id === gameState.currentChecker, )?.name
+#: src/components/Game.tsx:377
+msgid "{0} is checking for duplicates..."
+msgstr "{0} prüft auf Duplikate..."
+
+#. placeholder {0}: gameState.users.find( (u) => u.id === gameState.currentGuesser, )?.name
+#: src/components/Game.tsx:467
+msgid "{0} is guessing..."
+msgstr "{0} rät..."
+
+#. placeholder {0}: Object.keys(gameState.submittedClues).length
+#. placeholder {1}: gameState.users.length - 1
+#: src/components/Game.tsx:319
+msgid "{0} of {1} clues submitted"
+msgstr "{0} von {1} Hinweisen eingereicht"
+
+#: src/components/Game.tsx:305
+msgid "✓ Clue submitted! Waiting for others..."
+msgstr "✓ Hinweis eingereicht! Warte auf andere..."
+
+#: src/components/Game.tsx:214
+msgid "👑 Host"
+msgstr "👑 Gastgeber"
+
+#: src/components/Game.tsx:335
+msgid "Checking Duplicates"
+msgstr "Duplikate Prüfen"
+
+#: src/components/Game.tsx:399
+msgid "Clues Ready"
+msgstr "Hinweise Bereit"
+
+#: src/components/Game.tsx:54
+msgid "Connecting to game server..."
+msgstr "Verbinde zum Spielserver..."
+
+#: src/components/Game.tsx:151
+msgid "Cooperative word guessing game"
+msgstr "Kooperatives Wörter-Ratespiel"
+
+#: src/components/Game.tsx:374
+msgid "Duplicate Check in Progress"
+msgstr "Duplikatsprüfung Läuft"
+
+#: src/components/Game.tsx:721
+msgid "End"
+msgstr "Ende"
+
+#: src/components/Game.tsx:749
+msgid "End Session"
+msgstr "Sitzung Beenden"
+
+#: src/components/Game.tsx:738
+msgid "End Set"
+msgstr "Set Beenden"
+
+#: src/components/Game.tsx:600
+msgid "Enter one word clue"
+msgstr "Einen Hinweis eingeben"
+
+#: src/App.tsx:105
+#: src/App.tsx:209
+msgid "Enter room code"
+msgstr "Raumcode eingeben"
+
+#: src/App.tsx:91
+#: src/App.tsx:195
+msgid "Enter your name"
+msgstr "Namen eingeben"
+
+#: src/components/Game.tsx:541
+msgid "Final Score"
+msgstr "Endpunktzahl"
+
+#. placeholder {0}: selectedInvalidClues.length
+#: src/components/Game.tsx:644
+msgid "Finish Checking ({0} marked)"
+msgstr "Prüfung Beenden ({0} markiert)"
+
+#: src/components/Game.tsx:161
+msgid "Game Code"
+msgstr "Spielcode"
+
+#: src/components/Game.tsx:512
+msgid "Guess:"
+msgstr "Tipp:"
+
+#: src/components/Game.tsx:668
+msgid "Guess!"
+msgstr "Raten!"
+
+#: src/components/Game.tsx:416
+msgid "Guessing Time"
+msgstr "Rate-Zeit"
+
+#: src/components/Game.tsx:435
+msgid "Here are the clues:"
+msgstr "Hier sind die Hinweise:"
+
+#: src/App.tsx:185
+#: src/App.tsx:241
+msgid "Join Game"
+msgstr "Spiel Beitreten"
+
+#: src/App.tsx:81
+msgid "Just One"
+msgstr "Just One"
+
+#: src/components/LanguageSelector.tsx:15
+#~ msgid "Language"
+#~ msgstr "Sprache"
+
+#: src/components/Game.tsx:347
+msgid "Mark any clues that should be removed:"
+msgstr "Markiere Hinweise, die entfernt werden sollen:"
+
+#: src/components/Game.tsx:237
+msgid "Need at least 3 players to start the game"
+msgstr "Mindestens 3 Spieler nötig zum Starten"
+
+#: src/components/Game.tsx:695
+msgid "Next Round"
+msgstr "Nächste Runde"
+
+#: src/components/Game.tsx:680
+msgid "Pass"
+msgstr "Passen"
+
+#: src/components/Game.tsx:710
+msgid "Play Again"
+msgstr "Nochmal spielen"
+
+#. placeholder {0}: gameState.users.length
+#: src/components/Game.tsx:200
+msgid "Players ({0})"
+msgstr "Spieler ({0})"
+
+#: src/components/Game.tsx:402
+msgid "Preparing clues for the guesser..."
+msgstr "Hinweise für den Rater werden vorbereitet..."
+
+#: src/components/Game.tsx:564
+msgid "Previous Sets"
+msgstr "Vorherige Runden"
+
+#: src/components/Game.tsx:316
+msgid "Progress"
+msgstr "Fortschritt"
+
+#: src/components/Game.tsx:184
+msgid "QR Code"
+msgstr "QR-Code"
+
+#: src/App.tsx:104
+#: src/App.tsx:208
+msgid "Room Code"
+msgstr "Raumcode"
+
+#: src/components/Game.tsx:489
+msgid "Round Complete"
+msgstr "Runde beendet"
+
+#: src/components/Game.tsx:191
+msgid "Scan to join quickly"
+msgstr "Scannen für schnellen Beitritt"
+
+#. placeholder {0}: gameState.setScore
+#. placeholder {1}: gameState.gamesAttempted
+#: src/components/Game.tsx:518
+msgid "Score: {0}/{1}"
+msgstr "Punkte: {0}/{1}"
+
+#. placeholder {0}: gameState.setScore
+#. placeholder {1}: gameState.gamesAttempted
+#. placeholder {2}: gameState.setTarget
+#: src/components/Game.tsx:254
+#: src/components/Game.tsx:419
+msgid "Score: {0}/{1} | Target: {2}"
+msgstr "Punkte: {0}/{1} | Ziel: {2}"
+
+#. placeholder {0}: index + 1
+#. placeholder {1}: set.score
+#. placeholder {2}: set.target
+#: src/components/Game.tsx:570
+msgid "Set {0}: {1}/{2}"
+msgstr "Runde {0}: {1}/{2}"
+
+#: src/components/Game.tsx:533
+msgid "Set Complete!"
+msgstr "Runde beendet!"
+
+#: src/components/Game.tsx:174
+msgid "Share this code with other players"
+msgstr "Teile diesen Code mit anderen Spielern"
+
+#: src/components/Game.tsx:627
+msgid "Skip"
+msgstr "Überspringen"
+
+#: src/components/Game.tsx:229
+msgid "Start Game"
+msgstr "Spiel starten"
+
+#: src/components/Game.tsx:612
+msgid "Submit"
+msgstr "Bestätigen"
+
+#: src/components/Game.tsx:299
+msgid "Submit your clue using the form below"
+msgstr "Gib deinen Hinweis mit dem Formular unten ein"
+
+#: src/components/Game.tsx:458
+msgid "Submit your guess using the form below"
+msgstr "Gib deinen Tipp mit dem Formular unten ein"
+
+#: src/components/Game.tsx:279
+msgid "The word is:"
+msgstr "Das Wort ist:"
+
+#: src/components/Game.tsx:506
+msgid "The word was:"
+msgstr "Das Wort war:"
+
+#: src/components/Game.tsx:136
+msgid "Unknown game phase"
+msgstr "Unbekannte Spielphase"
+
+#: src/components/Game.tsx:269
+msgid "Wait while others write clues for you..."
+msgstr "Warte, während andere Hinweise für dich schreiben..."
+
+#: src/components/Game.tsx:657
+msgid "What's your guess?"
+msgstr "Wie lautet dein Tipp?"
+
+#. placeholder {0}: gameState.users.find( (u) => u.id === gameState.currentGuesser, )?.name
+#: src/components/Game.tsx:285
+msgid "Write ONE word clue for {0}"
+msgstr "Schreibe EINEN Wort-Hinweis für {0}"
+
+#: src/components/Game.tsx:251
+msgid "Writing Clues"
+msgstr "Hinweise schreiben"
+
+#: src/components/Game.tsx:344
+msgid "You are checking for duplicates!"
+msgstr "Du prüfst auf Duplikate!"
+
+#: src/components/Game.tsx:266
+msgid "You are the guesser!"
+msgstr "Du bist der Rater!"
+
+#: src/App.tsx:90
+#: src/App.tsx:194
+msgid "Your Name"
+msgstr "Dein Name"
+
+#: src/components/Game.tsx:432
+msgid "Your turn to guess!"
+msgstr "Du bist an der Reihe zu raten!"

@@ -12,10 +12,16 @@
 		"lint": "biome check .",
 		"test": "vitest run",
 		"test:ui": "vitest --ui",
-		"test:watch": "vitest watch"
+		"test:watch": "vitest watch",
+		"extract": "lingui extract",
+		"compile": "lingui compile",
+		"translate": "lingui extract && lingui compile"
 	},
 	"dependencies": {
 		"@biomejs/biome": "^2.1.2",
+		"@lingui/core": "^5.3.3",
+		"@lingui/macro": "^5.3.3",
+		"@lingui/react": "^5.3.3",
 		"@mantine/core": "^8.1.3",
 		"@mantine/form": "^8.1.3",
 		"@mantine/hooks": "^8.1.3",
@@ -40,6 +46,9 @@
 	"devDependencies": {
 		"@cloudflare/vite-plugin": "^1.9.6",
 		"@cloudflare/workers-types": "^4.20250719.0",
+		"@lingui/cli": "^5.3.3",
+		"@lingui/swc-plugin": "^5.5.2",
+		"@vitejs/plugin-react-swc": "^3.11.0",
 		"@vitest/ui": "^3.2.4",
 		"concurrently": "^9.2.0",
 		"partyserver": "^0.0.72",
