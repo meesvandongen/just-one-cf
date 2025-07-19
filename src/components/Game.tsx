@@ -1,5 +1,6 @@
 import {
 	Badge,
+	Box,
 	Button,
 	Card,
 	Center,
@@ -8,13 +9,19 @@ import {
 	Group,
 	Loader,
 	Paper,
-	ScrollArea,
 	SimpleGrid,
 	Stack,
 	Text,
 	TextInput,
 	Title,
 } from "@mantine/core";
+import {
+	IconCheck,
+	IconLogout,
+	IconPlayerSkipForward,
+	IconPlayerStop,
+	IconSend,
+} from "@tabler/icons-react";
 import { useState } from "react";
 import QRCode from "react-qr-code";
 import { useGameRoom } from "@/hooks/useGameRoom";
@@ -33,9 +40,6 @@ const Game = ({ username, roomId }: GameProps) => {
 	const [selectedInvalidClues, setSelectedInvalidClues] = useState<string[]>(
 		[],
 	);
-	const [gameCodeInput, setGameCodeInput] = useState("");
-	const [playerNameInput, setPlayerNameInput] = useState("");
-	const [showJoinForm, setShowJoinForm] = useState(false);
 
 	// Indicated that the game is loading
 	if (gameState === null) {
@@ -54,19 +58,6 @@ const Game = ({ username, roomId }: GameProps) => {
 	const isHost = currentUser?.isHost || false;
 	const isCurrentGuesser = gameState.currentGuesser === username;
 	const isCurrentChecker = gameState.currentChecker === username;
-
-	// Handle joining a session
-	const handleJoinSession = (e: React.FormEvent) => {
-		e.preventDefault();
-		if (gameCodeInput.length === 8 && playerNameInput.trim()) {
-			dispatch({
-				type: "join-session",
-				gameCode: gameCodeInput.toUpperCase(),
-				playerName: playerNameInput.trim(),
-			});
-			setShowJoinForm(false);
-		}
-	};
 
 	// Handle clue submission
 	const handleSubmitClue = (e: React.FormEvent) => {
@@ -151,139 +142,85 @@ const Game = ({ username, roomId }: GameProps) => {
 						<Text size="lg" c="dimmed">
 							Cooperative word guessing game
 						</Text>
-
-						{!currentUser && (
-							<Button
-								onClick={() => setShowJoinForm(true)}
-								size="lg"
-								variant="filled"
-							>
-								Join Game
-							</Button>
-						)}
-
-						{showJoinForm && (
-							<Paper shadow="sm" p="lg" radius="md" w={400}>
-								<form onSubmit={handleJoinSession}>
-									<Stack gap="md">
-										<Title order={3}>Join Game</Title>
-										<TextInput
-											placeholder="Enter your name"
-											value={playerNameInput}
-											onChange={(e) => setPlayerNameInput(e.target.value)}
-											required
-										/>
-										<TextInput
-											placeholder="Game Code (8 letters)"
-											value={gameCodeInput}
-											onChange={(e) =>
-												setGameCodeInput(e.target.value.toUpperCase())
-											}
-											maxLength={8}
-											tt="uppercase"
-											required
-										/>
-										<Group>
-											<Button type="submit" color="green">
-												Join
-											</Button>
-											<Button
-												type="button"
-												variant="light"
-												onClick={() => setShowJoinForm(false)}
-											>
-												Cancel
-											</Button>
-										</Group>
-									</Stack>
-								</form>
-							</Paper>
-						)}
 					</Stack>
 				</Center>
 
-				{currentUser && (
-					<>
-						<Grid>
-							<Grid.Col span={{ base: 12, md: 6 }}>
-								<Center>
-									<Stack align="center" gap="md">
-										<Title order={2}>Game Code</Title>
-										<Paper
-											bg="dark"
-											c="white"
-											p="lg"
-											radius="md"
-											ff="monospace"
-											fz="2rem"
-										>
-											{gameState.gameCode}
-										</Paper>
-										<Text size="sm" c="dimmed">
-											Share this code with other players
-										</Text>
-									</Stack>
-								</Center>
-							</Grid.Col>
-
-							<Grid.Col span={{ base: 12, md: 6 }}>
-								<Center>
-									<Stack align="center" gap="md">
-										<Title order={2}>QR Code</Title>
-										<QRCode
-											value={`${window.location.origin}?join=${gameState.gameCode}`}
-											size={150}
-										/>
-										<Text size="sm" c="dimmed">
-											Scan to join quickly
-										</Text>
-									</Stack>
-								</Center>
-							</Grid.Col>
-						</Grid>
-
-						<Stack gap="md">
-							<Title order={2}>Players ({gameState.users.length})</Title>
-							<SimpleGrid cols={{ base: 2, md: 3, lg: 4 }} spacing="sm">
-								{gameState.users.map((user) => (
-									<Card
-										key={user.id}
-										padding="md"
-										radius="md"
-										withBorder
-										bg={user.isHost ? "yellow.1" : "gray.1"}
-									>
-										<Text fw={600}>{user.name}</Text>
-										{user.isHost && (
-											<Badge color="yellow" size="sm" mt="xs">
-												👑 Host
-											</Badge>
-										)}
-									</Card>
-								))}
-							</SimpleGrid>
-						</Stack>
-
-						{isHost && gameState.users.length >= 3 && (
-							<Center>
-								<Button
-									onClick={() => dispatch({ type: "start-set" })}
-									size="xl"
-									color="green"
+				<Grid>
+					<Grid.Col span={{ base: 12, md: 6 }}>
+						<Center>
+							<Stack align="center" gap="md">
+								<Title order={2}>Game Code</Title>
+								<Paper
+									bg="dark"
+									c="white"
+									p="lg"
+									radius="md"
+									ff="monospace"
+									fz="2rem"
 								>
-									Start Game
-								</Button>
-							</Center>
-						)}
-
-						{gameState.users.length < 3 && (
-							<Center>
-								<Text c="dimmed">
-									Need at least 3 players to start the game
+									{gameState.gameCode}
+								</Paper>
+								<Text size="sm" c="dimmed">
+									Share this code with other players
 								</Text>
-							</Center>
-						)}
-					</>
+							</Stack>
+						</Center>
+					</Grid.Col>
+
+					<Grid.Col span={{ base: 12, md: 6 }}>
+						<Center>
+							<Stack align="center" gap="md">
+								<Title order={2}>QR Code</Title>
+								<QRCode
+									value={`${window.location.origin}/join/${gameState.gameCode}`}
+									size={150}
+								/>
+								<Text size="sm" c="dimmed">
+									Scan to join quickly
+								</Text>
+							</Stack>
+						</Center>
+					</Grid.Col>
+				</Grid>
+
+				<Stack gap="md">
+					<Title order={2}>Players ({gameState.users.length})</Title>
+					<SimpleGrid cols={{ base: 2, md: 3, lg: 4 }} spacing="sm">
+						{gameState.users.map((user) => (
+							<Card
+								key={user.id}
+								padding="md"
+								radius="md"
+								withBorder
+								bg={user.isHost ? "yellow.1" : "gray.1"}
+							>
+								<Text fw={600}>{user.name}</Text>
+								{user.isHost && (
+									<Badge color="yellow" size="sm" mt="xs">
+										👑 Host
+									</Badge>
+								)}
+							</Card>
+						))}
+					</SimpleGrid>
+				</Stack>
+
+				{isHost && gameState.users.length >= 3 && (
+					<Center>
+						<Button
+							onClick={() => dispatch({ type: "start-set" })}
+							size="xl"
+							color="green"
+						>
+							Start Game
+						</Button>
+					</Center>
+				)}
+
+				{gameState.users.length < 3 && (
+					<Center>
+						<Text c="dimmed">Need at least 3 players to start the game</Text>
+					</Center>
 				)}
 			</Stack>
 		</Container>
@@ -330,22 +267,9 @@ const Game = ({ username, roomId }: GameProps) => {
 
 							{!gameState.submittedClues[username] ? (
 								<Center>
-									<form onSubmit={handleSubmitClue}>
-										<Group>
-											<TextInput
-												value={clueInput}
-												onChange={(e) => setClueInput(e.target.value)}
-												placeholder="Enter one word clue"
-												size="lg"
-												w={250}
-												maxLength={30}
-												required
-											/>
-											<Button type="submit" size="lg" color="blue">
-												Submit Clue
-											</Button>
-										</Group>
-									</form>
+									<Text size="lg" c="dimmed">
+										Submit your clue using the form below
+									</Text>
 								</Center>
 							) : (
 								<Center>
@@ -367,18 +291,6 @@ const Game = ({ username, roomId }: GameProps) => {
 						</Text>
 					</Stack>
 				</Center>
-
-				{isHost && (
-					<Center>
-						<Button
-							onClick={() => dispatch({ type: "pass-word" })}
-							color="yellow"
-							variant="light"
-						>
-							Skip Word
-						</Button>
-					</Center>
-				)}
 			</Stack>
 		</Container>
 	);
@@ -415,16 +327,6 @@ const Game = ({ username, roomId }: GameProps) => {
 									</Button>
 								))}
 							</SimpleGrid>
-
-							<Center>
-								<Button
-									onClick={handleMarkInvalidClues}
-									color="green"
-									size="lg"
-								>
-									Finish Checking ({selectedInvalidClues.length} marked invalid)
-								</Button>
-							</Center>
 						</Stack>
 					</Paper>
 				) : (
@@ -497,33 +399,9 @@ const Game = ({ username, roomId }: GameProps) => {
 							</SimpleGrid>
 
 							<Center>
-								<form onSubmit={handleSubmitGuess}>
-									<Group>
-										<TextInput
-											value={guessInput}
-											onChange={(e) => setGuessInput(e.target.value)}
-											placeholder="What's your guess?"
-											size="lg"
-											w={250}
-											required
-										/>
-										<Button type="submit" size="lg" color="green">
-											Guess!
-										</Button>
-									</Group>
-								</form>
-							</Center>
-
-							<Center>
-								<Button
-									onClick={() =>
-										dispatch({ type: "submit-guess", guess: "PASS" })
-									}
-									variant="light"
-									color="gray"
-								>
-									Pass
-								</Button>
+								<Text size="lg" c="dimmed">
+									Submit your guess using the form below
+								</Text>
 							</Center>
 						</Stack>
 					</Paper>
@@ -579,18 +457,6 @@ const Game = ({ username, roomId }: GameProps) => {
 						</Text>
 					</Stack>
 				</Paper>
-
-				{isHost && (
-					<Center>
-						<Button
-							onClick={() => dispatch({ type: "next-round" })}
-							size="lg"
-							color="blue"
-						>
-							Next Round
-						</Button>
-					</Center>
-				)}
 			</Stack>
 		</Container>
 	);
@@ -638,91 +504,241 @@ const Game = ({ username, roomId }: GameProps) => {
 						</SimpleGrid>
 					</Stack>
 				)}
-
-				{isHost && (
-					<Center>
-						<Group>
-							<Button
-								onClick={() => dispatch({ type: "start-set" })}
-								size="lg"
-								color="green"
-							>
-								Play Another Set
-							</Button>
-							<Button
-								onClick={() => dispatch({ type: "end-session" })}
-								size="lg"
-								color="red"
-							>
-								End Session
-							</Button>
-						</Group>
-					</Center>
-				)}
 			</Stack>
 		</Container>
 	);
 
-	return (
-		<>
-			{renderGameContent()}
+	const renderBottomActions = () => {
+		// Don't show bottom actions in lobby
+		if (gameState.gamePhase === "lobby") {
+			return null;
+		}
 
-			{/* Game Log */}
-			{gameState.log.length > 0 && (
-				<Paper
-					shadow="lg"
-					p="md"
-					radius="md"
-					pos="fixed"
-					bottom={16}
-					right={16}
-					w={320}
-					mah={240}
+		const actions = [];
+
+		// Writing clues phase
+		if (gameState.gamePhase === "writing-clues") {
+			if (!isCurrentGuesser && !gameState.submittedClues[username]) {
+				actions.push(
+					<form key="clue-form" onSubmit={handleSubmitClue} style={{ flex: 1 }}>
+						<Group style={{ width: "100%" }}>
+							<TextInput
+								value={clueInput}
+								onChange={(e) => setClueInput(e.target.value)}
+								placeholder="Enter one word clue"
+								size="lg"
+								style={{ flex: 1 }}
+								maxLength={30}
+								required
+							/>
+							<Button
+								type="submit"
+								size="lg"
+								color="blue"
+								rightSection={<IconSend size={16} />}
+							>
+								Submit
+							</Button>
+						</Group>
+					</form>,
+				);
+			}
+			if (isHost) {
+				actions.push(
+					<Button
+						key="skip-word"
+						onClick={() => dispatch({ type: "pass-word" })}
+						color="yellow"
+						variant="light"
+						leftSection={<IconPlayerSkipForward size={16} />}
+					>
+						Skip
+					</Button>,
+				);
+			}
+		}
+
+		// Checking duplicates phase
+		if (gameState.gamePhase === "checking-duplicates" && isCurrentChecker) {
+			actions.push(
+				<Button
+					key="finish-checking"
+					onClick={handleMarkInvalidClues}
+					color="green"
+					size="lg"
+					style={{ flex: 1 }}
+					rightSection={<IconCheck size={16} />}
 				>
-					<ScrollArea h={180}>
-						<Stack gap="xs">
-							<Text fw={600} size="sm">
-								Game Log
-							</Text>
-							{gameState.log.map((logEntry) => (
-								<Text key={logEntry.dt} size="xs" c="dimmed">
-									{logEntry.message}
-								</Text>
-							))}
-						</Stack>
-					</ScrollArea>
-				</Paper>
-			)}
+					Finish Checking ({selectedInvalidClues.length} marked)
+				</Button>,
+			);
+		}
 
-			{/* Host Controls */}
-			{isHost && gameState.gamePhase !== "lobby" && (
-				<Paper shadow="lg" p="md" radius="md" pos="fixed" bottom={16} left={16}>
-					<Stack gap="xs">
-						<Text fw={600} size="sm">
-							Host Controls
-						</Text>
+		// Guessing phase
+		if (gameState.gamePhase === "guessing" && isCurrentGuesser) {
+			actions.push(
+				<form key="guess-form" onSubmit={handleSubmitGuess} style={{ flex: 1 }}>
+					<Group style={{ width: "100%" }}>
+						<TextInput
+							value={guessInput}
+							onChange={(e) => setGuessInput(e.target.value)}
+							placeholder="What's your guess?"
+							size="lg"
+							style={{ flex: 1 }}
+							required
+						/>
 						<Button
-							onClick={() => dispatch({ type: "end-set" })}
-							size="xs"
-							color="yellow"
-							variant="light"
-							fullWidth
+							type="submit"
+							size="lg"
+							color="green"
+							rightSection={<IconSend size={16} />}
 						>
-							End Set
+							Guess!
 						</Button>
-						<Button
-							onClick={() => dispatch({ type: "end-session" })}
-							size="xs"
-							color="red"
-							variant="light"
-							fullWidth
-						>
-							End Session
-						</Button>
-					</Stack>
-				</Paper>
-			)}
-		</>
+					</Group>
+				</form>,
+			);
+			actions.push(
+				<Button
+					key="pass"
+					onClick={() => dispatch({ type: "submit-guess", guess: "PASS" })}
+					variant="light"
+					color="gray"
+				>
+					Pass
+				</Button>,
+			);
+		}
+
+		// Round end phase
+		if (gameState.gamePhase === "round-end" && isHost) {
+			actions.push(
+				<Button
+					key="next-round"
+					onClick={() => dispatch({ type: "next-round" })}
+					size="lg"
+					color="blue"
+					style={{ flex: 1 }}
+				>
+					Next Round
+				</Button>,
+			);
+		}
+
+		// Set end phase
+		if (gameState.gamePhase === "set-end" && isHost) {
+			actions.push(
+				<Button
+					key="play-again"
+					onClick={() => dispatch({ type: "start-set" })}
+					size="lg"
+					color="green"
+					style={{ flex: 1 }}
+				>
+					Play Again
+				</Button>,
+			);
+			actions.push(
+				<Button
+					key="end-session"
+					onClick={() => dispatch({ type: "end-session" })}
+					size="lg"
+					color="red"
+					leftSection={<IconLogout size={16} />}
+				>
+					End
+				</Button>,
+			);
+		}
+
+		// Host controls (available in most phases except lobby)
+		if (isHost && !["lobby", "set-end"].includes(gameState.gamePhase)) {
+			if (actions.length === 0) {
+				// If no other actions, show host controls prominently
+				actions.push(
+					<Button
+						key="end-set"
+						onClick={() => dispatch({ type: "end-set" })}
+						color="yellow"
+						variant="light"
+						leftSection={<IconPlayerStop size={16} />}
+					>
+						End Set
+					</Button>,
+				);
+				actions.push(
+					<Button
+						key="end-session-main"
+						onClick={() => dispatch({ type: "end-session" })}
+						color="red"
+						variant="light"
+						leftSection={<IconLogout size={16} />}
+					>
+						End Session
+					</Button>,
+				);
+			} else {
+				// If there are other actions, show host controls as smaller buttons
+				actions.push(
+					<Button
+						key="end-set-small"
+						onClick={() => dispatch({ type: "end-set" })}
+						size="sm"
+						color="yellow"
+						variant="light"
+					>
+						<IconPlayerStop size={16} />
+					</Button>,
+				);
+				actions.push(
+					<Button
+						key="end-session-small"
+						onClick={() => dispatch({ type: "end-session" })}
+						size="sm"
+						color="red"
+						variant="light"
+					>
+						<IconLogout size={16} />
+					</Button>,
+				);
+			}
+		}
+
+		if (actions.length === 0) {
+			return null;
+		}
+
+		return (
+			<Box
+				style={{
+					position: "fixed",
+					bottom: "16px",
+					left: "16px",
+					right: "16px",
+					zIndex: 1000,
+				}}
+			>
+				<Group gap="sm" style={{ width: "100%" }}>
+					{actions}
+				</Group>
+			</Box>
+		);
+	};
+
+	return (
+		<Box
+			style={{
+				flex: 1,
+				display: "flex",
+				flexDirection: "column",
+				paddingBottom: "80px", // Space for fixed button area
+			}}
+		>
+			<Box style={{ flex: 1 }}>{renderGameContent()}</Box>
+
+			{/* Fixed bottom button area */}
+			{renderBottomActions()}
+		</Box>
 	);
 };
 

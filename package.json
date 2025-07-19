@@ -10,9 +10,9 @@
 		"deploy:server": "wrangler deploy",
 		"start": "vite preview",
 		"lint": "biome check .",
-		"test": "vitest",
+		"test": "vitest run",
 		"test:ui": "vitest --ui",
-		"test:run": "vitest run"
+		"test:watch": "vitest watch"
 	},
 	"dependencies": {
 		"@biomejs/biome": "^2.1.2",

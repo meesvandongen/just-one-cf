@@ -1,4 +1,4 @@
-import { AppShell, Container } from "@mantine/core";
+import { AppShell, Box } from "@mantine/core";
 
 interface LayoutProps {
 	children: React.ReactNode;
@@ -6,9 +6,18 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
 	return (
-		<AppShell bg="gray.3" h="100vh" padding="md">
+		<AppShell bg="gray.1" h="100vh" padding={0}>
 			<AppShell.Main>
-				<Container size="xl">{children}</Container>
+				<Box
+					h="100vh"
+					style={{
+						display: "flex",
+						flexDirection: "column",
+						overflow: "hidden",
+					}}
+				>
+					{children}
+				</Box>
 			</AppShell.Main>
 		</AppShell>
 	);

@@ -1,6 +1,12 @@
-import { Button, Center, Paper, Stack, TextInput, Title } from "@mantine/core";
-import { useEffect, useState } from "react";
-import { Route, Routes, useNavigate, useSearchParams } from "react-router-dom";
+import { Box, Button, Stack, TextInput, Title } from "@mantine/core";
+import { useEffect } from "react";
+import {
+	Route,
+	Routes,
+	useNavigate,
+	useParams,
+	useSearchParams,
+} from "react-router-dom";
 import { z } from "zod";
 import Game from "@/components/Game";
 import Layout from "@/components/Layout";
@@ -11,19 +17,7 @@ const queryParamsValidator = z.object({
 	roomId: z.string().min(1),
 });
 
-interface GameSetup {
-	username: string | null;
-	roomId: string | null;
-	showGame: boolean;
-}
-
 function Home() {
-	const [setup, setSetup] = useState<GameSetup>({
-		username: null,
-		roomId: null,
-		showGame: false,
-	});
-
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
 
@@ -31,11 +25,9 @@ function Home() {
 		// Check if joining via QR code or direct link
 		const joinCode = searchParams.get("join");
 		if (joinCode && joinCode.length === 8) {
-			// Pre-fill the room ID with the join code
-			setSetup((prev) => ({
-				...prev,
-				roomId: joinCode.toUpperCase(),
-			}));
+			// Redirect to join page with pre-filled room code
+			navigate(`/join/${joinCode.toUpperCase()}`);
+			return;
 		}
 
 		const username = searchParams.get("username");
@@ -44,14 +36,12 @@ function Home() {
 		if (username && roomId) {
 			const parsed = queryParamsValidator.safeParse({ username, roomId });
 			if (parsed.success) {
-				setSetup(() => ({
-					username: parsed.data.username,
-					roomId: parsed.data.roomId,
-					showGame: true,
-				}));
+				navigate(
+					`/game/${parsed.data.roomId}?username=${encodeURIComponent(parsed.data.username)}`,
+				);
 			}
 		}
-	}, [searchParams, setSetup]);
+	}, [searchParams, navigate]);
 
 	const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -61,66 +51,222 @@ function Home() {
 
 		if (username && roomId) {
 			navigate(
-				`/?username=${encodeURIComponent(username)}&roomId=${encodeURIComponent(roomId.toUpperCase())}`,
+				`/game/${roomId.toUpperCase()}?username=${encodeURIComponent(username)}`,
 			);
 		}
 	};
 
-	const handleNewGame = () => {
-		setSetup({
-			username: null,
-			roomId: null,
-			showGame: false,
-		});
-		navigate("/");
+	return (
+		<Layout>
+			<Box
+				style={{
+					flex: 1,
+					display: "flex",
+					flexDirection: "column",
+					padding: "16px",
+					paddingBottom: "80px", // Space for fixed button
+				}}
+			>
+				<Box
+					style={{
+						flex: 1,
+						display: "flex",
+						flexDirection: "column",
+						justifyContent: "center",
+					}}
+				>
+					<Title order={1} ta="center" mb="xl" size="2rem" c="gray.8">
+						Just One
+					</Title>
+
+					<form
+						onSubmit={handleFormSubmit}
+						style={{ flex: 1, display: "flex", flexDirection: "column" }}
+					>
+						<Stack gap="lg" style={{ flex: 1, justifyContent: "center" }}>
+							<TextInput
+								label="Your Name"
+								placeholder="Enter your name"
+								name="username"
+								required
+								size="lg"
+								styles={{
+									input: {
+										height: "48px",
+										fontSize: "16px",
+									},
+								}}
+							/>
+
+							<TextInput
+								label="Room Code"
+								placeholder="Enter room code"
+								name="roomId"
+								maxLength={8}
+								tt="uppercase"
+								required
+								size="lg"
+								styles={{
+									input: {
+										height: "48px",
+										fontSize: "16px",
+									},
+								}}
+							/>
+						</Stack>
+
+						<Box
+							style={{
+								position: "fixed",
+								bottom: "16px",
+								left: "16px",
+								right: "16px",
+								zIndex: 1000,
+							}}
+						>
+							<Button
+								type="submit"
+								size="lg"
+								fullWidth
+								variant="filled"
+								style={{ height: "56px", fontSize: "18px" }}
+							>
+								Join Game
+							</Button>
+						</Box>
+					</form>
+				</Box>
+			</Box>
+		</Layout>
+	);
+}
+
+// Join Game page component
+function JoinGame() {
+	const navigate = useNavigate();
+	const { roomId: paramRoomId } = useParams<{ roomId?: string }>();
+
+	const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		const formData = new FormData(event.currentTarget);
+		const username = formData.get("username") as string;
+		const roomId = formData.get("roomId") as string;
+
+		if (username && roomId) {
+			navigate(
+				`/game/${roomId.toUpperCase()}?username=${encodeURIComponent(username)}`,
+			);
+		}
 	};
 
-	if (setup.showGame && setup.username && setup.roomId) {
-		return (
-			<Layout>
-				<Game username={setup.username} roomId={setup.roomId} />
-			</Layout>
-		);
+	return (
+		<Layout>
+			<Box
+				style={{
+					flex: 1,
+					display: "flex",
+					flexDirection: "column",
+					padding: "16px",
+					paddingBottom: "80px", // Space for fixed button
+				}}
+			>
+				<Box
+					style={{
+						flex: 1,
+						display: "flex",
+						flexDirection: "column",
+						justifyContent: "center",
+					}}
+				>
+					<Title order={1} ta="center" mb="xl" size="2rem" c="gray.8">
+						Join Game
+					</Title>
+
+					<form
+						onSubmit={handleFormSubmit}
+						style={{ flex: 1, display: "flex", flexDirection: "column" }}
+					>
+						<Stack gap="lg" style={{ flex: 1, justifyContent: "center" }}>
+							<TextInput
+								label="Your Name"
+								placeholder="Enter your name"
+								name="username"
+								required
+								size="lg"
+								styles={{
+									input: {
+										height: "48px",
+										fontSize: "16px",
+									},
+								}}
+							/>
+
+							<TextInput
+								label="Room Code"
+								placeholder="Enter room code"
+								name="roomId"
+								defaultValue={paramRoomId || ""}
+								maxLength={8}
+								tt="uppercase"
+								required
+								size="lg"
+								styles={{
+									input: {
+										height: "48px",
+										fontSize: "16px",
+									},
+								}}
+							/>
+						</Stack>
+
+						<Box
+							style={{
+								position: "fixed",
+								bottom: "16px",
+								left: "16px",
+								right: "16px",
+								zIndex: 1000,
+							}}
+						>
+							<Button
+								type="submit"
+								size="lg"
+								fullWidth
+								variant="filled"
+								style={{ height: "56px", fontSize: "18px" }}
+							>
+								Join Game
+							</Button>
+						</Box>
+					</form>
+				</Box>
+			</Box>
+		</Layout>
+	);
+}
+
+// Game page component
+function GamePage() {
+	const { roomId } = useParams<{ roomId: string }>();
+	const [searchParams] = useSearchParams();
+	const navigate = useNavigate();
+
+	const username = searchParams.get("username");
+
+	// If no username provided, redirect to join page
+	useEffect(() => {
+		if (!username && roomId) {
+			navigate(`/join/${roomId}`);
+		}
+	}, [username, roomId, navigate]);
+
+	if (!username || !roomId) {
+		return null; // Will redirect
 	}
 
 	return (
 		<Layout>
-			<Center h="60vh">
-				<Paper shadow="lg" p="xl" radius="md" w={400}>
-					<Stack gap="xl">
-						<Title order={1} ta="center" c="gray.8">
-							Just One
-						</Title>
-
-						<form onSubmit={handleFormSubmit}>
-							<Stack gap="md">
-								<TextInput
-									label="Your Name"
-									placeholder="Enter your name"
-									name="username"
-									required
-									size="md"
-								/>
-
-								<TextInput
-									label="Room Code"
-									placeholder="Enter room code"
-									name="roomId"
-									defaultValue={setup.roomId || ""}
-									maxLength={8}
-									tt="uppercase"
-									required
-									size="md"
-								/>
-
-								<Button type="submit" size="md" fullWidth variant="filled">
-									Join Game
-								</Button>
-							</Stack>
-						</form>
-					</Stack>
-				</Paper>
-			</Center>
+			<Game username={username} roomId={roomId} />
 		</Layout>
 	);
 }
@@ -129,6 +275,8 @@ function App() {
 	return (
 		<Routes>
 			<Route path="/" element={<Home />} />
+			<Route path="/join/:roomId?" element={<JoinGame />} />
+			<Route path="/game/:roomId" element={<GamePage />} />
 		</Routes>
 	);
 }

@@ -256,8 +256,65 @@ describe("Game Logic Tests", () => {
 			state = gameUpdater(action2, state);
 
 			expect(state.gamePhase).toBe("checking-duplicates");
-			expect(state.validClues).toHaveLength(1);
-			expect(state.validClues[0]).toBe("water");
+			// When clues are duplicates, ALL instances should be removed
+			expect(state.validClues).toHaveLength(0);
+		});
+
+		it("should handle mixed unique and duplicate clues correctly", () => {
+			// Need 4 players to test this scenario properly
+			const user4: User = { id: "user4", name: "Player4", isHost: false };
+			let state = gameUpdater(
+				{ type: "UserEntered", user: user4 },
+				gameInProgress,
+			);
+
+			const nonGuessers = state.users.filter(
+				(u) => u.id !== state.currentGuesser,
+			);
+
+			// Submit: unique clue, duplicate clue, duplicate clue, another unique clue
+			const actions: ServerAction[] = [
+				{
+					type: "submit-clue",
+					clue: "ocean", // unique
+					user: nonGuessers[0],
+				},
+				{
+					type: "submit-clue",
+					clue: "water", // duplicate
+					user: nonGuessers[1],
+				},
+				{
+					type: "submit-clue",
+					clue: "Water", // duplicate (case insensitive)
+					user: nonGuessers[2],
+				},
+			];
+
+			// If we have a 4th non-guesser, add another unique clue
+			if (nonGuessers.length > 3) {
+				actions.push({
+					type: "submit-clue",
+					clue: "blue", // unique
+					user: nonGuessers[3],
+				});
+			}
+
+			actions.forEach((action) => {
+				state = gameUpdater(action, state);
+			});
+
+			expect(state.gamePhase).toBe("checking-duplicates");
+			// Should only keep the unique clues
+			const expectedUniqueClues = nonGuessers.length > 3 ? 2 : 1;
+			expect(state.validClues).toHaveLength(expectedUniqueClues);
+			expect(state.validClues).toContain("ocean");
+			if (nonGuessers.length > 3) {
+				expect(state.validClues).toContain("blue");
+			}
+			// Should NOT contain any "water" variants
+			expect(state.validClues).not.toContain("water");
+			expect(state.validClues).not.toContain("Water");
 		});
 	});
 

@@ -307,14 +307,22 @@ const removeDuplicateClues = (submittedClues: {
 	[userId: string]: string;
 }): string[] => {
 	const clueValues = Object.values(submittedClues);
-	const uniqueClues: string[] = [];
-	const seenClues = new Set<string>();
+	const clueFrequency = new Map<string, string[]>();
 
+	// Count occurrences of each normalized clue and keep original versions
 	clueValues.forEach((clue) => {
 		const normalizedClue = clue.toLowerCase().trim();
-		if (!seenClues.has(normalizedClue)) {
-			seenClues.add(normalizedClue);
-			uniqueClues.push(clue);
+		if (!clueFrequency.has(normalizedClue)) {
+			clueFrequency.set(normalizedClue, []);
+		}
+		clueFrequency.get(normalizedClue)!.push(clue);
+	});
+
+	// Return only clues that appear exactly once
+	const uniqueClues: string[] = [];
+	clueFrequency.forEach((originalClues) => {
+		if (originalClues.length === 1) {
+			uniqueClues.push(originalClues[0]);
 		}
 	});
 
