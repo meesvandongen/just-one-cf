@@ -1,4 +1,3 @@
-import { Trans } from "@lingui/react/macro";
 import { Select } from "@mantine/core";
 import { useLanguage } from "../contexts/LanguageContext";
 
@@ -12,7 +11,6 @@ export const LanguageSelector = () => {
 
 	return (
 		<Select
-			label={<Trans>Language</Trans>}
 			value={locale}
 			onChange={(value) => value && setLocale(value)}
 			data={data}
