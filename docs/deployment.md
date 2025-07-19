@@ -17,7 +17,7 @@ npm run deploy:server
 ```
 
 The project is configured with:
-- Server name: `partykit-starter-party` (defined in `wrangler.toml`)
+- Server name: `just-one` (defined in `wrangler.toml`)
 - Durable Object binding for `GameServer`
 - TypeScript support
 
