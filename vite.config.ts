@@ -1,5 +1,6 @@
 /// <reference types="vitest" />
 import { cloudflare } from "@cloudflare/vite-plugin";
+import { lingui } from "@lingui/vite-plugin";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { defineConfig } from "vite";
@@ -10,6 +11,7 @@ export default defineConfig({
 		react({
 			plugins: [["@lingui/swc-plugin", {}]],
 		}),
+		lingui(),
 		cloudflare(),
 	],
 	resolve: {

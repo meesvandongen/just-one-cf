@@ -5,7 +5,7 @@ import React, {
 	useEffect,
 	useState,
 } from "react";
-import { defaultLocale, dynamicActivate, locales } from "../i18n";
+import { defaultLocale, loadCatalog, locales } from "../i18n";
 
 interface LanguageContextType {
 	locale: string;
@@ -39,7 +39,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
 	});
 
 	useEffect(() => {
-		dynamicActivate(locale);
+		loadCatalog(locale);
 		localStorage.setItem("just-one-locale", locale);
 	}, [locale]);
 

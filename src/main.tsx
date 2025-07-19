@@ -6,10 +6,10 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { LanguageProvider } from "./contexts/LanguageContext";
-import { defaultLocale, dynamicActivate } from "./i18n";
+import { defaultLocale, loadCatalog } from "./i18n";
 
 // Initialize i18n with default locale
-dynamicActivate(defaultLocale);
+await loadCatalog(defaultLocale);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>

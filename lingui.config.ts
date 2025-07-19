@@ -1,5 +1,6 @@
-/** @type {import('@lingui/conf').LinguiConfig} */
-export default {
+import type { LinguiConfig } from "@lingui/conf";
+
+const config: LinguiConfig = {
 	locales: ["en", "es", "fr", "de", "ja", "nl"],
 	pseudoLocale: "pseudo",
 	sourceLocale: "en",
@@ -8,10 +9,10 @@ export default {
 	},
 	catalogs: [
 		{
-			path: "src/locales/{locale}/messages",
+			path: "src/locales/{locale}",
 			include: ["src"],
 		},
 	],
-	format: "po",
-	compileNamespace: "es",
 };
+
+export default config;

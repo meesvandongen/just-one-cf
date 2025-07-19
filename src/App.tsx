@@ -1,5 +1,4 @@
 import { Trans, useLingui } from "@lingui/react/macro";
-
 import {
 	ActionIcon,
 	Box,
@@ -11,7 +10,6 @@ import {
 	TextInput,
 	Title,
 } from "@mantine/core";
-
 import { useEffect, useState } from "react";
 import { MdQrCodeScanner } from "react-icons/md";
 import {
@@ -24,11 +22,8 @@ import {
 import { z } from "zod";
 import Game from "@/components/Game";
 import Layout from "@/components/Layout";
-
 import QRScanner from "@/components/QRScanner";
-
 import { isValidRoomCode } from "@/utils";
-
 import "@mantine/core/styles.css";
 
 const queryParamsValidator = z.object({
