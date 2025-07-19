@@ -343,19 +343,24 @@ const Game = ({ username, roomId }: GameProps) => {
 							</Stack>
 
 							<SimpleGrid cols={{ base: 2, md: 3 }} spacing="sm">
-								{gameState.validClues.map((clue, index) => (
+								{gameState.validClues.map((clueWithSubmitter, index) => (
 									<Button
 										key={index}
-										onClick={() => toggleClueSelection(clue)}
+										onClick={() => toggleClueSelection(clueWithSubmitter.clue)}
 										variant={
-											selectedInvalidClues.includes(clue) ? "filled" : "outline"
+											selectedInvalidClues.includes(clueWithSubmitter.clue) ? "filled" : "outline"
 										}
-										color={selectedInvalidClues.includes(clue) ? "red" : "gray"}
+										color={selectedInvalidClues.includes(clueWithSubmitter.clue) ? "red" : "gray"}
 										size="lg"
 										h="auto"
 										p="1rem"
 									>
-										{clue}
+										<Stack gap="xs" align="center">
+											<Text>{clueWithSubmitter.clue}</Text>
+											<Text size="xs" c="dimmed">
+												by {clueWithSubmitter.submitterName}
+											</Text>
+										</Stack>
 									</Button>
 								))}
 							</SimpleGrid>
@@ -431,7 +436,7 @@ const Game = ({ username, roomId }: GameProps) => {
 							</Stack>
 
 							<SimpleGrid cols={{ base: 2, md: 3 }} spacing="md">
-								{gameState.validClues.map((clue, index) => (
+								{gameState.validClues.map((clueWithSubmitter, index) => (
 									<Card
 										key={index}
 										bg="white"
@@ -441,7 +446,10 @@ const Game = ({ username, roomId }: GameProps) => {
 										radius="md"
 									>
 										<Text size="lg" fw={600} ta="center">
-											{clue}
+											{clueWithSubmitter.clue}
+										</Text>
+										<Text size="sm" c="dimmed" ta="center" mt="xs">
+											by {clueWithSubmitter.submitterName}
 										</Text>
 									</Card>
 								))}
