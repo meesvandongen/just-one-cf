@@ -129,8 +129,8 @@ msgid "Just One"
 msgstr "Just One"
 
 #: src/components/LanguageSelector.tsx:15
-msgid "Language"
-msgstr "Sprache"
+#~ msgid "Language"
+#~ msgstr "Sprache"
 
 #: src/components/Game.tsx:347
 msgid "Mark any clues that should be removed:"
