@@ -25,17 +25,10 @@ describe("Game Logic Tests", () => {
 			expect(gameState.setScore).toBe(0);
 			expect(gameState.gamesAttempted).toBe(0);
 			expect(gameState.setTarget).toBe(20);
-			expect(gameState.gameCode).toMatch(/^[A-Z0-9]{8}$/);
 			expect(gameState.wordList.length).toBeGreaterThan(0);
 			expect(gameState.usedWords).toEqual([]);
 			expect(gameState.log).toHaveLength(1);
 			expect(gameState.log[0].message).toBe("Game Created!");
-		});
-
-		it("should generate unique game codes", () => {
-			const game1 = initialGame();
-			const game2 = initialGame();
-			expect(game1.gameCode).not.toBe(game2.gameCode);
 		});
 	});
 
@@ -87,7 +80,6 @@ describe("Game Logic Tests", () => {
 			const user: User = { id: "user1", name: "user1", isHost: false };
 			const action: ServerAction = {
 				type: "join-session",
-				gameCode: "TEST1234",
 				playerName: "CustomName",
 				user,
 			};

@@ -1,6 +1,19 @@
 import { Trans, useLingui } from "@lingui/react/macro";
-import { ActionIcon, Box, Button, Group, Stack, TextInput, Title } from "@mantine/core";
+
+import {
+	ActionIcon,
+	Box,
+	Button,
+	Group,
+	PinInput,
+	Stack,
+	Text,
+	TextInput,
+	Title,
+} from "@mantine/core";
+
 import { useEffect, useState } from "react";
+import { MdQrCodeScanner } from "react-icons/md";
 import {
 	Route,
 	Routes,
@@ -8,29 +21,35 @@ import {
 	useParams,
 	useSearchParams,
 } from "react-router-dom";
-import { MdQrCodeScanner } from "react-icons/md";
 import { z } from "zod";
 import Game from "@/components/Game";
 import Layout from "@/components/Layout";
+
 import QRScanner from "@/components/QRScanner";
+
+import { isValidRoomCode } from "@/utils";
+
 import "@mantine/core/styles.css";
 
 const queryParamsValidator = z.object({
 	username: z.string().min(1),
-	roomId: z.string().min(1),
+	roomId: z.string().regex(/^\d{6}$/, "Room code must be 6 digits"),
 });
 
 function Home() {
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
+	const { roomId: paramRoomId } = useParams<{ roomId?: string }>();
 	const { t } = useLingui();
+	const [qrScannerOpen, setQrScannerOpen] = useState(false);
+	const [username, setUsername] = useState("");
+	const [roomCode, setRoomCode] = useState(paramRoomId || "");
 
 	useEffect(() => {
 		// Check if joining via QR code or direct link
 		const joinCode = searchParams.get("join");
-		if (joinCode && joinCode.length === 8) {
-			// Redirect to join page with pre-filled room code
-			navigate(`/join/${joinCode.toUpperCase()}`);
+		if (joinCode && joinCode.length === 6 && /^\d{6}$/.test(joinCode)) {
+			setRoomCode(joinCode);
 			return;
 		}
 
@@ -49,15 +68,14 @@ function Home() {
 
 	const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		const formData = new FormData(event.currentTarget);
-		const username = formData.get("username") as string;
-		const roomId = formData.get("roomId") as string;
 
-		if (username && roomId) {
-			navigate(
-				`/game/${roomId.toUpperCase()}?username=${encodeURIComponent(username)}`,
-			);
+		if (username && roomCode && isValidRoomCode(roomCode)) {
+			navigate(`/game/${roomCode}?username=${encodeURIComponent(username)}`);
 		}
+	};
+
+	const handleQRScan = (scannedCode: string) => {
+		setRoomCode(scannedCode);
 	};
 
 	return (
@@ -91,7 +109,8 @@ function Home() {
 							<TextInput
 								label={<Trans>Your Name</Trans>}
 								placeholder={t`Enter your name`}
-								name="username"
+								value={username}
+								onChange={(e) => setUsername(e.target.value)}
 								required
 								size="lg"
 								styles={{
@@ -102,148 +121,37 @@ function Home() {
 								}}
 							/>
 
-							<TextInput
-								label={<Trans>Room Code</Trans>}
-								placeholder={t`Enter room code`}
-								name="roomId"
-								maxLength={8}
-								tt="uppercase"
-								required
-								size="lg"
-								styles={{
-									input: {
-										height: "48px",
-										fontSize: "16px",
-									},
-								}}
-							/>
-						</Stack>
-
-						<Box
-							style={{
-								position: "fixed",
-								bottom: "16px",
-								left: "16px",
-								right: "16px",
-								zIndex: 1000,
-							}}
-						>
-							<Button
-								type="submit"
-								size="lg"
-								fullWidth
-								variant="filled"
-								style={{ height: "56px", fontSize: "18px" }}
-							>
-								Join Game
-							</Button>
-						</Box>
-					</form>
-				</Box>
-			</Box>
-		</Layout>
-	);
-}
-
-// Join Game page component
-function JoinGame() {
-	const navigate = useNavigate();
-	const { roomId: paramRoomId } = useParams<{ roomId?: string }>();
-	const { t } = useLingui();
-	const [qrScannerOpen, setQrScannerOpen] = useState(false);
-	const [roomCode, setRoomCode] = useState(paramRoomId || "");
-
-	const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		const formData = new FormData(event.currentTarget);
-		const username = formData.get("username") as string;
-		const roomId = formData.get("roomId") as string;
-
-		if (username && roomId) {
-			navigate(
-				`/game/${roomId.toUpperCase()}?username=${encodeURIComponent(username)}`,
-			);
-		}
-	};
-
-	const handleQRScan = (scannedCode: string) => {
-		setRoomCode(scannedCode);
-	};
-
-	return (
-		<Layout>
-			<Box
-				style={{
-					flex: 1,
-					display: "flex",
-					flexDirection: "column",
-					padding: "16px",
-					paddingBottom: "80px", // Space for fixed button
-				}}
-			>
-				<Box
-					style={{
-						flex: 1,
-						display: "flex",
-						flexDirection: "column",
-						justifyContent: "center",
-					}}
-				>
-					<Title order={1} ta="center" mb="xl" size="2rem" c="gray.8">
-						<Trans>Join Game</Trans>
-					</Title>
-
-					<form
-						onSubmit={handleFormSubmit}
-						style={{ flex: 1, display: "flex", flexDirection: "column" }}
-					>
-						<Stack gap="lg" style={{ flex: 1, justifyContent: "center" }}>
-							<TextInput
-								label={<Trans>Your Name</Trans>}
-								placeholder={t`Enter your name`}
-								name="username"
-								required
-								size="lg"
-								styles={{
-									input: {
-										height: "48px",
-										fontSize: "16px",
-									},
-								}}
-							/>
-
-							<Group align="end" gap="xs">
-								<TextInput
-									label={<Trans>Room Code</Trans>}
-									placeholder={t`Enter room code`}
-									name="roomId"
+							<Stack gap="xs">
+								<Group justify="space-between" align="end">
+									<Text fw={500} size="sm">
+										<Trans>Room Code</Trans>
+									</Text>
+									<ActionIcon
+										size="lg"
+										variant="light"
+										onClick={() => setQrScannerOpen(true)}
+										title={t`Scan QR Code`}
+										style={{
+											height: "40px",
+											width: "40px",
+										}}
+									>
+										<MdQrCodeScanner size="20" />
+									</ActionIcon>
+								</Group>
+								<PinInput
 									value={roomCode}
-									onChange={(event) => setRoomCode(event.currentTarget.value)}
-									maxLength={8}
-									tt="uppercase"
-									required
+									onChange={setRoomCode}
+									length={6}
+									type="number"
 									size="lg"
-									style={{ flex: 1 }}
-									styles={{
-										input: {
-											height: "48px",
-											fontSize: "16px",
-										},
-									}}
+									style={{ justifyContent: "center" }}
+									error={roomCode.length > 0 && !isValidRoomCode(roomCode)}
 								/>
-								<ActionIcon
-									size="lg"
-									variant="light"
-									onClick={() => setQrScannerOpen(true)}
-									title={t`Scan QR Code`}
-									style={{
-										height: "48px",
-										width: "48px",
-									}}
-								>
-									<MdQrCodeScanner size="20" />
-								</ActionIcon>
-							</Group>
+								<Text size="xs" c="dimmed" ta="center">
+									<Trans>Enter 6-digit room code or scan QR</Trans>
+								</Text>
+							</Stack>
 						</Stack>
 
 						<Box
@@ -261,6 +169,7 @@ function JoinGame() {
 								fullWidth
 								variant="filled"
 								style={{ height: "56px", fontSize: "18px" }}
+								disabled={!username || !isValidRoomCode(roomCode)}
 							>
 								<Trans>Join Game</Trans>
 							</Button>
@@ -285,14 +194,22 @@ function GamePage() {
 
 	const username = searchParams.get("username");
 
-	// If no username provided, redirect to join page
+	// Validate room code format
 	useEffect(() => {
-		if (!username && roomId) {
-			navigate(`/join/${roomId}`);
+		if (roomId && !isValidRoomCode(roomId)) {
+			navigate("/");
+			return;
+		}
+	}, [roomId, navigate]);
+
+	// If no username provided, redirect to home page with room code
+	useEffect(() => {
+		if (!username && roomId && isValidRoomCode(roomId)) {
+			navigate(`/?join=${roomId}`);
 		}
 	}, [username, roomId, navigate]);
 
-	if (!username || !roomId) {
+	if (!username || !roomId || !isValidRoomCode(roomId)) {
 		return null; // Will redirect
 	}
 
@@ -307,7 +224,7 @@ function App() {
 	return (
 		<Routes>
 			<Route path="/" element={<Home />} />
-			<Route path="/join/:roomId?" element={<JoinGame />} />
+			<Route path="/:roomId?" element={<Home />} />
 			<Route path="/game/:roomId" element={<GamePage />} />
 		</Routes>
 	);

@@ -152,7 +152,7 @@ const Game = ({ username, roomId }: GameProps) => {
 						<Center>
 							<Stack align="center" gap="md">
 								<Title order={2}>
-									<Trans>Game Code</Trans>
+									<Trans>Room Code</Trans>
 								</Title>
 								<Paper
 									bg="dark"
@@ -162,7 +162,7 @@ const Game = ({ username, roomId }: GameProps) => {
 									ff="monospace"
 									fz="2rem"
 								>
-									{gameState.gameCode}
+									{roomId}
 								</Paper>
 								<Text size="sm" c="dimmed">
 									<Trans>Share this code with other players</Trans>
@@ -178,7 +178,7 @@ const Game = ({ username, roomId }: GameProps) => {
 									<Trans>QR Code</Trans>
 								</Title>
 								<QRCode
-									value={`${window.location.origin}/join/${gameState.gameCode}`}
+									value={`${window.location.origin}/join/${roomId}`}
 									size={150}
 								/>
 								<Text size="sm" c="dimmed">
