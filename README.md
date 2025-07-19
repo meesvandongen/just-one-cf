@@ -1,8 +1,14 @@
-# 🎲 Just One - Multiplayer Word Guessing Game
+# 🎲 Just One - Multipl📖 **[Game Design & Rules](docs/game-design.md)** - How to play Just One, game rules, terminology, and feature ideas
+
+🔧 **[Technical Architecture](docs/technical-architecture.md)** - Code structure, API reference, and development guide
+
+🚀 **[Deployment Guide](docs/deployment.md)** - How to deploy to production (Cloudflare Workers + Vite hosting)
+
+📦 **[Migration Guide](docs/migration-guide.md)** - Changes from original PartyKit to Cloudflare PartyKit Guessing Game
 
 A cooperative word-guessing party game where players work together to help one player guess a mystery word using single-word clues. The twist? Duplicate clues are eliminated, so players must be creative and think uniquely!
 
-Built with [Next.js](https://nextjs.org/) and [Cloudflare PartyKit](https://github.com/cloudflare/partykit) for real-time multiplayer functionality.
+Built with [Vite](https://vitejs.dev/) + [React](https://reactjs.org/) and [Cloudflare PartyKit](https://github.com/cloudflare/partykit) for real-time multiplayer functionality.
 
 ## Quick Start
 
@@ -10,7 +16,7 @@ Built with [Next.js](https://nextjs.org/) and [Cloudflare PartyKit](https://gith
 # Install dependencies
 npm install
 
-# Start the client (Next.js)
+# Start the client (Vite)
 npm run dev
 
 # Start the server (in a separate terminal)
@@ -25,7 +31,9 @@ Open http://localhost:3000 to play!
 
 🔧 **[Technical Architecture](docs/technical-architecture.md)** - Code structure, API reference, and development guide
 
-🚀 **[Deployment Guide](docs/deployment.md)** - How to deploy to production (Cloudflare Workers + Next.js hosting)
+�️ **[PartyKit Utilities](docs/partykit-utilities.md)** - New utility methods for server management, routing, and location hints
+
+�🚀 **[Deployment Guide](docs/deployment.md)** - How to deploy to production (Cloudflare Workers + Vite hosting)
 
 📦 **[Migration Guide](docs/migration-guide.md)** - Changes from original PartyKit to Cloudflare PartyKit
 

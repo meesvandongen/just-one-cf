@@ -23,20 +23,23 @@ The project is configured with:
 
 ## Client Deployment
 
-For production, deploy your Next.js application to your preferred hosting platform.
+For production, deploy your Vite application to your preferred hosting platform.
 
 ### Environment Variables
 
-You may need to set environment variables for production, such as:
-- Server URL configuration
-- Any API keys or configuration specific to your deployment
+For production, you may need to set environment variables specific to your deployment. In Vite, environment variables must be prefixed with `VITE_` to be exposed to the client.
 
-### Next.js Deployment
+The application now connects to the same domain using the `/api/` prefix, so no server URL configuration is needed.
 
-Standard Next.js deployment options:
-- **Vercel**: Connect your repository and deploy
-- **Netlify**: Set build command to `npm run build`
-- **Other platforms**: Follow standard Next.js deployment procedures
+**Note**: Unlike Next.js which used `NEXT_PUBLIC_*` prefix, Vite uses `VITE_*` prefix for client-accessible environment variables.
+
+### Vite Deployment
+
+Standard Vite deployment options:
+- **Vercel**: Connect your repository and deploy (Vite is supported out of the box)
+- **Netlify**: Set build command to `npm run build` and publish directory to `dist`
+- **GitHub Pages**: Use the `gh-pages` package or GitHub Actions
+- **Other platforms**: Follow standard static site deployment procedures
 
 ## Configuration
 
