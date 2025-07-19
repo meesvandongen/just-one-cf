@@ -1,6 +1,6 @@
 import usePartySocket from "partysocket/react";
 import { useEffect, useRef, useState } from "react";
-import { Action, GameState } from "../../game/logic";
+import { Action, GameState } from "../../party/logic";
 
 export const useGameRoom = (username: string, roomId: string) => {
 	const [gameState, setGameState] = useState<GameState | null>(null);

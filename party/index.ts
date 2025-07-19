@@ -6,10 +6,10 @@ import {
 	gameUpdater,
 	initialGame,
 	ServerAction,
-} from "../game/logic";
+} from "./logic";
 
 type Env = {
-	GameServer: any; // DurableObjectNamespace<GameServer> - using any to avoid type issues
+	GameServer: DurableObjectNamespace<GameServer>;
 };
 
 export class GameServer extends Server<Env> {
