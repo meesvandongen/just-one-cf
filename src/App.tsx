@@ -1,3 +1,4 @@
+import { Trans, useLingui } from "@lingui/react/macro";
 import { Box, Button, Stack, TextInput, Title } from "@mantine/core";
 import { useEffect } from "react";
 import {
@@ -20,6 +21,7 @@ const queryParamsValidator = z.object({
 function Home() {
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
+	const { t } = useLingui();
 
 	useEffect(() => {
 		// Check if joining via QR code or direct link
@@ -76,7 +78,7 @@ function Home() {
 					}}
 				>
 					<Title order={1} ta="center" mb="xl" size="2rem" c="gray.8">
-						Just One
+						<Trans>Just One</Trans>
 					</Title>
 
 					<form
@@ -85,8 +87,8 @@ function Home() {
 					>
 						<Stack gap="lg" style={{ flex: 1, justifyContent: "center" }}>
 							<TextInput
-								label="Your Name"
-								placeholder="Enter your name"
+								label={<Trans>Your Name</Trans>}
+								placeholder={t`Enter your name`}
 								name="username"
 								required
 								size="lg"
@@ -99,8 +101,8 @@ function Home() {
 							/>
 
 							<TextInput
-								label="Room Code"
-								placeholder="Enter room code"
+								label={<Trans>Room Code</Trans>}
+								placeholder={t`Enter room code`}
 								name="roomId"
 								maxLength={8}
 								tt="uppercase"
@@ -145,6 +147,7 @@ function Home() {
 function JoinGame() {
 	const navigate = useNavigate();
 	const { roomId: paramRoomId } = useParams<{ roomId?: string }>();
+	const { t } = useLingui();
 
 	const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -179,7 +182,7 @@ function JoinGame() {
 					}}
 				>
 					<Title order={1} ta="center" mb="xl" size="2rem" c="gray.8">
-						Join Game
+						<Trans>Join Game</Trans>
 					</Title>
 
 					<form
@@ -188,8 +191,8 @@ function JoinGame() {
 					>
 						<Stack gap="lg" style={{ flex: 1, justifyContent: "center" }}>
 							<TextInput
-								label="Your Name"
-								placeholder="Enter your name"
+								label={<Trans>Your Name</Trans>}
+								placeholder={t`Enter your name`}
 								name="username"
 								required
 								size="lg"
@@ -202,8 +205,8 @@ function JoinGame() {
 							/>
 
 							<TextInput
-								label="Room Code"
-								placeholder="Enter room code"
+								label={<Trans>Room Code</Trans>}
+								placeholder={t`Enter room code`}
 								name="roomId"
 								defaultValue={paramRoomId || ""}
 								maxLength={8}
@@ -235,7 +238,7 @@ function JoinGame() {
 								variant="filled"
 								style={{ height: "56px", fontSize: "18px" }}
 							>
-								Join Game
+								<Trans>Join Game</Trans>
 							</Button>
 						</Box>
 					</form>
