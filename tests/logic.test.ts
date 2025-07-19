@@ -6,7 +6,7 @@ import {
 	initialGame,
 	type ServerAction,
 	type User,
-} from "../game/logic";
+} from "../party/logic";
 
 describe("Game Logic Tests", () => {
 	let gameState: GameState;
@@ -432,7 +432,7 @@ describe("Game Logic Tests", () => {
 			expect(newState.gamePhase).toBe("round-end");
 		});
 
-		it("should handle incorrect guess", () => {
+		it("should handle incorrect guess by moving to checking-answer phase", () => {
 			const guesser = stateReadyForGuessing.users.find(
 				(u) => u.id === stateReadyForGuessing.currentGuesser,
 			)!;
@@ -444,10 +444,87 @@ describe("Game Logic Tests", () => {
 
 			const newState = gameUpdater(action, stateReadyForGuessing);
 
+			expect(newState.lastGuessCorrect).toBe(null); // Will be determined by checker
+			expect(newState.setScore).toBe(0); // No change yet
+			expect(newState.gamesAttempted).toBe(0); // No change yet, will increment after verification
+			expect(newState.gamePhase).toBe("checking-answer");
+			expect(newState.lastGuess).toBe("wrongguess");
+		});
+
+		it("should handle answer verification - reject", () => {
+			// Setup state in checking-answer phase
+			const checkingAnswerState: GameState = {
+				...stateReadyForGuessing,
+				gamePhase: "checking-answer",
+				lastGuess: "wrongguess",
+				lastGuessCorrect: null,
+			};
+
+			const checker = checkingAnswerState.users.find(
+				(u) => u.id === checkingAnswerState.currentChecker,
+			)!;
+			const action: ServerAction = {
+				type: "verify-answer",
+				isCorrect: false,
+				user: checker,
+			};
+
+			const newState = gameUpdater(action, checkingAnswerState);
+
 			expect(newState.lastGuessCorrect).toBe(false);
 			expect(newState.setScore).toBe(0);
 			expect(newState.gamesAttempted).toBe(1);
 			expect(newState.gamePhase).toBe("round-end");
+		});
+
+		it("should handle answer verification - accept", () => {
+			// Setup state in checking-answer phase
+			const checkingAnswerState: GameState = {
+				...stateReadyForGuessing,
+				gamePhase: "checking-answer",
+				lastGuess: "wrongguess",
+				lastGuessCorrect: null,
+			};
+
+			const checker = checkingAnswerState.users.find(
+				(u) => u.id === checkingAnswerState.currentChecker,
+			)!;
+			const action: ServerAction = {
+				type: "verify-answer",
+				isCorrect: true,
+				user: checker,
+			};
+
+			const newState = gameUpdater(action, checkingAnswerState);
+
+			expect(newState.lastGuessCorrect).toBe(true);
+			expect(newState.setScore).toBe(1);
+			expect(newState.gamesAttempted).toBe(1);
+			expect(newState.gamePhase).toBe("round-end");
+		});
+
+		it("should not allow non-checker to verify answer", () => {
+			// Setup state in checking-answer phase
+			const checkingAnswerState: GameState = {
+				...stateReadyForGuessing,
+				gamePhase: "checking-answer",
+				lastGuess: "wrongguess",
+				lastGuessCorrect: null,
+			};
+
+			const nonChecker = checkingAnswerState.users.find(
+				(u) => u.id !== checkingAnswerState.currentChecker,
+			)!;
+			const action: ServerAction = {
+				type: "verify-answer",
+				isCorrect: false,
+				user: nonChecker,
+			};
+
+			const newState = gameUpdater(action, checkingAnswerState);
+
+			// State should remain unchanged
+			expect(newState).toEqual(checkingAnswerState);
 		});
 
 		it("should not allow non-guesser to submit guess", () => {

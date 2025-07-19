@@ -147,6 +147,7 @@ export type GamePhase =
 	| "checking-duplicates"
 	| "reviewing-clues"
 	| "guessing"
+	| "checking-answer"
 	| "round-end"
 	| "set-end";
 
@@ -324,6 +325,7 @@ export type GameAction =
 	| { type: "submit-clue"; clue: string }
 	| { type: "mark-invalid-clues"; invalidClues: string[] }
 	| { type: "submit-guess"; guess: string }
+	| { type: "verify-answer"; isCorrect: boolean }
 
 	// Host-only actions
 	| { type: "start-set" }
@@ -512,9 +514,75 @@ export const gameUpdater = (
 				return state;
 			}
 
-			const isCorrect =
+			const isExactMatch =
 				action.guess.toLowerCase().trim() ===
 				state.currentWord?.toLowerCase().trim();
+
+			// If it's an exact match, handle scoring immediately
+			if (isExactMatch) {
+				const newScore = state.setScore + 1;
+				const newGamesAttempted = state.gamesAttempted + 1;
+
+				// Check if set is complete
+				if (newGamesAttempted >= state.setTarget) {
+					const setResult: SetResult = {
+						score: newScore,
+						target: state.setTarget,
+						completed: true,
+					};
+
+					return {
+						...state,
+						setScore: newScore,
+						gamesAttempted: newGamesAttempted,
+						lastGuess: action.guess,
+						lastGuessCorrect: true,
+						gamePhase: "set-end",
+						setHistory: [...state.setHistory, setResult],
+						log: addLog(
+							`Set complete! Final score: ${newScore}/${state.setTarget}`,
+							state.log,
+						),
+					};
+				}
+
+				// Continue to next round with correct answer
+				return {
+					...state,
+					setScore: newScore,
+					gamesAttempted: newGamesAttempted,
+					lastGuess: action.guess,
+					lastGuessCorrect: true,
+					gamePhase: "round-end",
+					log: addLog(
+						`Correct! Score: ${newScore}/${newGamesAttempted}`,
+						state.log,
+					),
+				};
+			}
+
+			// If not an exact match, go to checking-answer phase
+			return {
+				...state,
+				lastGuess: action.guess,
+				lastGuessCorrect: null, // Will be determined by checker
+				gamePhase: "checking-answer",
+				log: addLog(
+					`${action.user.id} submitted a guess that needs verification`,
+					state.log,
+				),
+			};
+		}
+
+		case "verify-answer": {
+			if (
+				state.gamePhase !== "checking-answer" ||
+				action.user.id !== state.currentChecker
+			) {
+				return state;
+			}
+
+			const isCorrect = action.isCorrect;
 			const newScore = isCorrect ? state.setScore + 1 : state.setScore;
 			const newGamesAttempted = state.gamesAttempted + 1;
 
@@ -530,30 +598,25 @@ export const gameUpdater = (
 					...state,
 					setScore: newScore,
 					gamesAttempted: newGamesAttempted,
-					lastGuess: action.guess,
 					lastGuessCorrect: isCorrect,
 					gamePhase: "set-end",
 					setHistory: [...state.setHistory, setResult],
 					log: addLog(
-						`Set complete! Final score: ${newScore}/${state.setTarget}`,
+						`Answer ${isCorrect ? "accepted" : "rejected"}. Set complete! Final score: ${newScore}/${state.setTarget}`,
 						state.log,
 					),
 				};
 			}
 
-			// Continue to next round
-			const nextGuesser = getNextPlayer(state.users, state.currentGuesser);
-			const nextWord = getRandomWord(state.wordList, state.usedWords);
-
+			// Continue to round end
 			return {
 				...state,
 				setScore: newScore,
 				gamesAttempted: newGamesAttempted,
-				lastGuess: action.guess,
 				lastGuessCorrect: isCorrect,
 				gamePhase: "round-end",
 				log: addLog(
-					`${isCorrect ? "Correct!" : "Incorrect."} Score: ${newScore}/${newGamesAttempted}`,
+					`Answer ${isCorrect ? "accepted" : "rejected"}. Score: ${newScore}/${newGamesAttempted}`,
 					state.log,
 				),
 			};

@@ -116,6 +116,8 @@ const Game = ({ username, roomId }: GameProps) => {
 				return renderWritingClues();
 			case "checking-duplicates":
 				return renderCheckingDuplicates();
+			case "checking-answer":
+				return renderCheckingAnswer();
 			case "reviewing-clues":
 				return renderReviewingClues();
 			case "guessing":
@@ -375,6 +377,87 @@ const Game = ({ username, roomId }: GameProps) => {
 										)?.name
 									}{" "}
 									is checking for duplicates...
+								</Trans>
+							</Text>
+							<Text size="3rem">⏳</Text>
+						</Stack>
+					</Paper>
+				)}
+			</Stack>
+		</Container>
+	);
+
+	const renderCheckingAnswer = () => (
+		<Container size="lg">
+			<Stack gap="xl">
+				<Center>
+					<Title order={1}>
+						🤔 <Trans>Checking Answer</Trans>
+					</Title>
+				</Center>
+
+				{isCurrentChecker ? (
+					<Paper bg="orange.1" p="xl" radius="md">
+						<Stack gap="lg">
+							<Stack align="center" gap="md">
+								<Title order={2}>
+									<Trans>You are checking the answer!</Trans>
+								</Title>
+								<Text size="lg">
+									<Trans>The word was:</Trans>{" "}
+									<Text span fw={700}>
+										{gameState.currentWord}
+									</Text>
+								</Text>
+								<Text size="lg">
+									<Trans>The guess was:</Trans>{" "}
+									<Text span fw={700}>
+										{gameState.lastGuess}
+									</Text>
+								</Text>
+								<Text size="md" c="dimmed">
+									<Trans>Should this answer be accepted as correct?</Trans>
+								</Text>
+							</Stack>
+
+							<Group justify="center" gap="xl">
+								<Button
+									onClick={() =>
+										dispatch({ type: "verify-answer", isCorrect: true })
+									}
+									color="green"
+									size="xl"
+									leftSection={<MdCheck size={20} />}
+								>
+									<Trans>Accept Answer</Trans>
+								</Button>
+								<Button
+									onClick={() =>
+										dispatch({ type: "verify-answer", isCorrect: false })
+									}
+									color="red"
+									size="xl"
+									leftSection={<MdStop size={20} />}
+								>
+									<Trans>Reject Answer</Trans>
+								</Button>
+							</Group>
+						</Stack>
+					</Paper>
+				) : (
+					<Paper bg="gray.1" p="xl" radius="md">
+						<Stack align="center" gap="lg">
+							<Title order={2}>
+								<Trans>Answer Verification in Progress</Trans>
+							</Title>
+							<Text size="lg">
+								<Trans>
+									{
+										gameState.users.find(
+											(u) => u.id === gameState.currentChecker,
+										)?.name
+									}{" "}
+									is checking if the answer should be accepted...
 								</Trans>
 							</Text>
 							<Text size="3rem">⏳</Text>
