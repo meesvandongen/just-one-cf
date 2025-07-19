@@ -178,7 +178,7 @@ const Game = ({ username, roomId }: GameProps) => {
 									<Trans>QR Code</Trans>
 								</Title>
 								<QRCode
-									value={`${window.location.origin}/join/${roomId}`}
+									value={`${window.location.origin}?join=${roomId}`}
 									size={150}
 								/>
 								<Text size="sm" c="dimmed">

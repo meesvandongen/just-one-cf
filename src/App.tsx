@@ -4,6 +4,7 @@ import {
 	ActionIcon,
 	Box,
 	Button,
+	Center,
 	Group,
 	PinInput,
 	Stack,
@@ -13,7 +14,7 @@ import {
 } from "@mantine/core";
 
 import { useEffect, useState } from "react";
-import { MdQrCodeScanner } from "react-icons/md";
+import { MdAdd, MdQrCodeScanner } from "react-icons/md";
 import {
 	Route,
 	Routes,
@@ -27,7 +28,15 @@ import Layout from "@/components/Layout";
 
 import QRScanner from "@/components/QRScanner";
 
-import { isValidRoomCode } from "@/utils";
+import {
+	clearSavedRoomCode,
+	clearSavedUsername,
+	getSavedRoomCode,
+	getSavedUsername,
+	isValidRoomCode,
+	saveRoomCode,
+	saveUsername,
+} from "@/utils";
 
 import "@mantine/core/styles.css";
 
@@ -42,23 +51,43 @@ function Home() {
 	const { roomId: paramRoomId } = useParams<{ roomId?: string }>();
 	const { t } = useLingui();
 	const [qrScannerOpen, setQrScannerOpen] = useState(false);
-	const [username, setUsername] = useState("");
-	const [roomCode, setRoomCode] = useState(paramRoomId || "");
+	const [roomCode, setRoomCode] = useState("");
 
 	useEffect(() => {
 		// Check if joining via QR code or direct link
 		const joinCode = searchParams.get("join");
 		if (joinCode && joinCode.length === 6 && /^\d{6}$/.test(joinCode)) {
-			setRoomCode(joinCode);
+			// Save room code and redirect to name selection
+			saveRoomCode(joinCode);
+			navigate("/select-name");
 			return;
 		}
 
+		// Check if there's a saved room code but no username
+		const savedRoom = getSavedRoomCode();
+		const savedUsername = getSavedUsername();
+
+		if (savedRoom && savedUsername) {
+			// Both room and username available, go to game
+			navigate(
+				`/game/${savedRoom}?username=${encodeURIComponent(savedUsername)}`,
+			);
+			return;
+		} else if (savedRoom) {
+			// Room saved but no username, go to name selection
+			navigate("/select-name");
+			return;
+		}
+
+		// Handle legacy URL params for backward compatibility
 		const username = searchParams.get("username");
 		const roomId = searchParams.get("roomId");
 
 		if (username && roomId) {
 			const parsed = queryParamsValidator.safeParse({ username, roomId });
 			if (parsed.success) {
+				saveRoomCode(parsed.data.roomId);
+				saveUsername(parsed.data.username);
 				navigate(
 					`/game/${parsed.data.roomId}?username=${encodeURIComponent(parsed.data.username)}`,
 				);
@@ -66,16 +95,25 @@ function Home() {
 		}
 	}, [searchParams, navigate]);
 
-	const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-
-		if (username && roomCode && isValidRoomCode(roomCode)) {
-			navigate(`/game/${roomCode}?username=${encodeURIComponent(username)}`);
+	const handleJoinRoom = () => {
+		if (isValidRoomCode(roomCode)) {
+			saveRoomCode(roomCode);
+			navigate("/select-name");
 		}
 	};
 
 	const handleQRScan = (scannedCode: string) => {
-		setRoomCode(scannedCode);
+		if (isValidRoomCode(scannedCode)) {
+			saveRoomCode(scannedCode);
+			navigate("/select-name");
+		}
+	};
+
+	const handleStartNewSession = () => {
+		// Generate a random 6-digit room code for new sessions
+		const newRoomCode = Math.floor(100000 + Math.random() * 900000).toString();
+		saveRoomCode(newRoomCode);
+		navigate("/select-name");
 	};
 
 	return (
@@ -86,7 +124,165 @@ function Home() {
 					display: "flex",
 					flexDirection: "column",
 					padding: "16px",
-					paddingBottom: "80px", // Space for fixed button
+				}}
+			>
+				<Title order={1} ta="center" mb="xl" size="2rem" c="gray.8">
+					<Trans>Just One</Trans>
+				</Title>
+
+				<Stack gap="xl" style={{ flex: 1 }}>
+					{/* QR Scanner Section - Prominent at top */}
+					<Stack gap="md">
+						<Text size="lg" fw={600} ta="center">
+							<Trans>Join an Existing Game</Trans>
+						</Text>
+
+						<Center>
+							<Button
+								onClick={() => setQrScannerOpen(true)}
+								size="xl"
+								variant="filled"
+								color="blue"
+								style={{
+									height: "120px",
+									width: "100%",
+									maxWidth: "400px",
+									fontSize: "18px",
+								}}
+								leftSection={<MdQrCodeScanner size="40" />}
+							>
+								<Stack gap="xs" align="center">
+									<Text size="xl" fw={600}>
+										<Trans>Scan QR Code</Trans>
+									</Text>
+									<Text size="sm" opacity={0.8}>
+										<Trans>Camera</Trans>
+									</Text>
+								</Stack>
+							</Button>
+						</Center>
+					</Stack>
+
+					{/* PIN Input Section - Similarly sized below camera */}
+					<Stack gap="md">
+						<Text size="md" fw={500} ta="center" c="dimmed">
+							<Trans>Or enter room code manually</Trans>
+						</Text>
+
+						<Center>
+							<Stack
+								gap="md"
+								align="center"
+								style={{ width: "100%", maxWidth: "400px" }}
+							>
+								<PinInput
+									value={roomCode}
+									onChange={setRoomCode}
+									length={6}
+									type="number"
+									size="xl"
+									style={{ justifyContent: "center" }}
+									error={roomCode.length > 0 && !isValidRoomCode(roomCode)}
+								/>
+								<Button
+									onClick={handleJoinRoom}
+									size="lg"
+									variant="outline"
+									style={{ width: "100%", height: "56px" }}
+									disabled={!isValidRoomCode(roomCode)}
+								>
+									<Trans>Join Room</Trans>
+								</Button>
+							</Stack>
+						</Center>
+					</Stack>
+
+					{/* Spacer */}
+					<Box style={{ flex: 1 }} />
+
+					{/* Start New Session - At bottom */}
+					<Stack gap="md">
+						<Text size="md" fw={500} ta="center" c="dimmed">
+							<Trans>Or start a new game</Trans>
+						</Text>
+
+						<Center>
+							<Button
+								onClick={handleStartNewSession}
+								size="lg"
+								variant="light"
+								color="green"
+								style={{ width: "100%", maxWidth: "400px", height: "56px" }}
+								leftSection={<MdAdd size="20" />}
+							>
+								<Trans>Start New Session</Trans>
+							</Button>
+						</Center>
+					</Stack>
+				</Stack>
+			</Box>
+
+			<QRScanner
+				isOpen={qrScannerOpen}
+				onClose={() => setQrScannerOpen(false)}
+				onScan={handleQRScan}
+			/>
+		</Layout>
+	);
+}
+
+//  Name Selection page component
+function NameSelection() {
+	const navigate = useNavigate();
+	const { t } = useLingui();
+	const [username, setUsername] = useState("");
+
+	useEffect(() => {
+		const savedRoom = getSavedRoomCode();
+		if (!savedRoom) {
+			// No room saved, redirect to home
+			navigate("/");
+			return;
+		}
+
+		// Load previously saved username if available
+		const savedUsername = getSavedUsername();
+		if (savedUsername) {
+			setUsername(savedUsername);
+		}
+	}, [navigate]);
+
+	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+
+		const savedRoom = getSavedRoomCode();
+		if (username.trim() && savedRoom) {
+			saveUsername(username.trim());
+			navigate(
+				`/game/${savedRoom}?username=${encodeURIComponent(username.trim())}`,
+			);
+		}
+	};
+
+	const handleBack = () => {
+		clearSavedRoomCode();
+		navigate("/");
+	};
+
+	const savedRoom = getSavedRoomCode();
+
+	if (!savedRoom) {
+		return null; // Will redirect
+	}
+
+	return (
+		<Layout>
+			<Box
+				style={{
+					flex: 1,
+					display: "flex",
+					flexDirection: "column",
+					padding: "16px",
 				}}
 			>
 				<Box
@@ -97,95 +293,61 @@ function Home() {
 						justifyContent: "center",
 					}}
 				>
-					<Title order={1} ta="center" mb="xl" size="2rem" c="gray.8">
-						<Trans>Just One</Trans>
+					<Title order={1} ta="center" mb="md" size="2rem" c="gray.8">
+						<Trans>Choose Your Name</Trans>
 					</Title>
 
-					<form
-						onSubmit={handleFormSubmit}
-						style={{ flex: 1, display: "flex", flexDirection: "column" }}
-					>
-						<Stack gap="lg" style={{ flex: 1, justifyContent: "center" }}>
+					<Text size="lg" ta="center" c="dimmed" mb="xl">
+						<Trans>Room Code: {savedRoom}</Trans>
+					</Text>
+
+					<form onSubmit={handleSubmit}>
+						<Stack gap="xl" align="center">
 							<TextInput
 								label={<Trans>Your Name</Trans>}
 								placeholder={t`Enter your name`}
 								value={username}
 								onChange={(e) => setUsername(e.target.value)}
 								required
-								size="lg"
+								size="xl"
+								style={{ width: "100%", maxWidth: "400px" }}
 								styles={{
 									input: {
-										height: "48px",
-										fontSize: "16px",
+										height: "56px",
+										fontSize: "18px",
+										textAlign: "center",
 									},
 								}}
+								autoFocus
 							/>
 
-							<Stack gap="xs">
-								<Group justify="space-between" align="end">
-									<Text fw={500} size="sm">
-										<Trans>Room Code</Trans>
-									</Text>
-									<ActionIcon
-										size="lg"
-										variant="light"
-										onClick={() => setQrScannerOpen(true)}
-										title={t`Scan QR Code`}
-										style={{
-											height: "40px",
-											width: "40px",
-										}}
-									>
-										<MdQrCodeScanner size="20" />
-									</ActionIcon>
-								</Group>
-								<PinInput
-									value={roomCode}
-									onChange={setRoomCode}
-									length={6}
-									type="number"
+							<Stack gap="md" style={{ width: "100%", maxWidth: "400px" }}>
+								<Button
+									type="submit"
+									size="xl"
+									variant="filled"
+									style={{ height: "56px", fontSize: "18px" }}
+									disabled={!username.trim()}
+								>
+									<Trans>Join Game</Trans>
+								</Button>
+
+								<Button
+									onClick={handleBack}
 									size="lg"
-									style={{ justifyContent: "center" }}
-									error={roomCode.length > 0 && !isValidRoomCode(roomCode)}
-								/>
-								<Text size="xs" c="dimmed" ta="center">
-									<Trans>Enter 6-digit room code or scan QR</Trans>
-								</Text>
+									variant="light"
+									color="gray"
+								>
+									<Trans>Back to Home</Trans>
+								</Button>
 							</Stack>
 						</Stack>
-
-						<Box
-							style={{
-								position: "fixed",
-								bottom: "16px",
-								left: "16px",
-								right: "16px",
-								zIndex: 1000,
-							}}
-						>
-							<Button
-								type="submit"
-								size="lg"
-								fullWidth
-								variant="filled"
-								style={{ height: "56px", fontSize: "18px" }}
-								disabled={!username || !isValidRoomCode(roomCode)}
-							>
-								<Trans>Join Game</Trans>
-							</Button>
-						</Box>
 					</form>
 				</Box>
 			</Box>
-			<QRScanner
-				isOpen={qrScannerOpen}
-				onClose={() => setQrScannerOpen(false)}
-				onScan={handleQRScan}
-			/>
 		</Layout>
 	);
 }
-
 // Game page component
 function GamePage() {
 	const { roomId } = useParams<{ roomId: string }>();
@@ -202,12 +364,25 @@ function GamePage() {
 		}
 	}, [roomId, navigate]);
 
-	// If no username provided, redirect to home page with room code
+	// If no username provided, redirect to name selection
 	useEffect(() => {
 		if (!username && roomId && isValidRoomCode(roomId)) {
-			navigate(`/?join=${roomId}`);
+			saveRoomCode(roomId);
+			navigate("/select-name");
 		}
 	}, [username, roomId, navigate]);
+
+	// Clean up local storage when successfully in game
+	useEffect(() => {
+		if (username && roomId && isValidRoomCode(roomId)) {
+			// Keep the username saved for future games, but clear room code
+			// since we're now actively in this game
+			clearSavedRoomCode();
+			if (username) {
+				saveUsername(username);
+			}
+		}
+	}, [username, roomId]);
 
 	if (!username || !roomId || !isValidRoomCode(roomId)) {
 		return null; // Will redirect
@@ -224,6 +399,7 @@ function App() {
 	return (
 		<Routes>
 			<Route path="/" element={<Home />} />
+			<Route path="/select-name" element={<NameSelection />} />
 			<Route path="/:roomId?" element={<Home />} />
 			<Route path="/game/:roomId" element={<GamePage />} />
 		</Routes>
