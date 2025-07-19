@@ -9,11 +9,15 @@
 		"build:server": "wrangler deploy --dry-run",
 		"deploy:server": "wrangler deploy",
 		"start": "vite preview",
-		"lint": "biome check ."
+		"lint": "biome check .",
+		"test": "vitest",
+		"test:ui": "vitest --ui",
+		"test:run": "vitest run"
 	},
 	"dependencies": {
 		"@biomejs/biome": "^2.1.2",
 		"@mantine/core": "^8.1.3",
+		"@mantine/form": "^8.1.3",
 		"@mantine/hooks": "^8.1.3",
 		"@tabler/icons-react": "^3.34.0",
 		"@types/node": "24.0.15",
@@ -21,15 +25,14 @@
 		"@types/react": "19.1.8",
 		"@types/react-dom": "19.1.6",
 		"@vitejs/plugin-react": "^4.3.3",
-		"autoprefixer": "10.4.21",
 		"partysocket": "^1.1.4",
 		"postcss": "8.5.6",
+		"postcss-preset-mantine": "^1.18.0",
 		"qrcode": "^1.5.4",
 		"react": "19.1.0",
 		"react-dom": "19.1.0",
 		"react-qr-code": "^2.0.18",
 		"react-router-dom": "^7.1.5",
-		"tailwindcss": "4.1.11",
 		"typescript": "5.8.3",
 		"vite": "^6.1.4",
 		"zod": "^4.0.5"
@@ -37,8 +40,10 @@
 	"devDependencies": {
 		"@cloudflare/vite-plugin": "^1.9.6",
 		"@cloudflare/workers-types": "^4.20250719.0",
+		"@vitest/ui": "^3.2.4",
 		"concurrently": "^9.2.0",
 		"partyserver": "^0.0.72",
+		"vitest": "^3.2.4",
 		"wrangler": "^4.25.0"
 	},
 	"type": "module"

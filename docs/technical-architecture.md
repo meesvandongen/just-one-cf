@@ -69,7 +69,6 @@ Actions available in Just One:
 - `start-set`: Begin a new set
 - `end-session`: Terminate the entire session
 - `end-set`: End the current set early
-- `end-round`: Skip the current word/round
 - `remove-player`: Remove a player from the session
 - `next-round`: Force advance to the next word
 - `pass-word`: Allow skipping a difficult word
@@ -85,8 +84,8 @@ Actions available in Just One:
 - `start-set`: Begins a new set (only available when no set is active)
 - `end-session`: Terminates the entire session and removes all players  
 - `end-set`: Ends the current set early and shows results
-- `end-round`: Skips the current word and moves to the next round
-- `next-round`: Forces progression to the next word (similar to end-round)
+- `next-round`: Forces progression to the next word
+- `pass-word`: Allows skipping a difficult word
 
 ## The gameUpdater Function
 
@@ -102,10 +101,9 @@ This function handles all the game logic for Just One and enforces host permissi
 - **start-set**: Initializes a new set, selects the first guesser, and draws the first word
 - **end-session**: Terminates the entire session and removes all players
 - **end-set**: Completes the current set early and shows final results
-- **end-round**: Skips the current word and moves to the next round in the set
 - **remove-player**: Removes a player from the session (with host transfer if needed)
 - **next-round**: Advances to the next round with a new guesser and word
-- **pass-word**: Allows skipping a difficult word (same as end-round)
+- **pass-word**: Allows skipping a difficult word
 - **pause-game/resume-game**: Temporarily halt/continue game progression
 - **update-settings**: Modify set parameters like target word count or time limits
 - **update-timers**: Configure optional timer settings for each game phase

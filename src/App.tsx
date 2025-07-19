@@ -1,8 +1,10 @@
+import { Button, Center, Paper, Stack, TextInput, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import Game from "@/components/Game";
 import Layout from "@/components/Layout";
+import "@mantine/core/styles.css";
 
 const queryParamsValidator = z.object({
 	username: z.string().min(1),
@@ -83,59 +85,42 @@ function Home() {
 
 	return (
 		<Layout>
-			<div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50">
-				<div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
-					<h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
-						Just One
-					</h1>
+			<Center h="60vh">
+				<Paper shadow="lg" p="xl" radius="md" w={400}>
+					<Stack gap="xl">
+						<Title order={1} ta="center" c="gray.8">
+							Just One
+						</Title>
 
-					<form onSubmit={handleFormSubmit} className="space-y-6">
-						<div>
-							<label
-								htmlFor="username"
-								className="block text-sm font-medium text-gray-700 mb-2"
-							>
-								Your Name
-							</label>
-							<input
-								type="text"
-								id="username"
-								name="username"
-								required
-								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-								placeholder="Enter your name"
-							/>
-						</div>
+						<form onSubmit={handleFormSubmit}>
+							<Stack gap="md">
+								<TextInput
+									label="Your Name"
+									placeholder="Enter your name"
+									name="username"
+									required
+									size="md"
+								/>
 
-						<div>
-							<label
-								htmlFor="roomId"
-								className="block text-sm font-medium text-gray-700 mb-2"
-							>
-								Room Code
-							</label>
-							<input
-								type="text"
-								id="roomId"
-								name="roomId"
-								required
-								defaultValue={setup.roomId || ""}
-								className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 uppercase"
-								placeholder="Enter room code"
-								maxLength={8}
-								style={{ textTransform: "uppercase" }}
-							/>
-						</div>
+								<TextInput
+									label="Room Code"
+									placeholder="Enter room code"
+									name="roomId"
+									defaultValue={setup.roomId || ""}
+									maxLength={8}
+									tt="uppercase"
+									required
+									size="md"
+								/>
 
-						<button
-							type="submit"
-							className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-						>
-							Join Game
-						</button>
-					</form>
-				</div>
-			</div>
+								<Button type="submit" size="md" fullWidth variant="filled">
+									Join Game
+								</Button>
+							</Stack>
+						</form>
+					</Stack>
+				</Paper>
+			</Center>
 		</Layout>
 	);
 }

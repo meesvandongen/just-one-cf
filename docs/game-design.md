@@ -55,7 +55,7 @@ The game host has exclusive control over these actions:
 - **End Session**: Terminate the entire session and kick all players
 - **Kick Players**: Remove disruptive players from the session
 - **End Set**: Terminate the current set early and show results
-- **End Round**: Skip the current word/round and move to next
+- **Skip Word**: Skip the current word and move to next
 - **Game Settings**: Adjust set parameters (word count target, time limits, etc.)
 - **Time Limit Controls**: Enable/disable timers and adjust duration for each phase
 - **Next Round**: Force advance to the next word if needed

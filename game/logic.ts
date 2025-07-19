@@ -333,7 +333,6 @@ export type GameAction =
 	| { type: "start-set" }
 	| { type: "end-session" }
 	| { type: "end-set" }
-	| { type: "end-round" }
 	| { type: "remove-player"; playerId: string }
 	| { type: "next-round" }
 	| { type: "pass-word" }
@@ -417,7 +416,10 @@ export const gameUpdater = (
 		}
 
 		case "start-set": {
-			if (!isHost(action.user.id) || state.gamePhase !== "lobby") {
+			if (
+				!isHost(action.user.id) ||
+				(state.gamePhase !== "lobby" && state.gamePhase !== "set-end")
+			) {
 				return state;
 			}
 
@@ -621,7 +623,6 @@ export const gameUpdater = (
 			};
 		}
 
-		case "end-round":
 		case "pass-word": {
 			if (!isHost(action.user.id)) {
 				return state;
