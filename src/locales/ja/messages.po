@@ -36,10 +36,6 @@ msgstr "{0}が推測中..."
 msgid "{0} of {1} clues submitted"
 msgstr "{1}個中{0}個のヒントが提出済み"
 
-#: src/components/Game.tsx:233
-#~ msgid "#: src/components/Game.tsx:199"
-#~ msgstr ""
-
 #: src/components/Game.tsx:305
 msgid "✓ Clue submitted! Waiting for others..."
 msgstr "✓ ヒントを提出しました！他の人を待っています..."
@@ -146,55 +142,55 @@ msgstr "ゲームを開始するには最低3人のプレイヤーが必要で�
 
 #: src/components/Game.tsx:695
 msgid "Next Round"
-msgstr ""
+msgstr "次のラウンド"
 
 #: src/components/Game.tsx:680
 msgid "Pass"
-msgstr ""
+msgstr "パス"
 
 #: src/components/Game.tsx:710
 msgid "Play Again"
-msgstr ""
+msgstr "もう一度プレイ"
 
 #. placeholder {0}: gameState.users.length
 #: src/components/Game.tsx:200
 msgid "Players ({0})"
-msgstr ""
+msgstr "プレイヤー ({0})"
 
 #: src/components/Game.tsx:402
 msgid "Preparing clues for the guesser..."
-msgstr ""
+msgstr "推測者のためにヒントを準備中..."
 
 #: src/components/Game.tsx:564
 msgid "Previous Sets"
-msgstr ""
+msgstr "前のセット"
 
 #: src/components/Game.tsx:316
 msgid "Progress"
-msgstr ""
+msgstr "進行状況"
 
 #: src/components/Game.tsx:184
 msgid "QR Code"
-msgstr ""
+msgstr "QRコード"
 
 #: src/App.tsx:104
 #: src/App.tsx:208
 msgid "Room Code"
-msgstr ""
+msgstr "ルームコード"
 
 #: src/components/Game.tsx:489
 msgid "Round Complete"
-msgstr ""
+msgstr "ラウンド完了"
 
 #: src/components/Game.tsx:191
 msgid "Scan to join quickly"
-msgstr ""
+msgstr "素早く参加するためにスキャン"
 
 #. placeholder {0}: gameState.setScore
 #. placeholder {1}: gameState.gamesAttempted
 #: src/components/Game.tsx:518
 msgid "Score: {0}/{1}"
-msgstr ""
+msgstr "スコア: {0}/{1}"
 
 #. placeholder {0}: gameState.setScore
 #. placeholder {1}: gameState.gamesAttempted
@@ -202,85 +198,85 @@ msgstr ""
 #: src/components/Game.tsx:254
 #: src/components/Game.tsx:419
 msgid "Score: {0}/{1} | Target: {2}"
-msgstr ""
+msgstr "スコア: {0}/{1} | 目標: {2}"
 
 #. placeholder {0}: index + 1
 #. placeholder {1}: set.score
 #. placeholder {2}: set.target
 #: src/components/Game.tsx:570
 msgid "Set {0}: {1}/{2}"
-msgstr ""
+msgstr "セット {0}: {1}/{2}"
 
 #: src/components/Game.tsx:533
 msgid "Set Complete!"
-msgstr ""
+msgstr "セット完了！"
 
 #: src/components/Game.tsx:174
 msgid "Share this code with other players"
-msgstr ""
+msgstr "このコードを他のプレイヤーと共有"
 
 #: src/components/Game.tsx:627
 msgid "Skip"
-msgstr ""
+msgstr "スキップ"
 
 #: src/components/Game.tsx:229
 msgid "Start Game"
-msgstr ""
+msgstr "ゲーム開始"
 
 #: src/components/Game.tsx:612
 msgid "Submit"
-msgstr ""
+msgstr "送信"
 
 #: src/components/Game.tsx:299
 msgid "Submit your clue using the form below"
-msgstr ""
+msgstr "下のフォームを使ってヒントを送信"
 
 #: src/components/Game.tsx:458
 msgid "Submit your guess using the form below"
-msgstr ""
+msgstr "下のフォームを使って推測を送信"
 
 #: src/components/Game.tsx:279
 msgid "The word is:"
-msgstr ""
+msgstr "単語は："
 
 #: src/components/Game.tsx:506
 msgid "The word was:"
-msgstr ""
+msgstr "単語は："
 
 #: src/components/Game.tsx:136
 msgid "Unknown game phase"
-msgstr ""
+msgstr "不明なゲーム段階"
 
 #: src/components/Game.tsx:269
 msgid "Wait while others write clues for you..."
-msgstr ""
+msgstr "他の人があなたのためにヒントを書いている間待機..."
 
 #: src/components/Game.tsx:657
 msgid "What's your guess?"
-msgstr ""
+msgstr "あなたの推測は？"
 
 #. placeholder {0}: gameState.users.find( (u) => u.id === gameState.currentGuesser, )?.name
 #: src/components/Game.tsx:285
 msgid "Write ONE word clue for {0}"
-msgstr ""
+msgstr "{0}のために一単語のヒントを書く"
 
 #: src/components/Game.tsx:251
 msgid "Writing Clues"
-msgstr ""
+msgstr "ヒント作成中"
 
 #: src/components/Game.tsx:344
 msgid "You are checking for duplicates!"
-msgstr ""
+msgstr "あなたが重複をチェック中！"
 
 #: src/components/Game.tsx:266
 msgid "You are the guesser!"
-msgstr ""
+msgstr "あなたが推測者です！"
 
 #: src/App.tsx:90
 #: src/App.tsx:194
 msgid "Your Name"
-msgstr ""
+msgstr "あなたの名前"
 
 #: src/components/Game.tsx:432
 msgid "Your turn to guess!"
-msgstr ""
+msgstr "あなたの推測の番です！"
