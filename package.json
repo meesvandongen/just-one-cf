@@ -13,7 +13,8 @@
 		"test": "vitest run",
 		"test:ui": "vitest --ui",
 		"test:watch": "vitest watch",
-		"extract": "lingui extract"
+		"extract": "lingui extract",
+		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@biomejs/biome": "^2.1.2",
