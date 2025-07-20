@@ -154,7 +154,7 @@ function Home() {
 								onChange={setRoomCode}
 								length={6}
 								type="number"
-								size="xl"
+								size="xs"
 								style={{ justifyContent: "center" }}
 								error={roomCode.length > 0 && !isValidRoomCode(roomCode)}
 							/>
