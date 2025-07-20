@@ -350,9 +350,15 @@ const Game = ({ username, roomId }: GameProps) => {
 										key={index}
 										onClick={() => toggleClueSelection(clueWithSubmitter.clue)}
 										variant={
-											selectedInvalidClues.includes(clueWithSubmitter.clue) ? "filled" : "outline"
+											selectedInvalidClues.includes(clueWithSubmitter.clue)
+												? "filled"
+												: "outline"
 										}
-										color={selectedInvalidClues.includes(clueWithSubmitter.clue) ? "red" : "gray"}
+										color={
+											selectedInvalidClues.includes(clueWithSubmitter.clue)
+												? "red"
+												: "gray"
+										}
 										size="lg"
 										h="auto"
 										p="1rem"

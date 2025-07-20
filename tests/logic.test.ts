@@ -10,7 +10,9 @@ import {
 
 // Helper functions for testing with the new ClueWithSubmitter structure
 const clueExists = (validClues: any[], clueText: string): boolean => {
-	return validClues.some((clueWithSubmitter) => clueWithSubmitter.clue === clueText);
+	return validClues.some(
+		(clueWithSubmitter) => clueWithSubmitter.clue === clueText,
+	);
 };
 
 const clueDoesNotExist = (validClues: any[], clueText: string): boolean => {
