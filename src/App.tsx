@@ -379,8 +379,21 @@ function GamePage() {
 		return null; // Will redirect
 	}
 
+	const handleLeaveGame = () => {
+		// Clear saved data and return to home
+		clearSavedRoomCode();
+		navigate("/");
+	};
+
+	const qrCodeValue = `${window.location.origin}?join=${roomId}`;
+
 	return (
-		<Layout>
+		<Layout
+			showSidebar={true}
+			onLeaveGame={handleLeaveGame}
+			roomCode={roomId}
+			qrCodeValue={qrCodeValue}
+		>
 			<Game username={username} roomId={roomId} />
 		</Layout>
 	);
