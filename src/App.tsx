@@ -32,7 +32,6 @@ import {
 } from "@/utils";
 
 import "@mantine/core/styles.css";
-import "./mobile.css";
 
 const queryParamsValidator = z.object({
 	username: z.string().min(1),

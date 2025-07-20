@@ -9,7 +9,7 @@ import {
 	Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { MdCode, MdLogout, MdQrCode } from "react-icons/md";
+import { MdLogout, MdQrCode, MdCode } from "react-icons/md";
 import QRCode from "react-qr-code";
 
 interface SidebarMenuProps {
@@ -19,18 +19,9 @@ interface SidebarMenuProps {
 	onClose: () => void;
 }
 
-export const SidebarMenu = ({
-	onLeaveGame,
-	roomCode,
-	qrCodeValue,
-	onClose,
-}: SidebarMenuProps) => {
-	const [qrModalOpened, { open: openQrModal, close: closeQrModal }] =
-		useDisclosure(false);
-	const [
-		roomCodeModalOpened,
-		{ open: openRoomCodeModal, close: closeRoomCodeModal },
-	] = useDisclosure(false);
+export const SidebarMenu = ({ onLeaveGame, roomCode, qrCodeValue, onClose }: SidebarMenuProps) => {
+	const [qrModalOpened, { open: openQrModal, close: closeQrModal }] = useDisclosure(false);
+	const [roomCodeModalOpened, { open: openRoomCodeModal, close: closeRoomCodeModal }] = useDisclosure(false);
 
 	const handleLeaveGame = () => {
 		onClose();
@@ -104,7 +95,12 @@ export const SidebarMenu = ({
 				centered
 			>
 				<Stack align="center" gap="md">
-					{qrCodeValue && <QRCode value={qrCodeValue} size={200} />}
+					{qrCodeValue && (
+						<QRCode
+							value={qrCodeValue}
+							size={200}
+						/>
+					)}
 					<Text size="sm" c="dimmed" ta="center">
 						<Trans>Scan to join quickly</Trans>
 					</Text>
