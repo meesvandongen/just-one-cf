@@ -21,6 +21,7 @@ import { useState } from "react";
 import { MdCheck, MdLogout, MdSend, MdSkipNext, MdStop } from "react-icons/md";
 import QRCode from "react-qr-code";
 import { useGameRoom } from "@/hooks/useGameRoom";
+import { useWord } from "../hooks/useWord";
 import { WORD_LISTS } from "@/wordLists";
 
 interface GameProps {
@@ -31,6 +32,12 @@ interface GameProps {
 const Game = ({ username, roomId }: GameProps) => {
 	const { gameState, dispatch } = useGameRoom(username, roomId);
 	const { t } = useLingui();
+
+	// Resolve current word from word list and index
+	const { word: currentWord, loading: wordLoading, error: wordError } = useWord(
+		gameState?.selectedWordListId || null,
+		gameState?.currentWordIndex || null,
+	);
 
 	// Local state for UI interactions
 	const [clueInput, setClueInput] = useState("");
@@ -304,9 +311,17 @@ const Game = ({ username, roomId }: GameProps) => {
 								<Title order={2}>
 									<Trans>The word is:</Trans>
 								</Title>
-								<Text size="3rem" fw={700}>
-									{gameState.currentWord}
-								</Text>
+								{wordLoading ? (
+									<Loader size="lg" />
+								) : wordError ? (
+									<Text c="red" size="lg">
+										Error loading word: {wordError}
+									</Text>
+								) : (
+									<Text size="3rem" fw={700}>
+										{currentWord}
+									</Text>
+								)}
 								<Text size="lg">
 									<Trans>
 										Write ONE word clue for{" "}
@@ -446,9 +461,15 @@ const Game = ({ username, roomId }: GameProps) => {
 								</Title>
 								<Text size="lg">
 									<Trans>The word was:</Trans>{" "}
-									<Text span fw={700}>
-										{gameState.currentWord}
-									</Text>
+									{wordLoading ? (
+										<Text span>Loading...</Text>
+									) : wordError ? (
+										<Text span c="red">Error</Text>
+									) : (
+										<Text span fw={700}>
+											{currentWord}
+										</Text>
+									)}
 								</Text>
 								<Text size="lg">
 									<Trans>The guess was:</Trans>{" "}
@@ -625,9 +646,15 @@ const Game = ({ username, roomId }: GameProps) => {
 						</Title>
 						<Text size="lg">
 							<Trans>The word was:</Trans>{" "}
-							<Text span fw={700}>
-								{gameState.currentWord}
-							</Text>
+							{wordLoading ? (
+								<Text span>Loading...</Text>
+							) : wordError ? (
+								<Text span c="red">Error</Text>
+							) : (
+								<Text span fw={700}>
+									{currentWord}
+								</Text>
+							)}
 						</Text>
 						<Text size="lg">
 							<Trans>Guess:</Trans>{" "}

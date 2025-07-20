@@ -6,109 +6,31 @@ const addLog = (message: string, logs: GameState["log"]): GameState["log"] => {
 	);
 };
 
-// Default word list for the game
-const DEFAULT_WORD_LIST = [
-	"ocean",
-	"bicycle",
-	"elephant",
-	"coffee",
-	"mountain",
-	"guitar",
-	"rainbow",
-	"butterfly",
-	"chocolate",
-	"airplane",
-	"sunset",
-	"garden",
-	"library",
-	"pizza",
-	"camera",
-	"adventure",
-	"friendship",
-	"thunder",
-	"keyboard",
-	"lighthouse",
-	"telescope",
-	"sandwich",
-	"volcano",
-	"treasure",
-	"whisper",
-	"dinosaur",
-	"festival",
-	"laboratory",
-	"spaceship",
-	"waterfall",
-	"magician",
-	"symphony",
-	"photograph",
-	"universe",
-	"carnival",
-	"paintbrush",
-	"discovery",
-	"moonlight",
-	"poetry",
-	"compass",
-	"fireworks",
-	"meadow",
-	"architect",
-	"harmony",
-	"hurricane",
-	"sculpture",
-	"invention",
-	"starlight",
-	"expedition",
-	"castle",
-	"dragon",
-	"wizard",
-	"princess",
-	"knight",
-	"forest",
-	"crystal",
-	"journey",
-	"secret",
-	"mystery",
-	"adventure",
-	"treasure",
-	"island",
-	"pirate",
-	"ship",
-	"storm",
-	"legend",
-	"magic",
-	"spell",
-	"potion",
-	"sword",
-	"shield",
-	"crown",
-	"diamond",
-	"ruby",
-	"emerald",
-	"pearl",
-	"golden",
-	"silver",
-	"bronze",
-	"tower",
-	"bridge",
-	"river",
-	"valley",
-	"desert",
-	"jungle",
-	"mountain",
-	"village",
-	"cottage",
-	"mansion",
-	"palace",
-	"temple",
-	"church",
-	"school",
-	"hospital",
-	"market",
-	"bakery",
-	"restaurant",
-	"theater",
-	"museum",
-	"park",
+// Note: Word lists are now loaded client-side from public files
+// Server only tracks word indexes and word list metadata
+
+// Word list metadata (must match src/wordLists.ts)
+interface WordListMetadata {
+	id: string;
+	wordCount: number;
+}
+
+const WORD_LIST_METADATA: WordListMetadata[] = [
+	{
+		id: "default-en-v1",
+		wordCount: 111,
+	},
+	{
+		id: "basic-en-v1",
+		wordCount: 50,
+	},
 ];
+
+// Get word list length by ID
+const getWordListLength = (wordListId: string): number => {
+	const metadata = WORD_LIST_METADATA.find((wl) => wl.id === wordListId);
+	return metadata?.wordCount || 111; // Fallback to default count
+};
 
 // If there is anything you want to track for a specific user, change this interface
 export interface User {
@@ -181,7 +103,7 @@ export interface ClueWithSubmitter {
 export interface GameState extends BaseGameState {
 	// Core game state
 	hostId: string | null;
-	currentWord: string | null;
+	currentWordIndex: number | null;
 	gamePhase: GamePhase;
 
 	// Player roles
@@ -211,34 +133,24 @@ export interface GameState extends BaseGameState {
 	usedWordIndexes: number[];
 }
 
-// Load word list
-const loadWordList = (_wordListId: string): string[] => {
-	// For now, we'll still use the default word list regardless of ID
-	// In a full implementation, this could fetch from different sources
-	// based on the wordListId
-	return DEFAULT_WORD_LIST;
-};
-
-// Get a random word by index that hasn't been used
-const getRandomWordByIndex = (
+// Get a random index that hasn't been used
+// Word list length is determined by wordListId but server doesn't load actual words
+const getRandomIndex = (
 	wordListId: string,
 	usedWordIndexes: number[],
-): { word: string; index: number } => {
-	const wordList = loadWordList(wordListId);
+	wordListLength: number,
+): number => {
 	const availableIndexes = Array.from(
-		{ length: wordList.length },
+		{ length: wordListLength },
 		(_, i) => i,
 	).filter((index) => !usedWordIndexes.includes(index));
 
 	if (availableIndexes.length === 0) {
 		// If all words have been used, reset and start over
-		const randomIndex = Math.floor(Math.random() * wordList.length);
-		return { word: wordList[randomIndex], index: randomIndex };
+		return Math.floor(Math.random() * wordListLength);
 	}
 
-	const randomAvailableIndex =
-		availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
-	return { word: wordList[randomAvailableIndex], index: randomAvailableIndex };
+	return availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
 };
 
 // This is how a fresh new game starts out, it's a function so you can make it dynamic!
@@ -248,7 +160,7 @@ export const initialGame = (): GameState => ({
 
 	// Core game state
 	hostId: null,
-	currentWord: null,
+	currentWordIndex: null,
 	gamePhase: "lobby",
 
 	// Player roles
@@ -458,22 +370,24 @@ export const gameUpdater = (
 			}
 
 			const firstGuesser = state.users[0];
-			const { word: currentWord, index: wordIndex } = getRandomWordByIndex(
+			const wordListLength = getWordListLength(state.selectedWordListId);
+			const wordIndex = getRandomIndex(
 				state.selectedWordListId,
 				state.usedWordIndexes,
+				wordListLength,
 			);
 
 			return {
 				...state,
 				gamePhase: "writing-clues",
 				currentGuesser: firstGuesser.id,
-				currentWord,
+				currentWordIndex: wordIndex,
 				usedWordIndexes: [...state.usedWordIndexes, wordIndex],
 				submittedClues: {},
 				validClues: [],
 				setScore: 0,
 				gamesAttempted: 0,
-				log: addLog(`Set started! Word: ${currentWord}`, state.log),
+				log: addLog(`Set started! Word index: ${wordIndex}`, state.log),
 			};
 		}
 
@@ -549,54 +463,8 @@ export const gameUpdater = (
 				return state;
 			}
 
-			const isExactMatch =
-				action.guess.toLowerCase().trim() ===
-				state.currentWord?.toLowerCase().trim();
-
-			// If it's an exact match, handle scoring immediately
-			if (isExactMatch) {
-				const newScore = state.setScore + 1;
-				const newGamesAttempted = state.gamesAttempted + 1;
-
-				// Check if set is complete
-				if (newGamesAttempted >= state.setTarget) {
-					const setResult: SetResult = {
-						score: newScore,
-						target: state.setTarget,
-						completed: true,
-					};
-
-					return {
-						...state,
-						setScore: newScore,
-						gamesAttempted: newGamesAttempted,
-						lastGuess: action.guess,
-						lastGuessCorrect: true,
-						gamePhase: "set-end",
-						setHistory: [...state.setHistory, setResult],
-						log: addLog(
-							`Set complete! Final score: ${newScore}/${state.setTarget}`,
-							state.log,
-						),
-					};
-				}
-
-				// Continue to next round with correct answer
-				return {
-					...state,
-					setScore: newScore,
-					gamesAttempted: newGamesAttempted,
-					lastGuess: action.guess,
-					lastGuessCorrect: true,
-					gamePhase: "round-end",
-					log: addLog(
-						`Correct! Score: ${newScore}/${newGamesAttempted}`,
-						state.log,
-					),
-				};
-			}
-
-			// If not an exact match, go to checking-answer phase
+			// Since server doesn't have access to actual words, all guesses
+			// must go through the checker for verification
 			return {
 				...state,
 				lastGuess: action.guess,
@@ -666,20 +534,24 @@ export const gameUpdater = (
 				state.users,
 				state.currentGuesser,
 			);
-			const { word: nextWordForRound, index: nextWordIndex } =
-				getRandomWordByIndex(state.selectedWordListId, state.usedWordIndexes);
+			const wordListLength = getWordListLength(state.selectedWordListId);
+			const nextWordIndex = getRandomIndex(
+				state.selectedWordListId,
+				state.usedWordIndexes,
+				wordListLength,
+			);
 
 			return {
 				...state,
 				gamePhase: "writing-clues",
 				currentGuesser: nextGuesserForRound?.id || null,
-				currentWord: nextWordForRound,
+				currentWordIndex: nextWordIndex,
 				usedWordIndexes: [...state.usedWordIndexes, nextWordIndex],
 				submittedClues: {},
 				validClues: [],
 				lastGuess: null,
 				lastGuessCorrect: null,
-				log: addLog(`Next round started! Word: ${nextWordForRound}`, state.log),
+				log: addLog(`Next round started! Word index: ${nextWordIndex}`, state.log),
 			};
 		}
 
@@ -724,8 +596,12 @@ export const gameUpdater = (
 			}
 
 			const nextRoundGuesser = getNextPlayer(state.users, state.currentGuesser);
-			const { word: nextRoundWord, index: nextWordIndex } =
-				getRandomWordByIndex(state.selectedWordListId, state.usedWordIndexes);
+			const wordListLength = getWordListLength(state.selectedWordListId);
+			const nextWordIndex = getRandomIndex(
+				state.selectedWordListId,
+				state.usedWordIndexes,
+				wordListLength,
+			);
 			const newAttempted = state.gamesAttempted + 1;
 
 			// Check if set is complete after skipping
@@ -752,7 +628,7 @@ export const gameUpdater = (
 				...state,
 				gamePhase: "writing-clues",
 				currentGuesser: nextRoundGuesser?.id || null,
-				currentWord: nextRoundWord,
+				currentWordIndex: nextWordIndex,
 				usedWordIndexes: [...state.usedWordIndexes, nextWordIndex],
 				submittedClues: {},
 				validClues: [],

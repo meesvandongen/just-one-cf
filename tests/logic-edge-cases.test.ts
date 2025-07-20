@@ -100,21 +100,20 @@ describe("Game Logic Edge Cases", () => {
 				state,
 			);
 
-			// Test case insensitive guess
+			// Test any guess now goes to checking-answer (case sensitivity is client-side)
 			const guesser = state.users.find((u) => u.id === state.currentGuesser)!;
-			const correctWord = state.currentWord!;
-			const uppercaseGuess = correctWord.toUpperCase();
-
 			const action: ServerAction = {
 				type: "submit-guess",
-				guess: uppercaseGuess,
+				guess: "UPPERCASE GUESS",
 				user: guesser,
 			};
 
 			const newState = gameUpdater(action, state);
 
-			expect(newState.lastGuessCorrect).toBe(true);
-			expect(newState.setScore).toBe(1);
+			// Since server doesn't handle word comparison, all guesses go to checking-answer
+			expect(newState.gamePhase).toBe("checking-answer");
+			expect(newState.lastGuess).toBe("UPPERCASE GUESS");
+			expect(newState.lastGuessCorrect).toBeNull(); // Will be determined by checker
 		});
 
 		it("should handle whitespace in guesses correctly", () => {
@@ -149,10 +148,9 @@ describe("Game Logic Edge Cases", () => {
 				state,
 			);
 
-			// Test guess with leading/trailing whitespace
+			// Test guess with leading/trailing whitespace (server doesn't handle word comparison)
 			const guesser = state.users.find((u) => u.id === state.currentGuesser)!;
-			const correctWord = state.currentWord!;
-			const guessWithWhitespace = `  ${correctWord}  `;
+			const guessWithWhitespace = "  test guess  ";
 
 			const action: ServerAction = {
 				type: "submit-guess",
@@ -162,8 +160,10 @@ describe("Game Logic Edge Cases", () => {
 
 			const newState = gameUpdater(action, state);
 
-			expect(newState.lastGuessCorrect).toBe(true);
-			expect(newState.setScore).toBe(1);
+			// All guesses go to checking-answer phase now
+			expect(newState.gamePhase).toBe("checking-answer");
+			expect(newState.lastGuess).toBe("  test guess  ");
+			expect(newState.lastGuessCorrect).toBeNull(); // Will be determined by checker
 		});
 	});
 
@@ -329,13 +329,26 @@ describe("Game Logic Edge Cases", () => {
 				state,
 			);
 
-			// Make correct guess to complete set
+			// Make guess (all guesses now go to checking-answer first)
 			const guesser = state.users.find((u) => u.id === state.currentGuesser)!;
 			state = gameUpdater(
 				{
 					type: "submit-guess",
-					guess: state.currentWord!,
+					guess: "correct answer",
 					user: guesser,
+				},
+				state,
+			);
+
+			// Should now be in checking-answer phase
+			expect(state.gamePhase).toBe("checking-answer");
+
+			// Checker verifies as correct to complete set
+			state = gameUpdater(
+				{
+					type: "verify-answer",
+					isCorrect: true,
+					user: checker,
 				},
 				state,
 			);
@@ -391,8 +404,8 @@ describe("Game Logic Edge Cases", () => {
 			const host = state.users.find((u) => u.isHost)!;
 			state = gameUpdater({ type: "start-set", user: host }, state);
 
-			// Should still assign a word even when some are used
-			expect(state.currentWord).toBeTruthy();
+			// Should still assign a word index even when some are used
+			expect(state.currentWordIndex).not.toBeNull();
 			expect(state.usedWordIndexes).toHaveLength(6); // Original 5 + 1 new
 		});
 	});

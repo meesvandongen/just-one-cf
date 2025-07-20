@@ -31,7 +31,7 @@ describe("Game Logic Tests", () => {
 			expect(gameState.users).toEqual([]);
 			expect(gameState.hostId).toBeNull();
 			expect(gameState.gamePhase).toBe("lobby");
-			expect(gameState.currentWord).toBeNull();
+			expect(gameState.currentWordIndex).toBeNull();
 			expect(gameState.currentGuesser).toBeNull();
 			expect(gameState.setScore).toBe(0);
 			expect(gameState.gamesAttempted).toBe(0);
@@ -133,7 +133,7 @@ describe("Game Logic Tests", () => {
 			const newState = gameUpdater(action, stateWithUsers);
 
 			expect(newState.gamePhase).toBe("writing-clues");
-			expect(newState.currentWord).toBeTruthy();
+			expect(newState.currentWordIndex).not.toBeNull();
 			expect(newState.currentGuesser).toBe("user1");
 			expect(newState.usedWordIndexes).toHaveLength(1);
 		});
@@ -431,16 +431,16 @@ describe("Game Logic Tests", () => {
 			)!;
 			const action: ServerAction = {
 				type: "submit-guess",
-				guess: stateReadyForGuessing.currentWord!,
+				guess: "correct answer", // Any guess now goes to checking-answer
 				user: guesser,
 			};
 
 			const newState = gameUpdater(action, stateReadyForGuessing);
 
-			expect(newState.lastGuessCorrect).toBe(true);
-			expect(newState.setScore).toBe(1);
-			expect(newState.gamesAttempted).toBe(1);
-			expect(newState.gamePhase).toBe("round-end");
+			// Since server doesn't know the word, all guesses go to checking-answer
+			expect(newState.lastGuessCorrect).toBeNull(); // Will be determined by checker
+			expect(newState.gamePhase).toBe("checking-answer");
+			expect(newState.lastGuess).toBe("correct answer");
 		});
 
 		it("should handle incorrect guess by moving to checking-answer phase", () => {
@@ -566,15 +566,15 @@ describe("Game Logic Tests", () => {
 			)!;
 			const action: ServerAction = {
 				type: "submit-guess",
-				guess: stateNearEnd.currentWord!,
+				guess: "final answer", // Any guess now goes to checking-answer first
 				user: guesser,
 			};
 
 			const newState = gameUpdater(action, stateNearEnd);
 
-			expect(newState.gamePhase).toBe("set-end");
-			expect(newState.setHistory).toHaveLength(1);
-			expect(newState.setHistory[0].completed).toBe(true);
+			// Now all guesses go to checking-answer phase first
+			expect(newState.gamePhase).toBe("checking-answer");
+			expect(newState.lastGuess).toBe("final answer");
 		});
 	});
 
@@ -671,14 +671,14 @@ describe("Game Logic Tests", () => {
 			const host = state.users.find((u) => u.isHost)!;
 			state = gameUpdater({ type: "start-set", user: host }, state);
 
-			const firstWord = state.currentWord;
+			const firstWordIndex = state.currentWordIndex;
 			expect(state.usedWordIndexes).toHaveLength(1);
 
 			// Pass word to get next word
 			state = gameUpdater({ type: "pass-word", user: host }, state);
 
-			const secondWord = state.currentWord;
-			expect(secondWord).not.toBe(firstWord);
+			const secondWordIndex = state.currentWordIndex;
+			expect(secondWordIndex).not.toBe(firstWordIndex);
 			expect(state.usedWordIndexes).toHaveLength(2);
 		});
 	});
@@ -704,12 +704,12 @@ describe("Game Logic Tests", () => {
 
 		it("should allow host to pass word", () => {
 			const host = gameInProgress.users.find((u) => u.isHost)!;
-			const originalWord = gameInProgress.currentWord;
+			const originalWordIndex = gameInProgress.currentWordIndex;
 			const action: ServerAction = { type: "pass-word", user: host };
 
 			const newState = gameUpdater(action, gameInProgress);
 
-			expect(newState.currentWord).not.toBe(originalWord);
+			expect(newState.currentWordIndex).not.toBe(originalWordIndex);
 			expect(newState.gamesAttempted).toBe(1);
 			expect(newState.gamePhase).toBe("writing-clues");
 		});
