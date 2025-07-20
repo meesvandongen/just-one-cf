@@ -10,7 +10,9 @@ import {
 
 // Helper functions for testing with the new ClueWithSubmitter structure
 const clueExists = (validClues: any[], clueText: string): boolean => {
-	return validClues.some((clueWithSubmitter) => clueWithSubmitter.clue === clueText);
+	return validClues.some(
+		(clueWithSubmitter) => clueWithSubmitter.clue === clueText,
+	);
 };
 
 const clueDoesNotExist = (validClues: any[], clueText: string): boolean => {
@@ -34,8 +36,8 @@ describe("Game Logic Tests", () => {
 			expect(gameState.setScore).toBe(0);
 			expect(gameState.gamesAttempted).toBe(0);
 			expect(gameState.setTarget).toBe(20);
-			expect(gameState.wordList.length).toBeGreaterThan(0);
-			expect(gameState.usedWords).toEqual([]);
+			expect(gameState.selectedWordListId).toBe("default-en-v1");
+			expect(gameState.usedWordIndexes).toEqual([]);
 			expect(gameState.log).toHaveLength(1);
 			expect(gameState.log[0].message).toBe("Game Created!");
 		});
@@ -133,7 +135,7 @@ describe("Game Logic Tests", () => {
 			expect(newState.gamePhase).toBe("writing-clues");
 			expect(newState.currentWord).toBeTruthy();
 			expect(newState.currentGuesser).toBe("user1");
-			expect(newState.usedWords).toContain(newState.currentWord);
+			expect(newState.usedWordIndexes).toHaveLength(1);
 		});
 
 		it("should not start set with insufficient players", () => {
@@ -670,14 +672,14 @@ describe("Game Logic Tests", () => {
 			state = gameUpdater({ type: "start-set", user: host }, state);
 
 			const firstWord = state.currentWord;
-			expect(state.usedWords).toContain(firstWord);
+			expect(state.usedWordIndexes).toHaveLength(1);
 
 			// Pass word to get next word
 			state = gameUpdater({ type: "pass-word", user: host }, state);
 
 			const secondWord = state.currentWord;
 			expect(secondWord).not.toBe(firstWord);
-			expect(state.usedWords).toContain(secondWord);
+			expect(state.usedWordIndexes).toHaveLength(2);
 		});
 	});
 

@@ -41,8 +41,8 @@ const queryParamsValidator = z.object({
 function Home() {
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
-	const { roomId: paramRoomId } = useParams<{ roomId?: string }>();
-	const { t } = useLingui();
+	const { roomId: _paramRoomId } = useParams<{ roomId?: string }>();
+	const { t: _t } = useLingui();
 	const [qrScannerOpen, setQrScannerOpen] = useState(false);
 	const [roomCode, setRoomCode] = useState("");
 

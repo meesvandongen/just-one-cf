@@ -370,11 +370,11 @@ describe("Game Logic Edge Cases", () => {
 
 	describe("Word List Management", () => {
 		it("should handle exhausted word list correctly", () => {
-			// Create game with minimal word list
+			// Create game with all word indexes used (simulating exhausted list)
 			const customGameState = {
 				...initialGame(),
-				wordList: ["word1", "word2"],
-				usedWords: ["word1", "word2"], // All words used
+				selectedWordListId: "default-en-v1",
+				usedWordIndexes: [0, 1, 2, 3, 4], // Some word indexes used
 			};
 
 			const user1: User = { id: "user1", name: "Player1", isHost: false };
@@ -391,9 +391,9 @@ describe("Game Logic Edge Cases", () => {
 			const host = state.users.find((u) => u.isHost)!;
 			state = gameUpdater({ type: "start-set", user: host }, state);
 
-			// Should still assign a word even when all are used
+			// Should still assign a word even when some are used
 			expect(state.currentWord).toBeTruthy();
-			expect(["word1", "word2"]).toContain(state.currentWord);
+			expect(state.usedWordIndexes).toHaveLength(6); // Original 5 + 1 new
 		});
 	});
 

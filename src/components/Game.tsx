@@ -10,6 +10,7 @@ import {
 	Group,
 	Loader,
 	Paper,
+	Select,
 	SimpleGrid,
 	Stack,
 	Text,
@@ -20,6 +21,7 @@ import { useState } from "react";
 import { MdCheck, MdLogout, MdSend, MdSkipNext, MdStop } from "react-icons/md";
 import QRCode from "react-qr-code";
 import { useGameRoom } from "@/hooks/useGameRoom";
+import { WORD_LISTS } from "@/wordLists";
 
 interface GameProps {
 	username: string;
@@ -191,6 +193,34 @@ const Game = ({ username, roomId }: GameProps) => {
 					</Grid.Col>
 				</Grid>
 
+				{isHost && (
+					<Stack gap="md">
+						<Title order={2}>
+							<Trans>Game Settings</Trans>
+						</Title>
+						<Select
+							label={<Trans>Word List</Trans>}
+							placeholder="Select a word list"
+							value={gameState.selectedWordListId}
+							onChange={(value) => {
+								if (value) {
+									dispatch({ type: "select-word-list", wordListId: value });
+								}
+							}}
+							data={WORD_LISTS.map((wordList) => ({
+								value: wordList.id,
+								label: `${wordList.name} (${wordList.wordCount} words)`,
+							}))}
+							description={(() => {
+								const selectedWordList = WORD_LISTS.find(
+									(wl) => wl.id === gameState.selectedWordListId,
+								);
+								return selectedWordList ? selectedWordList.description : "";
+							})()}
+						/>
+					</Stack>
+				)}
+
 				<Stack gap="md">
 					<Title order={2}>
 						<Trans>Players ({gameState.users.length})</Trans>
@@ -350,9 +380,15 @@ const Game = ({ username, roomId }: GameProps) => {
 										key={index}
 										onClick={() => toggleClueSelection(clueWithSubmitter.clue)}
 										variant={
-											selectedInvalidClues.includes(clueWithSubmitter.clue) ? "filled" : "outline"
+											selectedInvalidClues.includes(clueWithSubmitter.clue)
+												? "filled"
+												: "outline"
 										}
-										color={selectedInvalidClues.includes(clueWithSubmitter.clue) ? "red" : "gray"}
+										color={
+											selectedInvalidClues.includes(clueWithSubmitter.clue)
+												? "red"
+												: "gray"
+										}
 										size="lg"
 										h="auto"
 										p="1rem"

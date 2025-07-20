@@ -206,16 +206,39 @@ export interface GameState extends BaseGameState {
 	// Timer state
 	currentTimer: TimerState | null;
 
-	// Word list
-	wordList: string[];
-	usedWords: string[];
+	// Word list selection
+	selectedWordListId: string;
+	usedWordIndexes: number[];
 }
 
 // Load word list
-const loadWordList = (): string[] => {
-	// In a Cloudflare Workers environment, we use the default word list
-	// In a full Node.js environment, you could load from a file
+const loadWordList = (_wordListId: string): string[] => {
+	// For now, we'll still use the default word list regardless of ID
+	// In a full implementation, this could fetch from different sources
+	// based on the wordListId
 	return DEFAULT_WORD_LIST;
+};
+
+// Get a random word by index that hasn't been used
+const getRandomWordByIndex = (
+	wordListId: string,
+	usedWordIndexes: number[],
+): { word: string; index: number } => {
+	const wordList = loadWordList(wordListId);
+	const availableIndexes = Array.from(
+		{ length: wordList.length },
+		(_, i) => i,
+	).filter((index) => !usedWordIndexes.includes(index));
+
+	if (availableIndexes.length === 0) {
+		// If all words have been used, reset and start over
+		const randomIndex = Math.floor(Math.random() * wordList.length);
+		return { word: wordList[randomIndex], index: randomIndex };
+	}
+
+	const randomAvailableIndex =
+		availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
+	return { word: wordList[randomAvailableIndex], index: randomAvailableIndex };
 };
 
 // This is how a fresh new game starts out, it's a function so you can make it dynamic!
@@ -256,20 +279,10 @@ export const initialGame = (): GameState => ({
 	// Timer state
 	currentTimer: null,
 
-	// Word list
-	wordList: loadWordList(),
-	usedWords: [],
+	// Word list selection
+	selectedWordListId: "default-en-v1", // Default to first word list
+	usedWordIndexes: [],
 });
-
-// Get a random word that hasn't been used
-const getRandomWord = (wordList: string[], usedWords: string[]): string => {
-	const availableWords = wordList.filter((word) => !usedWords.includes(word));
-	if (availableWords.length === 0) {
-		// If all words have been used, reset the used words list
-		return wordList[Math.floor(Math.random() * wordList.length)];
-	}
-	return availableWords[Math.floor(Math.random() * availableWords.length)];
-};
 
 // Get the next player in rotation
 const getNextPlayer = (
@@ -302,7 +315,10 @@ const removeDuplicateClues = (
 	submittedClues: { [userId: string]: string },
 	users: User[],
 ): ClueWithSubmitter[] => {
-	const clueFrequency = new Map<string, Array<{ userId: string; clue: string }>>();
+	const clueFrequency = new Map<
+		string,
+		Array<{ userId: string; clue: string }>
+	>();
 
 	// Count occurrences of each normalized clue and keep original versions with submitter info
 	Object.entries(submittedClues).forEach(([userId, clue]) => {
@@ -351,7 +367,8 @@ export type GameAction =
 	| { type: "update-settings"; settings: Partial<GameSettings> }
 	| { type: "update-timers"; timers: Partial<TimerState> }
 	| { type: "extend-timer"; additionalTime: number }
-	| { type: "timer-update"; timerState: TimerState };
+	| { type: "timer-update"; timerState: TimerState }
+	| { type: "select-word-list"; wordListId: string };
 
 export const gameUpdater = (
 	action: ServerAction,
@@ -441,14 +458,17 @@ export const gameUpdater = (
 			}
 
 			const firstGuesser = state.users[0];
-			const currentWord = getRandomWord(state.wordList, state.usedWords);
+			const { word: currentWord, index: wordIndex } = getRandomWordByIndex(
+				state.selectedWordListId,
+				state.usedWordIndexes,
+			);
 
 			return {
 				...state,
 				gamePhase: "writing-clues",
 				currentGuesser: firstGuesser.id,
 				currentWord,
-				usedWords: [...state.usedWords, currentWord],
+				usedWordIndexes: [...state.usedWordIndexes, wordIndex],
 				submittedClues: {},
 				validClues: [],
 				setScore: 0,
@@ -474,8 +494,10 @@ export const gameUpdater = (
 			if (
 				allCluesSubmitted(state.users, state.currentGuesser, newSubmittedClues)
 			) {
-				const automaticallyFilteredClues =
-					removeDuplicateClues(newSubmittedClues, state.users);
+				const automaticallyFilteredClues = removeDuplicateClues(
+					newSubmittedClues,
+					state.users,
+				);
 				const nextChecker = getNextPlayer(state.users, state.currentGuesser);
 
 				return {
@@ -507,7 +529,8 @@ export const gameUpdater = (
 			}
 
 			const finalValidClues = state.validClues.filter(
-				(clueWithSubmitter) => !action.invalidClues.includes(clueWithSubmitter.clue),
+				(clueWithSubmitter) =>
+					!action.invalidClues.includes(clueWithSubmitter.clue),
 			);
 
 			return {
@@ -643,14 +666,15 @@ export const gameUpdater = (
 				state.users,
 				state.currentGuesser,
 			);
-			const nextWordForRound = getRandomWord(state.wordList, state.usedWords);
+			const { word: nextWordForRound, index: nextWordIndex } =
+				getRandomWordByIndex(state.selectedWordListId, state.usedWordIndexes);
 
 			return {
 				...state,
 				gamePhase: "writing-clues",
 				currentGuesser: nextGuesserForRound?.id || null,
 				currentWord: nextWordForRound,
-				usedWords: [...state.usedWords, nextWordForRound],
+				usedWordIndexes: [...state.usedWordIndexes, nextWordIndex],
 				submittedClues: {},
 				validClues: [],
 				lastGuess: null,
@@ -700,7 +724,8 @@ export const gameUpdater = (
 			}
 
 			const nextRoundGuesser = getNextPlayer(state.users, state.currentGuesser);
-			const nextRoundWord = getRandomWord(state.wordList, state.usedWords);
+			const { word: nextRoundWord, index: nextWordIndex } =
+				getRandomWordByIndex(state.selectedWordListId, state.usedWordIndexes);
 			const newAttempted = state.gamesAttempted + 1;
 
 			// Check if set is complete after skipping
@@ -728,7 +753,7 @@ export const gameUpdater = (
 				gamePhase: "writing-clues",
 				currentGuesser: nextRoundGuesser?.id || null,
 				currentWord: nextRoundWord,
-				usedWords: [...state.usedWords, nextRoundWord],
+				usedWordIndexes: [...state.usedWordIndexes, nextWordIndex],
 				submittedClues: {},
 				validClues: [],
 				gamesAttempted: newAttempted,
@@ -779,6 +804,18 @@ export const gameUpdater = (
 					...action.settings,
 				},
 				log: addLog("Game settings updated", state.log),
+			};
+
+		case "select-word-list":
+			if (!isHost(action.user.id)) {
+				return state;
+			}
+
+			return {
+				...state,
+				selectedWordListId: action.wordListId,
+				usedWordIndexes: [], // Reset used words when switching word lists
+				log: addLog(`Word list changed to ${action.wordListId}`, state.log),
 			};
 
 		default:
