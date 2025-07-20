@@ -12,7 +12,13 @@ interface LayoutProps {
 	qrCodeValue?: string;
 }
 
-const Layout = ({ children, showSidebar = false, onLeaveGame, roomCode, qrCodeValue }: LayoutProps) => {
+const Layout = ({
+	children,
+	showSidebar = false,
+	onLeaveGame,
+	roomCode,
+	qrCodeValue,
+}: LayoutProps) => {
 	const [opened, { toggle, close }] = useDisclosure(false);
 
 	return (
@@ -20,11 +26,15 @@ const Layout = ({ children, showSidebar = false, onLeaveGame, roomCode, qrCodeVa
 			bg="gray.1"
 			h="100vh"
 			padding={0}
-			navbar={showSidebar ? {
-				width: 300,
-				breakpoint: 'sm',
-				collapsed: { mobile: !opened, desktop: !opened },
-			} : undefined}
+			navbar={
+				showSidebar
+					? {
+							width: 300,
+							breakpoint: "sm",
+							collapsed: { mobile: !opened, desktop: !opened },
+						}
+					: undefined
+			}
 		>
 			<AppShell.Header h={60} p="sm">
 				<Group h="100%" px="md" justify="space-between">
@@ -38,7 +48,7 @@ const Layout = ({ children, showSidebar = false, onLeaveGame, roomCode, qrCodeVa
 							<MdMenu size={20} />
 						</ActionIcon>
 					)}
-					<Box style={{ marginLeft: showSidebar ? undefined : 'auto' }}>
+					<Box style={{ marginLeft: showSidebar ? undefined : "auto" }}>
 						<LanguageSelector />
 					</Box>
 				</Group>
