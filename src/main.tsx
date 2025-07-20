@@ -6,6 +6,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import "./global.css";
 import { defaultLocale, loadCatalog } from "./i18n";
 
 // Initialize i18n with default locale

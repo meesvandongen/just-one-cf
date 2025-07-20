@@ -20,6 +20,7 @@ import { useState } from "react";
 import { MdCheck, MdLogout, MdSend, MdSkipNext, MdStop } from "react-icons/md";
 import QRCode from "react-qr-code";
 import { useGameRoom } from "@/hooks/useGameRoom";
+import { CenterLayout } from "./LayoutComponents";
 
 interface GameProps {
 	username: string;
@@ -40,15 +41,13 @@ const Game = ({ username, roomId }: GameProps) => {
 	// Indicated that the game is loading
 	if (gameState === null) {
 		return (
-			<Center h="60vh">
-				<Stack align="center" gap="lg">
-					<Text size="4rem">🎯</Text>
-					<Loader size="lg" />
-					<Text size="xl">
-						<Trans>Connecting to game server...</Trans>
-					</Text>
-				</Stack>
-			</Center>
+			<CenterLayout>
+				<Text size="4rem">🎯</Text>
+				<Loader size="lg" />
+				<Text size="xl" ta="center">
+					<Trans>Connecting to game server...</Trans>
+				</Text>
+			</CenterLayout>
 		);
 	}
 

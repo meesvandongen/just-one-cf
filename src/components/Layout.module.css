@@ -1,0 +1,301 @@
+/* Mobile-first responsive grid layout with named areas */
+.layout {
+	display: grid;
+	min-height: 100vh;
+	min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
+	grid-template-columns: 1fr;
+	grid-template-rows: auto 1fr auto;
+	grid-template-areas:
+		"header"
+		"main"
+		"footer";
+	background-color: var(--mantine-color-gray-1);
+	width: 100%;
+	overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* Header area */
+.header {
+	grid-area: header;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.75rem 1rem;
+	min-height: 60px;
+	background-color: white;
+	border-bottom: 1px solid var(--mantine-color-gray-3);
+	z-index: 100;
+}
+
+.headerLeft {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.headerRight {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+/* Main content area */
+.main {
+	grid-area: main;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	position: relative;
+	min-height: 0; /* Important for grid flex items */
+}
+
+.mainContent {
+	flex: 1;
+	overflow: auto;
+	padding: 1rem;
+	display: flex;
+	flex-direction: column;
+	/* Ensure content doesn't get hidden on mobile */
+	padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+	/* Better scrolling on iOS */
+	-webkit-overflow-scrolling: touch;
+	/* Prevent momentum scrolling issues */
+	overscroll-behavior: contain;
+}
+
+/* Footer area - optional, for future use */
+.footer {
+	grid-area: footer;
+	/* Hidden by default, can be shown when needed */
+	display: none;
+}
+
+/* Sidebar overlay for mobile */
+.sidebarOverlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 200;
+	display: none;
+}
+
+.sidebarOverlay.open {
+	display: block;
+}
+
+.sidebar {
+	position: fixed;
+	top: 0;
+	left: -300px;
+	width: 300px;
+	height: 100vh;
+	height: 100dvh;
+	background-color: white;
+	z-index: 300;
+	transition: transform 0.3s ease;
+	overflow-y: auto;
+	padding: 1rem;
+	border-right: 1px solid var(--mantine-color-gray-3);
+}
+
+.sidebar.open {
+	transform: translateX(300px);
+}
+
+/* Hide desktop sidebar on mobile by default */
+.sidebarDesktop {
+	display: none;
+}
+
+/* Tablet and larger screens */
+@media (min-width: 768px) {
+	.layout {
+		grid-template-columns: auto 1fr auto;
+		grid-template-areas:
+			"sidebar-desktop header header"
+			"sidebar-desktop main main"
+			"sidebar-desktop footer footer";
+	}
+
+	.layoutWithSidebar {
+		grid-template-areas:
+			"sidebar-desktop header header"
+			"sidebar-desktop main main"
+			"sidebar-desktop footer footer";
+	}
+
+	.mainContent {
+		padding: 1.5rem;
+		padding-bottom: 1.5rem;
+	}
+
+	/* Desktop sidebar */
+	.sidebarDesktop {
+		grid-area: sidebar-desktop;
+		width: 300px;
+		background-color: white;
+		border-right: 1px solid var(--mantine-color-gray-3);
+		padding: 1rem;
+		overflow-y: auto;
+		display: none;
+	}
+
+	.sidebarDesktop.show {
+		display: block;
+	}
+
+	/* Hide mobile sidebar on desktop */
+	.sidebarOverlay,
+	.sidebar {
+		display: none !important;
+	}
+}
+
+/* Large desktop screens */
+@media (min-width: 1200px) {
+	.mainContent {
+		padding: 2rem;
+		max-width: 1200px;
+		margin: 0 auto;
+		width: 100%;
+	}
+}
+
+/* Game-specific grid areas for flexible content layout */
+.gameLayout {
+	display: grid;
+	gap: 1rem;
+	height: 100%;
+	grid-template-rows: auto 1fr auto;
+	grid-template-areas:
+		"game-header"
+		"game-content"
+		"game-actions";
+}
+
+.gameHeader {
+	grid-area: game-header;
+}
+
+.gameContent {
+	grid-area: game-content;
+	overflow: auto;
+	min-height: 0;
+}
+
+.gameActions {
+	grid-area: game-actions;
+	padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Two-column layout for larger content */
+@media (min-width: 768px) {
+	.gameLayout.twoColumn {
+		grid-template-columns: 1fr 1fr;
+		grid-template-areas:
+			"game-header game-header"
+			"game-content-left game-content-right"
+			"game-actions game-actions";
+	}
+
+	.gameContentLeft {
+		grid-area: game-content-left;
+	}
+
+	.gameContentRight {
+		grid-area: game-content-right;
+	}
+}
+
+/* Center content layout for home/loading screens */
+.centerLayout {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 60vh;
+	padding: 2rem 1rem;
+}
+
+/* Form layout with consistent spacing */
+.formLayout {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	max-width: 400px;
+	margin: 0 auto;
+	padding: 1rem;
+}
+
+@media (min-width: 768px) {
+	.formLayout {
+		padding: 2rem;
+	}
+}
+
+/* Utility classes for common layout patterns */
+.fullHeight {
+	height: 100%;
+}
+
+.scrollable {
+	overflow: auto;
+}
+
+.noScrollbar {
+	overflow: hidden;
+}
+
+.centered {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.spaceBetween {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.flexColumn {
+	display: flex;
+	flex-direction: column;
+}
+
+.flexRow {
+	display: flex;
+	flex-direction: row;
+}
+
+.gap {
+	gap: 1rem;
+}
+
+.gapSmall {
+	gap: 0.5rem;
+}
+
+.gapLarge {
+	gap: 1.5rem;
+}
+
+/* Safe area insets for mobile devices with notches */
+.safeTop {
+	padding-top: env(safe-area-inset-top, 0px);
+}
+
+.safeBottom {
+	padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.safeLeft {
+	padding-left: env(safe-area-inset-left, 0px);
+}
+
+.safeRight {
+	padding-right: env(safe-area-inset-right, 0px);
+}

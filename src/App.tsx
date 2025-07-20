@@ -1,14 +1,5 @@
 import { Trans, useLingui } from "@lingui/react/macro";
-import {
-	Box,
-	Button,
-	Center,
-	PinInput,
-	Stack,
-	Text,
-	TextInput,
-	Title,
-} from "@mantine/core";
+import { Button, PinInput, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { MdAdd, MdQrCodeScanner } from "react-icons/md";
 import {
@@ -21,6 +12,7 @@ import {
 import { z } from "zod";
 import Game from "@/components/Game";
 import Layout from "@/components/Layout";
+import { CenterLayout, FormLayout } from "@/components/LayoutComponents";
 import QRScanner from "@/components/QRScanner";
 import {
 	clearSavedRoomCode,
@@ -109,109 +101,94 @@ function Home() {
 
 	return (
 		<Layout>
-			<Box
-				style={{
-					flex: 1,
-					display: "flex",
-					flexDirection: "column",
-					padding: "16px",
-				}}
-			>
-				<Title order={1} ta="center" mb="xl" size="2rem" c="gray.8">
+			<CenterLayout>
+				<Title
+					order={1}
+					ta="center"
+					mb="xl"
+					className="title-responsive"
+					c="gray.8"
+				>
 					<Trans>Just One</Trans>
 				</Title>
 
-				<Stack gap="xl" style={{ flex: 1 }}>
+				<FormLayout>
 					{/* QR Scanner Section - Prominent at top */}
 					<Stack gap="md">
 						<Text size="lg" fw={600} ta="center">
 							<Trans>Join an Existing Game</Trans>
 						</Text>
 
-						<Center>
-							<Button
-								onClick={() => setQrScannerOpen(true)}
-								size="xl"
-								variant="filled"
-								color="blue"
-								style={{
-									height: "120px",
-									width: "100%",
-									maxWidth: "400px",
-									fontSize: "18px",
-								}}
-								leftSection={<MdQrCodeScanner size="40" />}
-							>
-								<Stack gap="xs" align="center">
-									<Text size="xl" fw={600}>
-										<Trans>Scan QR Code</Trans>
-									</Text>
-									<Text size="sm" opacity={0.8}>
-										<Trans>Camera</Trans>
-									</Text>
-								</Stack>
-							</Button>
-						</Center>
+						<Button
+							onClick={() => setQrScannerOpen(true)}
+							size="xl"
+							variant="filled"
+							color="blue"
+							style={{
+								height: "120px",
+								width: "100%",
+								fontSize: "18px",
+							}}
+							leftSection={<MdQrCodeScanner size="40" />}
+						>
+							<Stack gap="xs" align="center">
+								<Text size="xl" fw={600}>
+									<Trans>Scan QR Code</Trans>
+								</Text>
+								<Text size="sm" opacity={0.8}>
+									<Trans>Camera</Trans>
+								</Text>
+							</Stack>
+						</Button>
 					</Stack>
 
-					{/* PIN Input Section - Similarly sized below camera */}
+					{/* PIN Input Section */}
 					<Stack gap="md">
 						<Text size="md" fw={500} ta="center" c="dimmed">
 							<Trans>Or enter room code manually</Trans>
 						</Text>
 
-						<Center>
-							<Stack
-								gap="md"
-								align="center"
-								style={{ width: "100%", maxWidth: "400px" }}
+						<Stack gap="md" align="center">
+							<PinInput
+								value={roomCode}
+								onChange={setRoomCode}
+								length={6}
+								type="number"
+								size="xl"
+								style={{ justifyContent: "center" }}
+								error={roomCode.length > 0 && !isValidRoomCode(roomCode)}
+							/>
+							<Button
+								onClick={handleJoinRoom}
+								size="lg"
+								variant="outline"
+								style={{ width: "100%", height: "56px" }}
+								disabled={!isValidRoomCode(roomCode)}
 							>
-								<PinInput
-									value={roomCode}
-									onChange={setRoomCode}
-									length={6}
-									type="number"
-									size="xl"
-									style={{ justifyContent: "center" }}
-									error={roomCode.length > 0 && !isValidRoomCode(roomCode)}
-								/>
-								<Button
-									onClick={handleJoinRoom}
-									size="lg"
-									variant="outline"
-									style={{ width: "100%", height: "56px" }}
-									disabled={!isValidRoomCode(roomCode)}
-								>
-									<Trans>Join Room</Trans>
-								</Button>
-							</Stack>
-						</Center>
+								<Trans>Join Room</Trans>
+							</Button>
+						</Stack>
 					</Stack>
 
-					{/* Spacer */}
-					<Box style={{ flex: 1 }} />
-
-					{/* Start New Session - At bottom */}
+					{/* Start New Session */}
 					<Stack gap="md">
 						<Text size="md" fw={500} ta="center" c="dimmed">
 							<Trans>Or start a new game</Trans>
 						</Text>
 
-						<Center>
-							<Button
-								onClick={handleStartNewSession}
-								size="lg"
-								variant="light"
-								color="green"
-								style={{ width: "100%", maxWidth: "400px", height: "56px" }}
-								leftSection={<MdAdd size="20" />}
-							>
-								<Trans>Start New Session</Trans>
-							</Button>
-						</Center>
+						<Button
+							onClick={handleStartNewSession}
+							size="lg"
+							variant="light"
+							color="green"
+							style={{ width: "100%", height: "56px" }}
+							leftSection={<MdAdd size="20" />}
+						>
+							<Trans>Start New Session</Trans>
+						</Button>
 					</Stack>
-				</Stack>
-			</Box>
+				</FormLayout>
+			</CenterLayout>
 
 			<QRScanner
 				isOpen={qrScannerOpen}
@@ -268,74 +245,56 @@ function NameSelection() {
 
 	return (
 		<Layout>
-			<Box
-				style={{
-					flex: 1,
-					display: "flex",
-					flexDirection: "column",
-					padding: "16px",
-				}}
-			>
-				<Box
-					style={{
-						flex: 1,
-						display: "flex",
-						flexDirection: "column",
-						justifyContent: "center",
-					}}
+			<CenterLayout>
+				<Title
+					order={1}
+					ta="center"
+					mb="md"
+					className="title-responsive"
+					c="gray.8"
 				>
-					<Title order={1} ta="center" mb="md" size="2rem" c="gray.8">
-						<Trans>Choose Your Name</Trans>
-					</Title>
+					<Trans>Choose Your Name</Trans>
+				</Title>
 
-					<Text size="lg" ta="center" c="dimmed" mb="xl">
-						<Trans>Room Code: {savedRoom}</Trans>
-					</Text>
+				<Text size="lg" ta="center" c="dimmed" mb="xl">
+					<Trans>Room Code: {savedRoom}</Trans>
+				</Text>
 
-					<form onSubmit={handleSubmit}>
-						<Stack gap="xl" align="center">
-							<TextInput
-								label={<Trans>Your Name</Trans>}
-								placeholder={t`Enter your name`}
-								value={username}
-								onChange={(e) => setUsername(e.target.value)}
-								required
-								size="xl"
-								style={{ width: "100%", maxWidth: "400px" }}
-								styles={{
-									input: {
-										height: "56px",
-										fontSize: "18px",
-										textAlign: "center",
-									},
-								}}
-								autoFocus
-							/>
+				<form onSubmit={handleSubmit}>
+					<FormLayout>
+						<TextInput
+							label={<Trans>Your Name</Trans>}
+							placeholder={t`Enter your name`}
+							value={username}
+							onChange={(e) => setUsername(e.target.value)}
+							required
+							size="xl"
+							styles={{
+								input: {
+									height: "56px",
+									fontSize: "18px",
+									textAlign: "center",
+								},
+							}}
+							autoFocus
+						/>
 
-							<Stack gap="md" style={{ width: "100%", maxWidth: "400px" }}>
-								<Button
-									type="submit"
-									size="xl"
-									variant="filled"
-									style={{ height: "56px", fontSize: "18px" }}
-									disabled={!username.trim()}
-								>
-									<Trans>Join Game</Trans>
-								</Button>
+						<Button
+							type="submit"
+							size="xl"
+							variant="filled"
+							style={{ height: "56px", fontSize: "18px" }}
+							disabled={!username.trim()}
+						>
+							<Trans>Join Game</Trans>
+						</Button>
 
-								<Button
-									onClick={handleBack}
-									size="lg"
-									variant="light"
-									color="gray"
-								>
-									<Trans>Back to Home</Trans>
-								</Button>
-							</Stack>
-						</Stack>
-					</form>
-				</Box>
-			</Box>
+						<Button onClick={handleBack} size="lg" variant="light" color="gray">
+							<Trans>Back to Home</Trans>
+						</Button>
+					</FormLayout>
+				</form>
+			</CenterLayout>
 		</Layout>
 	);
 }
