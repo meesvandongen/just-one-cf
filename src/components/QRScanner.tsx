@@ -23,13 +23,13 @@ export default function QRScanner({ isOpen, onClose, onScan }: QRScannerProps) {
 			try {
 				const url = new URL(text);
 				const joinParam = url.searchParams.get("join");
-				if (joinParam && joinParam.length === 8) {
-					roomCode = joinParam.toUpperCase();
+				if (joinParam && joinParam.length === 6 && /^\d{6}$/.test(joinParam)) {
+					roomCode = joinParam;
 				}
 			} catch {
-				// If not a URL, check if it's a direct 8-character room code
-				if (text.length === 8 && /^[A-Z0-9]+$/i.test(text)) {
-					roomCode = text.toUpperCase();
+				// If not a URL, check if it's a direct 6-digit room code
+				if (text.length === 6 && /^\d{6}$/.test(text)) {
+					roomCode = text;
 				}
 			}
 
