@@ -12,19 +12,30 @@ interface LayoutProps {
 	qrCodeValue?: string;
 }
 
-const Layout = ({ children, showSidebar = false, onLeaveGame, roomCode, qrCodeValue }: LayoutProps) => {
+const Layout = ({
+	children,
+	showSidebar = false,
+	onLeaveGame,
+	roomCode,
+	qrCodeValue,
+}: LayoutProps) => {
 	const [opened, { toggle, close }] = useDisclosure(false);
 
 	return (
 		<AppShell
 			bg="gray.1"
-			h="100vh"
+			h="100dvh"
+			className="mobile-vh-fallback"
 			padding={0}
-			navbar={showSidebar ? {
-				width: 300,
-				breakpoint: 'sm',
-				collapsed: { mobile: !opened, desktop: !opened },
-			} : undefined}
+			navbar={
+				showSidebar
+					? {
+							width: 300,
+							breakpoint: "sm",
+							collapsed: { mobile: !opened, desktop: !opened },
+						}
+					: undefined
+			}
 		>
 			<AppShell.Header h={60} p="sm">
 				<Group h="100%" px="md" justify="space-between">
@@ -38,7 +49,7 @@ const Layout = ({ children, showSidebar = false, onLeaveGame, roomCode, qrCodeVa
 							<MdMenu size={20} />
 						</ActionIcon>
 					)}
-					<Box style={{ marginLeft: showSidebar ? undefined : 'auto' }}>
+					<Box style={{ marginLeft: showSidebar ? undefined : "auto" }}>
 						<LanguageSelector />
 					</Box>
 				</Group>
@@ -57,7 +68,7 @@ const Layout = ({ children, showSidebar = false, onLeaveGame, roomCode, qrCodeVa
 
 			<AppShell.Main>
 				<Box
-					h="calc(100vh - 60px)"
+					h="calc(100dvh - 60px)"
 					style={{
 						display: "flex",
 						flexDirection: "column",
