@@ -7,6 +7,9 @@ import {
 	type User,
 } from "../party/logic";
 
+// Standard test word list for tests
+const TEST_WORD_LIST = ["apple", "banana", "cherry", "date", "elderberry", "fig", "grape", "honey", "ice", "jam"];
+
 describe("Game Logic Edge Cases", () => {
 	let gameState: GameState;
 
@@ -30,7 +33,7 @@ describe("Game Logic Edge Cases", () => {
 
 		it("should handle empty user list when starting set", () => {
 			const ghostUser: User = { id: "ghost", name: "Ghost", isHost: true };
-			const action: ServerAction = { type: "start-set", user: ghostUser };
+			const action: ServerAction = { type: "start-set", user: ghostUser, wordList: TEST_WORD_LIST };
 
 			const newState = gameUpdater(action, gameState);
 
@@ -79,7 +82,7 @@ describe("Game Logic Edge Cases", () => {
 			state = gameUpdater({ type: "UserEntered", user: user3 }, state);
 
 			const host = state.users.find((u) => u.isHost)!;
-			state = gameUpdater({ type: "start-set", user: host }, state);
+			state = gameUpdater({ type: "start-set", user: host, wordList: TEST_WORD_LIST }, state);
 
 			// Get to guessing phase
 			const nonGuessers = state.users.filter(
@@ -128,7 +131,7 @@ describe("Game Logic Edge Cases", () => {
 			state = gameUpdater({ type: "UserEntered", user: user3 }, state);
 
 			const host = state.users.find((u) => u.isHost)!;
-			state = gameUpdater({ type: "start-set", user: host }, state);
+			state = gameUpdater({ type: "start-set", user: host, wordList: TEST_WORD_LIST }, state);
 
 			// Get to guessing phase
 			const nonGuessers = state.users.filter(
@@ -197,7 +200,7 @@ describe("Game Logic Edge Cases", () => {
 		it("should rotate guesser correctly through multiple rounds", () => {
 			const host = stateWithUsers.users.find((u) => u.isHost)!;
 			let state = gameUpdater(
-				{ type: "start-set", user: host },
+				{ type: "start-set", user: host, wordList: TEST_WORD_LIST },
 				stateWithUsers,
 			);
 
@@ -232,7 +235,7 @@ describe("Game Logic Edge Cases", () => {
 		it("should handle checker assignment correctly", () => {
 			const host = stateWithUsers.users.find((u) => u.isHost)!;
 			let state = gameUpdater(
-				{ type: "start-set", user: host },
+				{ type: "start-set", user: host, wordList: TEST_WORD_LIST },
 				stateWithUsers,
 			);
 
@@ -259,7 +262,7 @@ describe("Game Logic Edge Cases", () => {
 		it("should handle player removal and adjust roles accordingly", () => {
 			const host = stateWithUsers.users.find((u) => u.isHost)!;
 			let state = gameUpdater(
-				{ type: "start-set", user: host },
+				{ type: "start-set", user: host, wordList: TEST_WORD_LIST },
 				stateWithUsers,
 			);
 
@@ -296,7 +299,7 @@ describe("Game Logic Edge Cases", () => {
 			state = gameUpdater({ type: "UserEntered", user: user3 }, state);
 
 			const host = state.users.find((u) => u.isHost)!;
-			gameInProgress = gameUpdater({ type: "start-set", user: host }, state);
+			gameInProgress = gameUpdater({ type: "start-set", user: host, wordList: TEST_WORD_LIST }, state);
 		});
 
 		it("should track set history correctly", () => {
@@ -370,30 +373,27 @@ describe("Game Logic Edge Cases", () => {
 
 	describe("Word List Management", () => {
 		it("should handle exhausted word list correctly", () => {
-			// Create game with minimal word list
-			const customGameState = {
-				...initialGame(),
-				wordList: ["word1", "word2"],
-				usedWords: ["word1", "word2"], // All words used
-			};
-
+			// Create game state with users
 			const user1: User = { id: "user1", name: "Player1", isHost: false };
 			const user2: User = { id: "user2", name: "Player2", isHost: false };
 			const user3: User = { id: "user3", name: "Player3", isHost: false };
 
 			let state = gameUpdater(
 				{ type: "UserEntered", user: user1 },
-				customGameState,
+				gameState,
 			);
 			state = gameUpdater({ type: "UserEntered", user: user2 }, state);
 			state = gameUpdater({ type: "UserEntered", user: user3 }, state);
 
 			const host = state.users.find((u) => u.isHost)!;
-			state = gameUpdater({ type: "start-set", user: host }, state);
+			
+			// Start with a small word list that will be exhausted
+			const smallWordList = ["word1", "word2"];
+			state = gameUpdater({ type: "start-set", user: host, wordList: smallWordList }, state);
 
-			// Should still assign a word even when all are used
-			expect(state.currentWord).toBeTruthy();
-			expect(["word1", "word2"]).toContain(state.currentWord);
+			// Should assign first word
+			expect(state.currentWord).toBe("word1");
+			expect(state.wordList).toEqual(smallWordList);
 		});
 	});
 

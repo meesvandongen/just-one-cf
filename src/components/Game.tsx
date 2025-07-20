@@ -21,6 +21,7 @@ import { MdCheck, MdLogout, MdSend, MdSkipNext, MdStop } from "react-icons/md";
 import QRCode from "react-qr-code";
 import { useGameRoom } from "@/hooks/useGameRoom";
 import { CenterLayout } from "./LayoutComponents";
+import { WordListSelector } from "./WordListSelector";
 
 interface GameProps {
 	username: string;
@@ -38,6 +39,9 @@ const Game = ({ username, roomId, onLeaveGame }: GameProps) => {
 	const [selectedInvalidClues, setSelectedInvalidClues] = useState<string[]>(
 		[],
 	);
+	
+	// Word list selection state (host only)
+	const [selectedWordList, setSelectedWordList] = useState<string[]>([]);
 
 	// Check if session has ended (gamePhase is lobby and no users)
 	useEffect(() => {
@@ -228,15 +232,31 @@ const Game = ({ username, roomId, onLeaveGame }: GameProps) => {
 					</SimpleGrid>
 				</Stack>
 
-				{isHost && gameState.users.length >= 3 && (
+				{isHost && (
+					<WordListSelector
+						setTarget={gameState.setTarget}
+						onWordListSelected={setSelectedWordList}
+						disabled={gameState.users.length < 3}
+					/>
+				)}
+
+				{isHost && gameState.users.length >= 3 && selectedWordList.length > 0 && (
 					<Center>
 						<Button
-							onClick={() => dispatch({ type: "start-set" })}
+							onClick={() => dispatch({ type: "start-set", wordList: selectedWordList })}
 							size="xl"
 							color="green"
 						>
 							<Trans>Start Game</Trans>
 						</Button>
+					</Center>
+				)}
+
+				{isHost && gameState.users.length >= 3 && selectedWordList.length === 0 && (
+					<Center>
+						<Text c="dimmed">
+							<Trans>Please select a word list to start the game</Trans>
+						</Text>
 					</Center>
 				)}
 
@@ -796,10 +816,11 @@ const Game = ({ username, roomId, onLeaveGame }: GameProps) => {
 			actions.push(
 				<Button
 					key="play-again"
-					onClick={() => dispatch({ type: "start-set" })}
+					onClick={() => dispatch({ type: "start-set", wordList: selectedWordList })}
 					size="lg"
 					color="green"
 					style={{ flex: 1 }}
+					disabled={selectedWordList.length === 0}
 				>
 					<Trans>Play Again</Trans>
 				</Button>,

@@ -6,110 +6,6 @@ const addLog = (message: string, logs: GameState["log"]): GameState["log"] => {
 	);
 };
 
-// Default word list for the game
-const DEFAULT_WORD_LIST = [
-	"ocean",
-	"bicycle",
-	"elephant",
-	"coffee",
-	"mountain",
-	"guitar",
-	"rainbow",
-	"butterfly",
-	"chocolate",
-	"airplane",
-	"sunset",
-	"garden",
-	"library",
-	"pizza",
-	"camera",
-	"adventure",
-	"friendship",
-	"thunder",
-	"keyboard",
-	"lighthouse",
-	"telescope",
-	"sandwich",
-	"volcano",
-	"treasure",
-	"whisper",
-	"dinosaur",
-	"festival",
-	"laboratory",
-	"spaceship",
-	"waterfall",
-	"magician",
-	"symphony",
-	"photograph",
-	"universe",
-	"carnival",
-	"paintbrush",
-	"discovery",
-	"moonlight",
-	"poetry",
-	"compass",
-	"fireworks",
-	"meadow",
-	"architect",
-	"harmony",
-	"hurricane",
-	"sculpture",
-	"invention",
-	"starlight",
-	"expedition",
-	"castle",
-	"dragon",
-	"wizard",
-	"princess",
-	"knight",
-	"forest",
-	"crystal",
-	"journey",
-	"secret",
-	"mystery",
-	"adventure",
-	"treasure",
-	"island",
-	"pirate",
-	"ship",
-	"storm",
-	"legend",
-	"magic",
-	"spell",
-	"potion",
-	"sword",
-	"shield",
-	"crown",
-	"diamond",
-	"ruby",
-	"emerald",
-	"pearl",
-	"golden",
-	"silver",
-	"bronze",
-	"tower",
-	"bridge",
-	"river",
-	"valley",
-	"desert",
-	"jungle",
-	"mountain",
-	"village",
-	"cottage",
-	"mansion",
-	"palace",
-	"temple",
-	"church",
-	"school",
-	"hospital",
-	"market",
-	"bakery",
-	"restaurant",
-	"theater",
-	"museum",
-	"park",
-];
-
 // If there is anything you want to track for a specific user, change this interface
 export interface User {
 	id: string;
@@ -211,13 +107,6 @@ export interface GameState extends BaseGameState {
 	usedWords: string[];
 }
 
-// Load word list
-const loadWordList = (): string[] => {
-	// In a Cloudflare Workers environment, we use the default word list
-	// In a full Node.js environment, you could load from a file
-	return DEFAULT_WORD_LIST;
-};
-
 // This is how a fresh new game starts out, it's a function so you can make it dynamic!
 export const initialGame = (): GameState => ({
 	users: [],
@@ -256,19 +145,18 @@ export const initialGame = (): GameState => ({
 	// Timer state
 	currentTimer: null,
 
-	// Word list
-	wordList: loadWordList(),
+	// Word list - empty until provided by client
+	wordList: [],
 	usedWords: [],
 });
 
-// Get a random word that hasn't been used
-const getRandomWord = (wordList: string[], usedWords: string[]): string => {
+// Get the next unused word from the word list
+const getNextWord = (wordList: string[], usedWords: string[]): string | null => {
 	const availableWords = wordList.filter((word) => !usedWords.includes(word));
 	if (availableWords.length === 0) {
-		// If all words have been used, reset the used words list
-		return wordList[Math.floor(Math.random() * wordList.length)];
+		return null; // No more words available
 	}
-	return availableWords[Math.floor(Math.random() * availableWords.length)];
+	return availableWords[0]; // Take the first available word
 };
 
 // Get the next player in rotation
@@ -343,7 +231,7 @@ export type GameAction =
 	| { type: "verify-answer"; isCorrect: boolean }
 
 	// Host-only actions
-	| { type: "start-set" }
+	| { type: "start-set"; wordList: string[] }
 	| { type: "end-session" }
 	| { type: "end-set" }
 	| { type: "remove-player"; playerId: string }
@@ -443,15 +331,23 @@ export const gameUpdater = (
 				};
 			}
 
+			if (!action.wordList || action.wordList.length === 0) {
+				return {
+					...state,
+					log: addLog("No word list provided", state.log),
+				};
+			}
+
 			const firstGuesser = state.users[0];
-			const currentWord = getRandomWord(state.wordList, state.usedWords);
+			const currentWord = action.wordList[0]; // Take the first word from the provided list
 
 			return {
 				...state,
 				gamePhase: "writing-clues",
 				currentGuesser: firstGuesser.id,
 				currentWord,
-				usedWords: [...state.usedWords, currentWord],
+				wordList: action.wordList, // Store the provided word list
+				usedWords: [currentWord], // Track used words from the provided list
 				submittedClues: {},
 				validClues: [],
 				setScore: 0,
@@ -649,7 +545,23 @@ export const gameUpdater = (
 				state.users,
 				state.currentGuesser,
 			);
-			const nextWordForRound = getRandomWord(state.wordList, state.usedWords);
+			const nextWordForRound = getNextWord(state.wordList, state.usedWords);
+
+			if (!nextWordForRound) {
+				// No more words available, end the set
+				const noWordsSetResult: SetResult = {
+					score: state.setScore,
+					target: state.setTarget,
+					completed: false,
+				};
+
+				return {
+					...state,
+					gamePhase: "set-end",
+					setHistory: [...state.setHistory, noWordsSetResult],
+					log: addLog("No more words available, set ended", state.log),
+				};
+			}
 
 			return {
 				...state,
@@ -706,8 +618,25 @@ export const gameUpdater = (
 			}
 
 			const nextRoundGuesser = getNextPlayer(state.users, state.currentGuesser);
-			const nextRoundWord = getRandomWord(state.wordList, state.usedWords);
+			const nextRoundWord = getNextWord(state.wordList, state.usedWords);
 			const newAttempted = state.gamesAttempted + 1;
+
+			if (!nextRoundWord) {
+				// No more words available, end the set
+				const noWordsSetResult: SetResult = {
+					score: state.setScore,
+					target: state.setTarget,
+					completed: false,
+				};
+
+				return {
+					...state,
+					gamesAttempted: newAttempted,
+					gamePhase: "set-end",
+					setHistory: [...state.setHistory, noWordsSetResult],
+					log: addLog("No more words available, set ended", state.log),
+				};
+			}
 
 			// Check if set is complete after skipping
 			if (newAttempted >= state.setTarget) {
