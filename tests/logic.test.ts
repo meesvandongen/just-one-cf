@@ -19,6 +19,9 @@ const clueDoesNotExist = (validClues: any[], clueText: string): boolean => {
 	return !clueExists(validClues, clueText);
 };
 
+// Standard test word list for tests
+const TEST_WORD_LIST = ["apple", "banana", "cherry", "date", "elderberry", "fig", "grape", "honey", "ice", "jam"];
+
 describe("Game Logic Tests", () => {
 	let gameState: GameState;
 
@@ -36,7 +39,7 @@ describe("Game Logic Tests", () => {
 			expect(gameState.setScore).toBe(0);
 			expect(gameState.gamesAttempted).toBe(0);
 			expect(gameState.setTarget).toBe(20);
-			expect(gameState.wordList.length).toBeGreaterThan(0);
+			expect(gameState.wordList).toEqual([]); // Now starts empty
 			expect(gameState.usedWords).toEqual([]);
 			expect(gameState.log).toHaveLength(1);
 			expect(gameState.log[0].message).toBe("Game Created!");
@@ -128,7 +131,7 @@ describe("Game Logic Tests", () => {
 
 		it("should start set with host action when enough players", () => {
 			const hostUser = stateWithUsers.users.find((u) => u.isHost)!;
-			const action: ServerAction = { type: "start-set", user: hostUser };
+			const action: ServerAction = { type: "start-set", user: hostUser, wordList: TEST_WORD_LIST };
 
 			const newState = gameUpdater(action, stateWithUsers);
 
@@ -136,6 +139,7 @@ describe("Game Logic Tests", () => {
 			expect(newState.currentWord).toBeTruthy();
 			expect(newState.currentGuesser).toBe("user1");
 			expect(newState.usedWords).toContain(newState.currentWord);
+			expect(newState.wordList).toEqual(TEST_WORD_LIST);
 		});
 
 		it("should not start set with insufficient players", () => {
@@ -146,7 +150,7 @@ describe("Game Logic Tests", () => {
 			};
 
 			const hostUser = stateWithTwoUsers.users.find((u) => u.isHost)!;
-			const action: ServerAction = { type: "start-set", user: hostUser };
+			const action: ServerAction = { type: "start-set", user: hostUser, wordList: TEST_WORD_LIST };
 
 			const newState = gameUpdater(action, stateWithTwoUsers);
 
@@ -180,7 +184,7 @@ describe("Game Logic Tests", () => {
 
 			const hostUser = state.users.find((u) => u.isHost)!;
 			gameInProgress = gameUpdater(
-				{ type: "start-set", user: hostUser },
+				{ type: "start-set", user: hostUser, wordList: TEST_WORD_LIST },
 				state,
 			);
 		});
@@ -335,7 +339,7 @@ describe("Game Logic Tests", () => {
 			state = gameUpdater({ type: "UserEntered", user: user3 }, state);
 
 			const hostUser = state.users.find((u) => u.isHost)!;
-			state = gameUpdater({ type: "start-set", user: hostUser }, state);
+			state = gameUpdater({ type: "start-set", user: hostUser, wordList: TEST_WORD_LIST }, state);
 
 			// Submit clues to get to checking phase
 			const nonGuessers = state.users.filter(
@@ -400,7 +404,7 @@ describe("Game Logic Tests", () => {
 			state = gameUpdater({ type: "UserEntered", user: user3 }, state);
 
 			const hostUser = state.users.find((u) => u.isHost)!;
-			state = gameUpdater({ type: "start-set", user: hostUser }, state);
+			state = gameUpdater({ type: "start-set", user: hostUser, wordList: TEST_WORD_LIST }, state);
 
 			// Submit clues
 			const nonGuessers = state.users.filter(
@@ -669,7 +673,7 @@ describe("Game Logic Tests", () => {
 
 			// Start set
 			const host = state.users.find((u) => u.isHost)!;
-			state = gameUpdater({ type: "start-set", user: host }, state);
+			state = gameUpdater({ type: "start-set", user: host, wordList: TEST_WORD_LIST }, state);
 
 			const firstWord = state.currentWord;
 			expect(state.usedWords).toContain(firstWord);
@@ -697,7 +701,7 @@ describe("Game Logic Tests", () => {
 
 			const hostUser = state.users.find((u) => u.isHost)!;
 			gameInProgress = gameUpdater(
-				{ type: "start-set", user: hostUser },
+				{ type: "start-set", user: hostUser, wordList: TEST_WORD_LIST },
 				state,
 			);
 		});
@@ -746,7 +750,7 @@ describe("Game Logic Tests", () => {
 			state = gameUpdater({ type: "UserEntered", user: user3 }, state);
 
 			const host = state.users.find((u) => u.isHost)!;
-			state = gameUpdater({ type: "start-set", user: host }, state);
+			state = gameUpdater({ type: "start-set", user: host, wordList: TEST_WORD_LIST }, state);
 
 			roundEndState = {
 				...state,
