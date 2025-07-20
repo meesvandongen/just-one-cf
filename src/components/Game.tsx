@@ -875,13 +875,18 @@ const Game = ({ username, roomId }: GameProps) => {
 			<Box
 				style={{
 					position: "fixed",
-					bottom: "16px",
-					left: "16px",
-					right: "16px",
+					bottom: 0,
+					left: 0,
+					right: 0,
 					zIndex: 1000,
+					padding: "12px 16px",
+					paddingBottom: "calc(12px + var(--safe-area-inset-bottom))",
+					backgroundColor: "var(--mantine-color-gray-1)",
+					borderTop: "1px solid var(--mantine-color-gray-3)",
+					boxShadow: "0 -2px 8px rgba(0, 0, 0, 0.1)",
 				}}
 			>
-				<Group gap="sm" style={{ width: "100%" }}>
+				<Group gap="sm" style={{ width: "100%", flexWrap: "wrap" }}>
 					{actions}
 				</Group>
 			</Box>
@@ -894,7 +899,7 @@ const Game = ({ username, roomId }: GameProps) => {
 				flex: 1,
 				display: "flex",
 				flexDirection: "column",
-				paddingBottom: "80px", // Space for fixed button area
+				paddingBottom: "calc(88px + var(--safe-area-inset-bottom))", // Space for fixed button area plus safe area
 			}}
 		>
 			<Box style={{ flex: 1 }}>{renderGameContent()}</Box>

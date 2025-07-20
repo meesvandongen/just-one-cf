@@ -24,7 +24,8 @@ const Layout = ({
 	return (
 		<AppShell
 			bg="gray.1"
-			h="100vh"
+			h="100dvh"
+			className="mobile-vh-fallback"
 			padding={0}
 			navbar={
 				showSidebar
@@ -67,7 +68,7 @@ const Layout = ({
 
 			<AppShell.Main>
 				<Box
-					h="calc(100vh - 60px)"
+					h="calc(100dvh - 60px)"
 					style={{
 						display: "flex",
 						flexDirection: "column",
