@@ -126,6 +126,10 @@ msgstr "Score Final"
 msgid "Finish Checking ({0} marked)"
 msgstr "Terminer la Vérification ({0} marqués)"
 
+#: src/components/SidebarMenu.tsx:45
+msgid "Game Menu"
+msgstr ""
+
 #: src/components/Game.tsx:603
 msgid "Guess:"
 msgstr "Devinette :"
@@ -157,6 +161,10 @@ msgstr "Rejoindre une Salle"
 #: src/App.tsx:121
 msgid "Just One"
 msgstr "Just One"
+
+#: src/components/SidebarMenu.tsx:85
+msgid "Leave Game"
+msgstr ""
 
 #: src/components/Game.tsx:343
 msgid "Mark any clues that should be removed:"
@@ -207,6 +215,7 @@ msgstr "Sets Précédents"
 msgid "Progress"
 msgstr "Progrès"
 
+#: src/components/SidebarMenu.tsx:94
 #: src/components/Game.tsx:180
 msgid "QR Code"
 msgstr "Code QR"
@@ -215,6 +224,7 @@ msgstr "Code QR"
 msgid "Reject Answer"
 msgstr "Rejeter la Réponse"
 
+#: src/components/SidebarMenu.tsx:114
 #: src/components/Game.tsx:157
 msgid "Room Code"
 msgstr "Code de la Salle"
@@ -232,6 +242,7 @@ msgstr "Manche Terminée"
 msgid "Scan QR Code"
 msgstr "Scanner le Code QR"
 
+#: src/components/SidebarMenu.tsx:105
 #: src/components/Game.tsx:187
 msgid "Scan to join quickly"
 msgstr "Scannez pour rejoindre rapidement"
@@ -261,6 +272,7 @@ msgstr "Set {0} : {1}/{2}"
 msgid "Set Complete!"
 msgstr "Set Terminé !"
 
+#: src/components/SidebarMenu.tsx:132
 #: src/components/Game.tsx:170
 msgid "Share this code with other players"
 msgstr "Partagez ce code avec d'autres joueurs"
@@ -268,6 +280,14 @@ msgstr "Partagez ce code avec d'autres joueurs"
 #: src/components/Game.tsx:430
 msgid "Should this answer be accepted as correct?"
 msgstr "Cette réponse doit-elle être acceptée comme correcte ?"
+
+#: src/components/SidebarMenu.tsx:70
+msgid "Show QR Code"
+msgstr ""
+
+#: src/components/SidebarMenu.tsx:58
+msgid "Show Room Code"
+msgstr ""
 
 #: src/components/Game.tsx:718
 msgid "Skip"
