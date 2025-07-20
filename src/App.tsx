@@ -353,7 +353,7 @@ function GamePage() {
 			roomCode={roomId}
 			qrCodeValue={qrCodeValue}
 		>
-			<Game username={username} roomId={roomId} />
+			<Game username={username} roomId={roomId} onLeaveGame={handleLeaveGame} />
 		</Layout>
 	);
 }

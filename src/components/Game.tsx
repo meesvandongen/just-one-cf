@@ -16,7 +16,7 @@ import {
 	TextInput,
 	Title,
 } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdCheck, MdLogout, MdSend, MdSkipNext, MdStop } from "react-icons/md";
 import QRCode from "react-qr-code";
 import { useGameRoom } from "@/hooks/useGameRoom";
@@ -25,9 +25,10 @@ import { CenterLayout } from "./LayoutComponents";
 interface GameProps {
 	username: string;
 	roomId: string;
+	onLeaveGame?: () => void;
 }
 
-const Game = ({ username, roomId }: GameProps) => {
+const Game = ({ username, roomId, onLeaveGame }: GameProps) => {
 	const { gameState, dispatch } = useGameRoom(username, roomId);
 	const { t } = useLingui();
 
@@ -50,6 +51,18 @@ const Game = ({ username, roomId }: GameProps) => {
 			</CenterLayout>
 		);
 	}
+
+	// Check if session has ended (gamePhase is lobby and no users)
+	useEffect(() => {
+		if (
+			gameState.gamePhase === "lobby" &&
+			gameState.users.length === 0 &&
+			onLeaveGame
+		) {
+			// Session has ended, redirect to home
+			onLeaveGame();
+		}
+	}, [gameState.gamePhase, gameState.users.length, onLeaveGame]);
 
 	const currentUser = gameState.users.find((user) => user.id === username);
 	const isHost = currentUser?.isHost || false;
