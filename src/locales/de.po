@@ -126,6 +126,10 @@ msgstr "Endpunktzahl"
 msgid "Finish Checking ({0} marked)"
 msgstr "Prüfung Beenden ({0} markiert)"
 
+#: src/components/SidebarMenu.tsx:45
+msgid "Game Menu"
+msgstr ""
+
 #: src/components/Game.tsx:603
 msgid "Guess:"
 msgstr "Tipp:"
@@ -157,6 +161,10 @@ msgstr "Raum Beitreten"
 #: src/App.tsx:121
 msgid "Just One"
 msgstr "Just One"
+
+#: src/components/SidebarMenu.tsx:85
+msgid "Leave Game"
+msgstr ""
 
 #: src/components/Game.tsx:343
 msgid "Mark any clues that should be removed:"
@@ -207,6 +215,7 @@ msgstr "Vorherige Runden"
 msgid "Progress"
 msgstr "Fortschritt"
 
+#: src/components/SidebarMenu.tsx:94
 #: src/components/Game.tsx:180
 msgid "QR Code"
 msgstr "QR-Code"
@@ -215,6 +224,7 @@ msgstr "QR-Code"
 msgid "Reject Answer"
 msgstr "Antwort Ablehnen"
 
+#: src/components/SidebarMenu.tsx:114
 #: src/components/Game.tsx:157
 msgid "Room Code"
 msgstr "Raumcode"
@@ -232,6 +242,7 @@ msgstr "Runde beendet"
 msgid "Scan QR Code"
 msgstr "QR-Code Scannen"
 
+#: src/components/SidebarMenu.tsx:105
 #: src/components/Game.tsx:187
 msgid "Scan to join quickly"
 msgstr "Scannen für schnellen Beitritt"
@@ -261,6 +272,7 @@ msgstr "Runde {0}: {1}/{2}"
 msgid "Set Complete!"
 msgstr "Runde beendet!"
 
+#: src/components/SidebarMenu.tsx:132
 #: src/components/Game.tsx:170
 msgid "Share this code with other players"
 msgstr "Teile diesen Code mit anderen Spielern"
@@ -268,6 +280,14 @@ msgstr "Teile diesen Code mit anderen Spielern"
 #: src/components/Game.tsx:430
 msgid "Should this answer be accepted as correct?"
 msgstr "Soll diese Antwort als richtig akzeptiert werden?"
+
+#: src/components/SidebarMenu.tsx:70
+msgid "Show QR Code"
+msgstr ""
+
+#: src/components/SidebarMenu.tsx:58
+msgid "Show Room Code"
+msgstr ""
 
 #: src/components/Game.tsx:718
 msgid "Skip"

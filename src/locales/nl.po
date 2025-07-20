@@ -126,6 +126,10 @@ msgstr "Eindscore"
 msgid "Finish Checking ({0} marked)"
 msgstr "Controle Voltooien ({0} gemarkeerd)"
 
+#: src/components/SidebarMenu.tsx:45
+msgid "Game Menu"
+msgstr ""
+
 #: src/components/Game.tsx:603
 msgid "Guess:"
 msgstr "Gok:"
@@ -157,6 +161,10 @@ msgstr "Doe Mee met Kamer"
 #: src/App.tsx:121
 msgid "Just One"
 msgstr "Just One"
+
+#: src/components/SidebarMenu.tsx:85
+msgid "Leave Game"
+msgstr ""
 
 #: src/components/Game.tsx:343
 msgid "Mark any clues that should be removed:"
@@ -207,6 +215,7 @@ msgstr "Vorige Sets"
 msgid "Progress"
 msgstr "Voortgang"
 
+#: src/components/SidebarMenu.tsx:94
 #: src/components/Game.tsx:180
 msgid "QR Code"
 msgstr "QR Code"
@@ -215,6 +224,7 @@ msgstr "QR Code"
 msgid "Reject Answer"
 msgstr "Antwoord Weigeren"
 
+#: src/components/SidebarMenu.tsx:114
 #: src/components/Game.tsx:157
 msgid "Room Code"
 msgstr "Kamercode"
@@ -232,6 +242,7 @@ msgstr "Ronde Voltooid"
 msgid "Scan QR Code"
 msgstr "QR-code Scannen"
 
+#: src/components/SidebarMenu.tsx:105
 #: src/components/Game.tsx:187
 msgid "Scan to join quickly"
 msgstr "Scan om snel mee te doen"
@@ -261,6 +272,7 @@ msgstr "Set {0}: {1}/{2}"
 msgid "Set Complete!"
 msgstr "Set Voltooid!"
 
+#: src/components/SidebarMenu.tsx:132
 #: src/components/Game.tsx:170
 msgid "Share this code with other players"
 msgstr "Deel deze code met andere spelers"
@@ -268,6 +280,14 @@ msgstr "Deel deze code met andere spelers"
 #: src/components/Game.tsx:430
 msgid "Should this answer be accepted as correct?"
 msgstr "Moet dit antwoord als correct worden geaccepteerd?"
+
+#: src/components/SidebarMenu.tsx:70
+msgid "Show QR Code"
+msgstr ""
+
+#: src/components/SidebarMenu.tsx:58
+msgid "Show Room Code"
+msgstr ""
 
 #: src/components/Game.tsx:718
 msgid "Skip"
