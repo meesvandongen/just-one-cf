@@ -44,18 +44,23 @@ const Layout = ({
 		};
 
 		if (opened) {
-			document.addEventListener("mousedown", handleClickOutside);
+			// Add a small delay to prevent immediate closing when opening the menu
+			const timeoutId = setTimeout(() => {
+				document.addEventListener("click", handleClickOutside);
+			}, 100);
+
 			document.addEventListener("keydown", handleEscapeKey);
 			document.body.style.overflow = "hidden"; // Prevent background scrolling
+
+			return () => {
+				clearTimeout(timeoutId);
+				document.removeEventListener("click", handleClickOutside);
+				document.removeEventListener("keydown", handleEscapeKey);
+				document.body.style.overflow = "";
+			};
 		} else {
 			document.body.style.overflow = "";
 		}
-
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-			document.removeEventListener("keydown", handleEscapeKey);
-			document.body.style.overflow = "";
-		};
 	}, [opened, close]);
 
 	return (
