@@ -302,7 +302,10 @@ const removeDuplicateClues = (
 	submittedClues: { [userId: string]: string },
 	users: User[],
 ): ClueWithSubmitter[] => {
-	const clueFrequency = new Map<string, Array<{ userId: string; clue: string }>>();
+	const clueFrequency = new Map<
+		string,
+		Array<{ userId: string; clue: string }>
+	>();
 
 	// Count occurrences of each normalized clue and keep original versions with submitter info
 	Object.entries(submittedClues).forEach(([userId, clue]) => {
@@ -474,8 +477,10 @@ export const gameUpdater = (
 			if (
 				allCluesSubmitted(state.users, state.currentGuesser, newSubmittedClues)
 			) {
-				const automaticallyFilteredClues =
-					removeDuplicateClues(newSubmittedClues, state.users);
+				const automaticallyFilteredClues = removeDuplicateClues(
+					newSubmittedClues,
+					state.users,
+				);
 				const nextChecker = getNextPlayer(state.users, state.currentGuesser);
 
 				return {
@@ -507,7 +512,8 @@ export const gameUpdater = (
 			}
 
 			const finalValidClues = state.validClues.filter(
-				(clueWithSubmitter) => !action.invalidClues.includes(clueWithSubmitter.clue),
+				(clueWithSubmitter) =>
+					!action.invalidClues.includes(clueWithSubmitter.clue),
 			);
 
 			return {

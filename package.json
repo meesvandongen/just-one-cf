@@ -14,7 +14,8 @@
 		"test:ui": "vitest --ui",
 		"test:watch": "vitest watch",
 		"extract": "lingui extract",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"check-translations": "node scripts/check-translations.js"
 	},
 	"dependencies": {
 		"@biomejs/biome": "^2.1.2",
