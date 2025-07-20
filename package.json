@@ -10,6 +10,7 @@
 		"deploy:server": "wrangler deploy",
 		"start": "vite preview",
 		"lint": "biome check .",
+		"fix": "biome check . --fix",
 		"test": "vitest run",
 		"test:ui": "vitest --ui",
 		"test:watch": "vitest watch",

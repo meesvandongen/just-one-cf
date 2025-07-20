@@ -1,4 +1,3 @@
-/// <reference types="vitest" />
 import { cloudflare } from "@cloudflare/vite-plugin";
 import { lingui } from "@lingui/vite-plugin";
 import react from "@vitejs/plugin-react-swc";
