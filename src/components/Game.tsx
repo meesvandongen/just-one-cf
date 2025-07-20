@@ -39,6 +39,19 @@ const Game = ({ username, roomId, onLeaveGame }: GameProps) => {
 		[],
 	);
 
+	// Check if session has ended (gamePhase is lobby and no users)
+	useEffect(() => {
+		if (
+			gameState &&
+			gameState.gamePhase === "lobby" &&
+			gameState.users.length === 0 &&
+			onLeaveGame
+		) {
+			// Session has ended, redirect to home
+			onLeaveGame();
+		}
+	}, [gameState, onLeaveGame]);
+
 	// Indicated that the game is loading
 	if (gameState === null) {
 		return (
@@ -51,18 +64,6 @@ const Game = ({ username, roomId, onLeaveGame }: GameProps) => {
 			</CenterLayout>
 		);
 	}
-
-	// Check if session has ended (gamePhase is lobby and no users)
-	useEffect(() => {
-		if (
-			gameState.gamePhase === "lobby" &&
-			gameState.users.length === 0 &&
-			onLeaveGame
-		) {
-			// Session has ended, redirect to home
-			onLeaveGame();
-		}
-	}, [gameState.gamePhase, gameState.users.length, onLeaveGame]);
 
 	const currentUser = gameState.users.find((user) => user.id === username);
 	const isHost = currentUser?.isHost || false;
