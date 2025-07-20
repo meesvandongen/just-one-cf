@@ -186,10 +186,6 @@ msgstr "O introduce el código de sala manualmente"
 msgid "Or start a new game"
 msgstr "O comenzar un nuevo juego"
 
-#: src/components/Game.tsx:771
-msgid "Pass"
-msgstr "Pasar"
-
 #: src/components/Game.tsx:801
 msgid "Play Again"
 msgstr "Jugar de Nuevo"

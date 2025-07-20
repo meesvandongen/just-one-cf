@@ -108,7 +108,6 @@ The manual reviewer sees all original clues with clear marking tools to cross of
 
 #### Special Situations
 - **Invalid Clues**: Clues that break the rules are eliminated (same as duplicates)
-- **Pass Option**: The Guesser can choose to pass if the clues are too confusing
 - **Time Limits**: Optional time constraints can be enabled by the host
 
 #### Time Limit Settings
@@ -138,7 +137,7 @@ The host can optionally enable time limits to keep the game moving at a steady p
    - **Automatic Filtering**: System eliminates identical duplicate clues
    - **Manual Review**: A selected player reviews all clues and marks invalid ones
    - **Clue Reveal**: The guesser sees all remaining valid clues after filtering
-   - **Guessing**: The guesser makes their guess or passes
+   - **Guessing**: The guesser makes their guess
    - **Round End**: Success/failure is displayed, set score updated
 4. **Next Round**: New guesser is selected and the cycle continues with a new word
 5. **Set Completion**: When target words are reached (or host ends set), final results are shown

@@ -191,8 +191,9 @@ msgid "Pass"
 msgstr "Passer"
 
 #: src/components/Game.tsx:801
+#: src/components/Game.tsx:801
 msgid "Play Again"
-msgstr "Rejouer"
+msgstr "Jouer Encore"
 
 #. placeholder {0}: gameState.users.length
 #: src/components/Game.tsx:196

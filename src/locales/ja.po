@@ -186,10 +186,6 @@ msgstr "またはルームコードを手動で入力"
 msgid "Or start a new game"
 msgstr "または新しいゲームを開始"
 
-#: src/components/Game.tsx:771
-msgid "Pass"
-msgstr "パス"
-
 #: src/components/Game.tsx:801
 msgid "Play Again"
 msgstr "もう一度プレイ"

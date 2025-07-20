@@ -760,16 +760,6 @@ const Game = ({ username, roomId }: GameProps) => {
 					</Group>
 				</form>,
 			);
-			actions.push(
-				<Button
-					key="pass"
-					onClick={() => dispatch({ type: "submit-guess", guess: "PASS" })}
-					variant="light"
-					color="gray"
-				>
-					<Trans>Pass</Trans>
-				</Button>,
-			);
 		}
 
 		// Round end phase
