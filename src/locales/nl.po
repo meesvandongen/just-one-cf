@@ -109,18 +109,9 @@ msgstr "Sessie Beëindigen"
 msgid "End Set"
 msgstr "Set Beëindigen"
 
-#: src/App.tsx:147
-#~ msgid "Enter 6-digit room code or scan QR"
-#~ msgstr ""
-
 #: src/components/Game.tsx:685
 msgid "Enter one word clue"
 msgstr "Voer een woord hint in"
-
-#: src/App.tsx:105
-#: src/App.tsx:209
-#~ msgid "Enter room code"
-#~ msgstr "Voer kamercode in"
 
 #: src/App.tsx:301
 msgid "Enter your name"
@@ -134,10 +125,6 @@ msgstr "Eindscore"
 #: src/components/Game.tsx:729
 msgid "Finish Checking ({0} marked)"
 msgstr "Controle Voltooien ({0} gemarkeerd)"
-
-#: src/components/Game.tsx:161
-#~ msgid "Game Code"
-#~ msgstr "Spelcode"
 
 #: src/components/Game.tsx:597
 msgid "Guess:"
@@ -170,10 +157,6 @@ msgstr "Doe Mee met Kamer"
 #: src/App.tsx:123
 msgid "Just One"
 msgstr "Just One"
-
-#: src/components/LanguageSelector.tsx:15
-#~ msgid "Language"
-#~ msgstr "Taal"
 
 #: src/components/Game.tsx:343
 msgid "Mark any clues that should be removed:"

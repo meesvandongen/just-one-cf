@@ -109,18 +109,9 @@ msgstr "セッション終了"
 msgid "End Set"
 msgstr "セット終了"
 
-#: src/App.tsx:147
-#~ msgid "Enter 6-digit room code or scan QR"
-#~ msgstr ""
-
 #: src/components/Game.tsx:685
 msgid "Enter one word clue"
 msgstr "一単語のヒントを入力"
-
-#: src/App.tsx:105
-#: src/App.tsx:209
-#~ msgid "Enter room code"
-#~ msgstr "ルームコードを入力"
 
 #: src/App.tsx:301
 msgid "Enter your name"
@@ -134,10 +125,6 @@ msgstr "最終スコア"
 #: src/components/Game.tsx:729
 msgid "Finish Checking ({0} marked)"
 msgstr "チェック完了（{0}個マーク済み）"
-
-#: src/components/Game.tsx:161
-#~ msgid "Game Code"
-#~ msgstr "ゲームコード"
 
 #: src/components/Game.tsx:597
 msgid "Guess:"
@@ -170,10 +157,6 @@ msgstr "ルームに参加"
 #: src/App.tsx:123
 msgid "Just One"
 msgstr "Just One"
-
-#: src/components/LanguageSelector.tsx:15
-#~ msgid "Language"
-#~ msgstr "言語"
 
 #: src/components/Game.tsx:343
 msgid "Mark any clues that should be removed:"
