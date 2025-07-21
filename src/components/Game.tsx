@@ -234,7 +234,6 @@ const Game = ({ username, roomId, onLeaveGame }: GameProps) => {
 
 				{isHost && (
 					<WordListSelector
-						setTarget={gameState.setTarget}
 						onWordListSelected={setSelectedWordList}
 						disabled={gameState.users.length < 3}
 					/>
@@ -287,8 +286,8 @@ const Game = ({ username, roomId, onLeaveGame }: GameProps) => {
 						</Title>
 						<Text size="lg">
 							<Trans>
-								Score: {gameState.setScore}/{gameState.gamesAttempted} | Target:{" "}
-								{gameState.setTarget}
+								Score: {gameState.setScore}/{gameState.gamesAttempted} | Target:
+								13
 							</Trans>
 						</Text>
 					</Stack>
@@ -544,8 +543,8 @@ const Game = ({ username, roomId, onLeaveGame }: GameProps) => {
 						</Title>
 						<Text size="lg">
 							<Trans>
-								Score: {gameState.setScore}/{gameState.gamesAttempted} | Target:{" "}
-								{gameState.setTarget}
+								Score: {gameState.setScore}/{gameState.gamesAttempted} | Target:
+								13
 							</Trans>
 						</Text>
 					</Stack>
@@ -671,7 +670,7 @@ const Game = ({ username, roomId, onLeaveGame }: GameProps) => {
 							<Trans>Final Score</Trans>
 						</Title>
 						<Text size="3rem" fw={700}>
-							{gameState.setScore} / {gameState.setTarget}
+							{gameState.setScore} / 13
 						</Text>
 
 						<Text size="lg">

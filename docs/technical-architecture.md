@@ -49,7 +49,7 @@ The GameState for Just One includes:
 - `validClues` - Clues remaining after both automatic and manual duplicate elimination
 - `setScore` - Team's current score in this set
 - `gamesAttempted` - Number of rounds attempted in the current set
-- `setTarget` - Target number of words for the current set (default: 20)
+- `setTarget` - Target number of words for the current set (always 13)
 - `setHistory` - Results from previous completed sets
 - `gameSettings` - Configurable options (set targets, time limits, etc.)
 - `timers` - Optional timer settings for each game phase

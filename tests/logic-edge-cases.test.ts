@@ -7,7 +7,7 @@ import {
 	type User,
 } from "../party/logic";
 
-// Standard test word list for tests
+// Standard test word list for tests - exactly 13 words as required
 const TEST_WORD_LIST = [
 	"apple",
 	"banana",
@@ -19,6 +19,9 @@ const TEST_WORD_LIST = [
 	"honey",
 	"ice",
 	"jam",
+	"kiwi",
+	"lemon",
+	"mango",
 ];
 
 describe("Game Logic Edge Cases", () => {
@@ -332,8 +335,8 @@ describe("Game Logic Edge Cases", () => {
 			// Complete a set by reaching target
 			const stateNearEnd = {
 				...gameInProgress,
-				setTarget: 1,
-				gamesAttempted: 0,
+
+				gamesAttempted: 12,
 			};
 
 			// Get to guessing phase
@@ -371,7 +374,7 @@ describe("Game Logic Edge Cases", () => {
 			expect(state.setHistory).toHaveLength(1);
 			expect(state.setHistory[0]).toEqual({
 				score: 1,
-				target: 1,
+				target: 13,
 				completed: true,
 			});
 		});
@@ -389,7 +392,7 @@ describe("Game Logic Edge Cases", () => {
 			expect(newState.setHistory).toHaveLength(1);
 			expect(newState.setHistory[0]).toEqual({
 				score: 0,
-				target: 20,
+				target: 13,
 				completed: false,
 			});
 		});

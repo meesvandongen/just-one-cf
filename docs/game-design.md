@@ -8,17 +8,17 @@ Just One is a cooperative party game for 3-8 players where teamwork and creativi
 Understanding the game structure:
 
 - **Session**: The entire multiplayer experience from when players first join until everyone leaves or the host ends the session
-- **Set**: A complete playthrough with a target number of words (e.g., trying to guess 20 words total)
+- **Set**: A complete playthrough with a target number of words (always 13 words total)
 - **Round**: A single word-guessing attempt (one word, clues, and one guess)
 - **Game**: Synonym for "round" - one word-guessing attempt
 
 **Example Flow:**
 1. **Session Starts**: Players join the lobby using game codes/QR codes
-2. **Set 1 Begins**: Host starts the first set (target: 20 words)
+2. **Set 1 Begins**: Host starts the first set (target: 13 words)
 3. **Round 1**: Players guess the first word ("ocean" → success!)
 4. **Round 2**: Players guess the second word ("bicycle" → failed)
-5. **...Rounds 3-20**: Continue until set target is reached
-6. **Set 1 Ends**: Score displayed (e.g., 15/20 correct)
+5. **...Rounds 3-13**: Continue until set target is reached
+6. **Set 1 Ends**: Score displayed (e.g., 10/13 correct)
 7. **Set 2 Begins**: Host can start a new set with fresh score
 8. **Session Ends**: Host ends session or all players leave
 
@@ -102,8 +102,8 @@ The manual reviewer sees all original clues with clear marking tools to cross of
 
 #### Winning Conditions
 - **Cooperative Gameplay**: The team works together to score as many points as possible in each set
-- **Set Target**: A typical set aims for 20 words, try to guess 13+ for an excellent score
-- **Set Scoring**: 8-10 correct = Good, 11-12 = Very Good, 13+ = Excellent
+- **Set Target**: Each set aims for exactly 13 words, try to guess 10+ for an excellent score
+- **Set Scoring**: 7-8 correct = Good, 9-10 = Very Good, 11+ = Excellent
 - **Multiple Sets**: After completing a set, the host can start a new set to play again
 
 #### Special Situations

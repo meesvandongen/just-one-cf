@@ -13,21 +13,18 @@ import {
 import { useEffect, useState } from "react";
 import { MdRefresh } from "react-icons/md";
 import {
-	estimateWordsNeeded,
 	selectRandomWords,
 	WORD_LIST_OPTIONS,
 	type WordListOption,
 } from "@/utils/wordlist";
 
 interface WordListSelectorProps {
-	setTarget: number;
 	onWordListSelected: (words: string[]) => void;
 	selectedWordListId?: string;
 	disabled?: boolean;
 }
 
 export const WordListSelector = ({
-	setTarget,
 	onWordListSelected,
 	selectedWordListId,
 	disabled = false,
@@ -42,7 +39,6 @@ export const WordListSelector = ({
 	const selectedOption = WORD_LIST_OPTIONS.find(
 		(opt) => opt.id === selectedOptionId,
 	);
-	const wordsNeeded = estimateWordsNeeded(setTarget);
 
 	// Load the selected word list
 	const loadWordList = async (option: WordListOption) => {
@@ -52,7 +48,7 @@ export const WordListSelector = ({
 			const words = await option.loadWords();
 			setLoadedWords(words);
 			// Automatically select random words and notify parent
-			const selectedWords = selectRandomWords(words, wordsNeeded);
+			const selectedWords = selectRandomWords(words, 13);
 			onWordListSelected(selectedWords);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Failed to load word list");
@@ -67,7 +63,7 @@ export const WordListSelector = ({
 		if (selectedOption) {
 			loadWordList(selectedOption);
 		}
-	}, [selectedOption, setTarget]);
+	}, [selectedOption]);
 
 	const handleOptionChange = (value: string | null) => {
 		if (value) {
@@ -77,7 +73,7 @@ export const WordListSelector = ({
 
 	const handleRefresh = () => {
 		if (selectedOption && loadedWords.length > 0) {
-			const selectedWords = selectRandomWords(loadedWords, wordsNeeded);
+			const selectedWords = selectRandomWords(loadedWords, 13);
 			onWordListSelected(selectedWords);
 		}
 	};
@@ -133,7 +129,7 @@ export const WordListSelector = ({
 								<Trans>
 									Loaded {loadedWords.length.toLocaleString()} words
 									<br />
-									Selected {wordsNeeded} for this game
+									Selected 13 for this game
 								</Trans>
 							</Text>
 							<Button

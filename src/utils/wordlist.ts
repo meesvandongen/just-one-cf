@@ -74,9 +74,7 @@ export const selectRandomWords = (words: string[], count: number): string[] => {
 	return shuffled.slice(0, count);
 };
 
-// Estimate how many words are needed for a game set
-export const estimateWordsNeeded = (setTarget: number): number => {
-	// Rough estimate: setTarget + some buffer for rounds that might fail
-	// Each round uses 1 word, but some rounds might fail and need another word
-	return Math.max(setTarget * 2, 50);
+// The word list is always exactly 13 words
+export const getWordsNeeded = (): number => {
+	return 13;
 };

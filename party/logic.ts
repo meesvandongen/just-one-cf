@@ -48,7 +48,6 @@ export type GamePhase =
 	| "set-end";
 
 export interface GameSettings {
-	setTarget: number;
 	timersEnabled: boolean;
 	clueWritingTime: number;
 	duplicateCheckingTime: number;
@@ -93,7 +92,6 @@ export interface GameState extends BaseGameState {
 	// Set tracking
 	setScore: number;
 	gamesAttempted: number;
-	setTarget: number;
 	setHistory: SetResult[];
 
 	// Game settings
@@ -130,12 +128,10 @@ export const initialGame = (): GameState => ({
 	// Set tracking
 	setScore: 0,
 	gamesAttempted: 0,
-	setTarget: 20,
 	setHistory: [],
 
 	// Game settings
 	gameSettings: {
-		setTarget: 20,
 		timersEnabled: false,
 		clueWritingTime: 90,
 		duplicateCheckingTime: 45,
@@ -441,10 +437,10 @@ export const gameUpdater = (
 				const newGamesAttempted = state.gamesAttempted + 1;
 
 				// Check if set is complete
-				if (newGamesAttempted >= state.setTarget) {
+				if (newGamesAttempted >= 13) {
 					const setResult: SetResult = {
 						score: newScore,
-						target: state.setTarget,
+						target: 13,
 						completed: true,
 					};
 
@@ -456,10 +452,7 @@ export const gameUpdater = (
 						lastGuessCorrect: true,
 						gamePhase: "set-end",
 						setHistory: [...state.setHistory, setResult],
-						log: addLog(
-							`Set complete! Final score: ${newScore}/${state.setTarget}`,
-							state.log,
-						),
+						log: addLog(`Set complete! Final score: ${newScore}/13`, state.log),
 					};
 				}
 
@@ -504,10 +497,10 @@ export const gameUpdater = (
 			const newGamesAttempted = state.gamesAttempted + 1;
 
 			// Check if set is complete
-			if (newGamesAttempted >= state.setTarget) {
+			if (newGamesAttempted >= 13) {
 				const setResult: SetResult = {
 					score: newScore,
-					target: state.setTarget,
+					target: 13,
 					completed: true,
 				};
 
@@ -519,7 +512,7 @@ export const gameUpdater = (
 					gamePhase: "set-end",
 					setHistory: [...state.setHistory, setResult],
 					log: addLog(
-						`Answer ${isCorrect ? "accepted" : "rejected"}. Set complete! Final score: ${newScore}/${state.setTarget}`,
+						`Answer ${isCorrect ? "accepted" : "rejected"}. Set complete! Final score: ${newScore}/13`,
 						state.log,
 					),
 				};
@@ -554,7 +547,7 @@ export const gameUpdater = (
 				// No more words available, end the set
 				const noWordsSetResult: SetResult = {
 					score: state.setScore,
-					target: state.setTarget,
+					target: 13,
 					completed: false,
 				};
 
@@ -600,10 +593,9 @@ export const gameUpdater = (
 
 			const endSetResult: SetResult = {
 				score: state.setScore,
-				target: state.setTarget,
+				target: 13,
 				completed: false,
 			};
-
 			return {
 				...state,
 				gamePhase: "set-end",
@@ -628,7 +620,7 @@ export const gameUpdater = (
 				// No more words available, end the set
 				const noWordsSetResult: SetResult = {
 					score: state.setScore,
-					target: state.setTarget,
+					target: 13,
 					completed: false,
 				};
 
@@ -642,10 +634,10 @@ export const gameUpdater = (
 			}
 
 			// Check if set is complete after skipping
-			if (newAttempted >= state.setTarget) {
+			if (newAttempted >= 13) {
 				const skipSetResult: SetResult = {
 					score: state.setScore,
-					target: state.setTarget,
+					target: 13,
 					completed: true,
 				};
 
@@ -655,7 +647,7 @@ export const gameUpdater = (
 					gamePhase: "set-end",
 					setHistory: [...state.setHistory, skipSetResult],
 					log: addLog(
-						`Word skipped. Set complete! Final score: ${state.setScore}/${state.setTarget}`,
+						`Word skipped. Set complete! Final score: ${state.setScore}/13`,
 						state.log,
 					),
 				};

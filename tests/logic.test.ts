@@ -49,7 +49,7 @@ describe("Game Logic Tests", () => {
 			expect(gameState.currentGuesser).toBeNull();
 			expect(gameState.setScore).toBe(0);
 			expect(gameState.gamesAttempted).toBe(0);
-			expect(gameState.setTarget).toBe(20);
+			
 			expect(gameState.wordList).toEqual([]); // Now starts empty
 			expect(gameState.usedWords).toEqual([]);
 			expect(gameState.log).toHaveLength(1);
@@ -586,8 +586,8 @@ describe("Game Logic Tests", () => {
 			// Set up state with target close to completion
 			const stateNearEnd = {
 				...stateReadyForGuessing,
-				setTarget: 1,
-				gamesAttempted: 0,
+				
+				gamesAttempted: 12,
 			};
 
 			const guesser = stateNearEnd.users.find(
@@ -665,13 +665,13 @@ describe("Game Logic Tests", () => {
 			const host = stateWithHost.users.find((u) => u.isHost)!;
 			const action: ServerAction = {
 				type: "update-settings",
-				settings: { setTarget: 15, timersEnabled: true },
+				settings: { timersEnabled: true },
 				user: host,
 			};
 
 			const newState = gameUpdater(action, stateWithHost);
 
-			expect(newState.gameSettings.setTarget).toBe(15);
+			
 			expect(newState.gameSettings.timersEnabled).toBe(true);
 		});
 	});
@@ -749,8 +749,8 @@ describe("Game Logic Tests", () => {
 		it("should end set if passing word reaches target", () => {
 			const stateNearEnd = {
 				...gameInProgress,
-				setTarget: 1,
-				gamesAttempted: 0,
+				
+				gamesAttempted: 12,
 			};
 
 			const host = stateNearEnd.users.find((u) => u.isHost)!;
