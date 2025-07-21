@@ -39,7 +39,7 @@ const Game = ({ username, roomId, onLeaveGame }: GameProps) => {
 	const [selectedInvalidClues, setSelectedInvalidClues] = useState<string[]>(
 		[],
 	);
-	
+
 	// Word list selection state (host only)
 	const [selectedWordList, setSelectedWordList] = useState<string[]>([]);
 
@@ -240,25 +240,31 @@ const Game = ({ username, roomId, onLeaveGame }: GameProps) => {
 					/>
 				)}
 
-				{isHost && gameState.users.length >= 3 && selectedWordList.length > 0 && (
-					<Center>
-						<Button
-							onClick={() => dispatch({ type: "start-set", wordList: selectedWordList })}
-							size="xl"
-							color="green"
-						>
-							<Trans>Start Game</Trans>
-						</Button>
-					</Center>
-				)}
+				{isHost &&
+					gameState.users.length >= 3 &&
+					selectedWordList.length > 0 && (
+						<Center>
+							<Button
+								onClick={() =>
+									dispatch({ type: "start-set", wordList: selectedWordList })
+								}
+								size="xl"
+								color="green"
+							>
+								<Trans>Start Game</Trans>
+							</Button>
+						</Center>
+					)}
 
-				{isHost && gameState.users.length >= 3 && selectedWordList.length === 0 && (
-					<Center>
-						<Text c="dimmed">
-							<Trans>Please select a word list to start the game</Trans>
-						</Text>
-					</Center>
-				)}
+				{isHost &&
+					gameState.users.length >= 3 &&
+					selectedWordList.length === 0 && (
+						<Center>
+							<Text c="dimmed">
+								<Trans>Please select a word list to start the game</Trans>
+							</Text>
+						</Center>
+					)}
 
 				{gameState.users.length < 3 && (
 					<Center>
@@ -816,7 +822,9 @@ const Game = ({ username, roomId, onLeaveGame }: GameProps) => {
 			actions.push(
 				<Button
 					key="play-again"
-					onClick={() => dispatch({ type: "start-set", wordList: selectedWordList })}
+					onClick={() =>
+						dispatch({ type: "start-set", wordList: selectedWordList })
+					}
 					size="lg"
 					color="green"
 					style={{ flex: 1 }}

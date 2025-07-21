@@ -1,4 +1,4 @@
-import { Trans, useLingui } from "@lingui/react/macro";
+import { Trans } from "@lingui/react/macro";
 import {
 	Button,
 	Card,
@@ -12,7 +12,12 @@ import {
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { MdRefresh } from "react-icons/md";
-import { WORD_LIST_OPTIONS, estimateWordsNeeded, selectRandomWords, type WordListOption } from "@/utils/wordlist";
+import {
+	estimateWordsNeeded,
+	selectRandomWords,
+	WORD_LIST_OPTIONS,
+	type WordListOption,
+} from "@/utils/wordlist";
 
 interface WordListSelectorProps {
 	setTarget: number;
@@ -27,15 +32,16 @@ export const WordListSelector = ({
 	selectedWordListId,
 	disabled = false,
 }: WordListSelectorProps) => {
-	const { t } = useLingui();
 	const [selectedOptionId, setSelectedOptionId] = useState<string>(
-		selectedWordListId || WORD_LIST_OPTIONS[0]?.id || ""
+		selectedWordListId || WORD_LIST_OPTIONS[0]?.id || "",
 	);
 	const [isLoading, setIsLoading] = useState(false);
 	const [loadedWords, setLoadedWords] = useState<string[]>([]);
 	const [error, setError] = useState<string | null>(null);
 
-	const selectedOption = WORD_LIST_OPTIONS.find(opt => opt.id === selectedOptionId);
+	const selectedOption = WORD_LIST_OPTIONS.find(
+		(opt) => opt.id === selectedOptionId,
+	);
 	const wordsNeeded = estimateWordsNeeded(setTarget);
 
 	// Load the selected word list
@@ -49,7 +55,7 @@ export const WordListSelector = ({
 			const selectedWords = selectRandomWords(words, wordsNeeded);
 			onWordListSelected(selectedWords);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Failed to load word list');
+			setError(err instanceof Error ? err.message : "Failed to load word list");
 			setLoadedWords([]);
 		} finally {
 			setIsLoading(false);
@@ -85,7 +91,7 @@ export const WordListSelector = ({
 
 				<Select
 					label={<Trans>Choose Word List</Trans>}
-					data={WORD_LIST_OPTIONS.map(option => ({
+					data={WORD_LIST_OPTIONS.map((option) => ({
 						value: option.id,
 						label: option.name,
 					}))}

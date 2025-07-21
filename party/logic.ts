@@ -151,7 +151,10 @@ export const initialGame = (): GameState => ({
 });
 
 // Get the next unused word from the word list
-const getNextWord = (wordList: string[], usedWords: string[]): string | null => {
+const getNextWord = (
+	wordList: string[],
+	usedWords: string[],
+): string | null => {
 	const availableWords = wordList.filter((word) => !usedWords.includes(word));
 	if (availableWords.length === 0) {
 		return null; // No more words available

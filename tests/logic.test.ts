@@ -20,7 +20,18 @@ const clueDoesNotExist = (validClues: any[], clueText: string): boolean => {
 };
 
 // Standard test word list for tests
-const TEST_WORD_LIST = ["apple", "banana", "cherry", "date", "elderberry", "fig", "grape", "honey", "ice", "jam"];
+const TEST_WORD_LIST = [
+	"apple",
+	"banana",
+	"cherry",
+	"date",
+	"elderberry",
+	"fig",
+	"grape",
+	"honey",
+	"ice",
+	"jam",
+];
 
 describe("Game Logic Tests", () => {
 	let gameState: GameState;
@@ -131,7 +142,11 @@ describe("Game Logic Tests", () => {
 
 		it("should start set with host action when enough players", () => {
 			const hostUser = stateWithUsers.users.find((u) => u.isHost)!;
-			const action: ServerAction = { type: "start-set", user: hostUser, wordList: TEST_WORD_LIST };
+			const action: ServerAction = {
+				type: "start-set",
+				user: hostUser,
+				wordList: TEST_WORD_LIST,
+			};
 
 			const newState = gameUpdater(action, stateWithUsers);
 
@@ -150,7 +165,11 @@ describe("Game Logic Tests", () => {
 			};
 
 			const hostUser = stateWithTwoUsers.users.find((u) => u.isHost)!;
-			const action: ServerAction = { type: "start-set", user: hostUser, wordList: TEST_WORD_LIST };
+			const action: ServerAction = {
+				type: "start-set",
+				user: hostUser,
+				wordList: TEST_WORD_LIST,
+			};
 
 			const newState = gameUpdater(action, stateWithTwoUsers);
 
@@ -339,7 +358,10 @@ describe("Game Logic Tests", () => {
 			state = gameUpdater({ type: "UserEntered", user: user3 }, state);
 
 			const hostUser = state.users.find((u) => u.isHost)!;
-			state = gameUpdater({ type: "start-set", user: hostUser, wordList: TEST_WORD_LIST }, state);
+			state = gameUpdater(
+				{ type: "start-set", user: hostUser, wordList: TEST_WORD_LIST },
+				state,
+			);
 
 			// Submit clues to get to checking phase
 			const nonGuessers = state.users.filter(
@@ -404,7 +426,10 @@ describe("Game Logic Tests", () => {
 			state = gameUpdater({ type: "UserEntered", user: user3 }, state);
 
 			const hostUser = state.users.find((u) => u.isHost)!;
-			state = gameUpdater({ type: "start-set", user: hostUser, wordList: TEST_WORD_LIST }, state);
+			state = gameUpdater(
+				{ type: "start-set", user: hostUser, wordList: TEST_WORD_LIST },
+				state,
+			);
 
 			// Submit clues
 			const nonGuessers = state.users.filter(
@@ -673,7 +698,10 @@ describe("Game Logic Tests", () => {
 
 			// Start set
 			const host = state.users.find((u) => u.isHost)!;
-			state = gameUpdater({ type: "start-set", user: host, wordList: TEST_WORD_LIST }, state);
+			state = gameUpdater(
+				{ type: "start-set", user: host, wordList: TEST_WORD_LIST },
+				state,
+			);
 
 			const firstWord = state.currentWord;
 			expect(state.usedWords).toContain(firstWord);
@@ -750,7 +778,10 @@ describe("Game Logic Tests", () => {
 			state = gameUpdater({ type: "UserEntered", user: user3 }, state);
 
 			const host = state.users.find((u) => u.isHost)!;
-			state = gameUpdater({ type: "start-set", user: host, wordList: TEST_WORD_LIST }, state);
+			state = gameUpdater(
+				{ type: "start-set", user: host, wordList: TEST_WORD_LIST },
+				state,
+			);
 
 			roundEndState = {
 				...state,
