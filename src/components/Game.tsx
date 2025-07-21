@@ -627,9 +627,11 @@ const Game = ({ username, roomId, onLeaveGame }: GameProps) => {
 					<Stack align="center" gap="lg">
 						<Text size="4rem">{gameState.lastGuessCorrect ? "🎉" : "😔"}</Text>
 						<Title order={2}>
-							<Trans>
-								{gameState.lastGuessCorrect ? "Correct!" : "Incorrect"}
-							</Trans>
+							{gameState.lastGuessCorrect ? (
+								<Trans>Correct!</Trans>
+							) : (
+								<Trans>Incorrect</Trans>
+							)}
 						</Title>
 						<Text size="lg">
 							<Trans>The word was:</Trans>{" "}
@@ -674,15 +676,15 @@ const Game = ({ username, roomId, onLeaveGame }: GameProps) => {
 						</Text>
 
 						<Text size="lg">
-							<Trans>
-								{gameState.setScore >= 13
-									? "Excellent!"
-									: gameState.setScore >= 11
-										? "Very Good!"
-										: gameState.setScore >= 8
-											? "Good!"
-											: "Keep trying!"}
-							</Trans>
+							{gameState.setScore >= 13 ? (
+								<Trans>Excellent!</Trans>
+							) : gameState.setScore >= 11 ? (
+								<Trans>Very Good!</Trans>
+							) : gameState.setScore >= 8 ? (
+								<Trans>Good!</Trans>
+							) : (
+								<Trans>Keep trying!</Trans>
+							)}
 						</Text>
 					</Stack>
 				</Paper>

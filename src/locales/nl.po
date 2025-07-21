@@ -13,13 +13,6 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#. placeholder {0}: gameState.lastGuessCorrect ? "Correct!" : "Incorrect"
-#. placeholder {0}: gameState.setScore >= 13 ? "Excellent!" : gameState.setScore >= 11 ? "Very Good!" : gameState.setScore >= 8 ? "Good!" : "Keep trying!"
-#: src/components/Game.tsx:630
-#: src/components/Game.tsx:677
-msgid "{0}"
-msgstr "{0}"
-
 #. placeholder {0}: gameState.users.find( (u) => u.id === gameState.currentChecker, )?.name
 #: src/components/Game.tsx:422
 msgid "{0} is checking for duplicates..."
@@ -79,7 +72,7 @@ msgstr "Duplicaten Controleren"
 
 #: src/components/WordListSelector.tsx:89
 msgid "Choose Word List"
-msgstr ""
+msgstr "Kies Woordenlijst"
 
 #: src/App.tsx:256
 msgid "Choose Your Name"
@@ -97,23 +90,27 @@ msgstr "Verbinden met spelserver..."
 msgid "Cooperative word guessing game"
 msgstr "Coöperatief woordraadspel"
 
+#: src/components/Game.tsx:631
+msgid "Correct!"
+msgstr "Correct!"
+
 #: src/components/Game.tsx:419
 msgid "Duplicate Check in Progress"
 msgstr "Duplicatencontrole Bezig"
 
-#: src/components/Game.tsx:843
+#: src/components/Game.tsx:845
 msgid "End"
 msgstr "Einde"
 
-#: src/components/Game.tsx:871
+#: src/components/Game.tsx:873
 msgid "End Session"
 msgstr "Sessie Beëindigen"
 
-#: src/components/Game.tsx:860
+#: src/components/Game.tsx:862
 msgid "End Set"
 msgstr "Set Beëindigen"
 
-#: src/components/Game.tsx:729
+#: src/components/Game.tsx:731
 msgid "Enter one word clue"
 msgstr "Voer een woord hint in"
 
@@ -123,26 +120,34 @@ msgstr "Voer je naam in"
 
 #: src/components/WordListSelector.tsx:121
 msgid "Error: {error}"
-msgstr ""
+msgstr "Fout: {error}"
 
-#: src/components/Game.tsx:670
+#: src/components/Game.tsx:680
+msgid "Excellent!"
+msgstr "Uitstekend!"
+
+#: src/components/Game.tsx:672
 msgid "Final Score"
 msgstr "Eindscore"
 
 #. placeholder {0}: selectedInvalidClues.length
-#: src/components/Game.tsx:773
+#: src/components/Game.tsx:775
 msgid "Finish Checking ({0} marked)"
 msgstr "Controle Voltooien ({0} gemarkeerd)"
 
 #: src/components/SidebarMenu.tsx:54
 msgid "Game Menu"
-msgstr ""
+msgstr "Spelmenu"
 
-#: src/components/Game.tsx:641
+#: src/components/Game.tsx:684
+msgid "Good!"
+msgstr "Goed!"
+
+#: src/components/Game.tsx:643
 msgid "Guess:"
 msgstr "Gok:"
 
-#: src/components/Game.tsx:797
+#: src/components/Game.tsx:799
 msgid "Guess!"
 msgstr "Raad!"
 
@@ -153,6 +158,10 @@ msgstr "Goktijd"
 #: src/components/Game.tsx:561
 msgid "Here are the clues:"
 msgstr "Hier zijn de hints:"
+
+#: src/components/Game.tsx:633
+msgid "Incorrect"
+msgstr "Onjuist"
 
 #: src/App.tsx:119
 msgid "Join an Existing Game"
@@ -170,18 +179,22 @@ msgstr "Doe Mee met Kamer"
 msgid "Just One"
 msgstr "Just One"
 
+#: src/components/Game.tsx:686
+msgid "Keep trying!"
+msgstr "Blijf proberen!"
+
 #: src/components/SidebarMenu.tsx:94
 msgid "Leave Game"
-msgstr ""
+msgstr "Spel Verlaten"
 
 #. placeholder {0}: loadedWords.length.toLocaleString()
 #: src/components/WordListSelector.tsx:129
 msgid "Loaded {0} words<0/>Selected 13 for this game"
-msgstr ""
+msgstr "{0} woorden geladen<0/>13 geselecteerd voor dit spel"
 
 #: src/components/WordListSelector.tsx:114
 msgid "Loading word list..."
-msgstr ""
+msgstr "Woordenlijst laden..."
 
 #: src/components/Game.tsx:381
 msgid "Mark any clues that should be removed:"
@@ -193,9 +206,9 @@ msgstr "Minimaal 3 spelers nodig om te beginnen"
 
 #: src/components/WordListSelector.tsx:142
 msgid "New Selection"
-msgstr ""
+msgstr "Nieuwe Selectie"
 
-#: src/components/Game.tsx:814
+#: src/components/Game.tsx:816
 msgid "Next Round"
 msgstr "Volgende Ronde"
 
@@ -207,7 +220,7 @@ msgstr "Of voer kamercode handmatig in"
 msgid "Or start a new game"
 msgstr "Of start een nieuw spel"
 
-#: src/components/Game.tsx:832
+#: src/components/Game.tsx:834
 msgid "Play Again"
 msgstr "Speel Opnieuw"
 
@@ -218,7 +231,7 @@ msgstr "Spelers ({0})"
 
 #: src/components/Game.tsx:263
 msgid "Please select a word list to start the game"
-msgstr ""
+msgstr "Selecteer een woordenlijst om het spel te starten"
 
 #: src/components/QRScanner.tsx:67
 msgid "Point your camera at a QR code to automatically enter the room code"
@@ -228,7 +241,7 @@ msgstr "Richt je camera op een QR-code om automatisch de kamercode in te voeren"
 msgid "Preparing clues for the guesser..."
 msgstr "Hints voorbereiden voor de gokker..."
 
-#: src/components/Game.tsx:693
+#: src/components/Game.tsx:695
 msgid "Previous Sets"
 msgstr "Vorige Sets"
 
@@ -270,7 +283,7 @@ msgstr "Scan om snel mee te doen"
 
 #. placeholder {0}: gameState.setScore
 #. placeholder {1}: gameState.gamesAttempted
-#: src/components/Game.tsx:647
+#: src/components/Game.tsx:649
 msgid "Score: {0}/{1}"
 msgstr "Score: {0}/{1}"
 
@@ -279,16 +292,16 @@ msgstr "Score: {0}/{1}"
 #: src/components/Game.tsx:288
 #: src/components/Game.tsx:545
 msgid "Score: {0}/{1} | Target: 13"
-msgstr ""
+msgstr "Score: {0}/{1} | Doel: 13"
 
 #. placeholder {0}: index + 1
 #. placeholder {1}: set.score
 #. placeholder {2}: set.target
-#: src/components/Game.tsx:699
+#: src/components/Game.tsx:701
 msgid "Set {0}: {1}/{2}"
 msgstr "Set {0}: {1}/{2}"
 
-#: src/components/Game.tsx:662
+#: src/components/Game.tsx:664
 msgid "Set Complete!"
 msgstr "Set Voltooid!"
 
@@ -303,13 +316,13 @@ msgstr "Moet dit antwoord als correct worden geaccepteerd?"
 
 #: src/components/SidebarMenu.tsx:79
 msgid "Show QR Code"
-msgstr ""
+msgstr "QR-code Tonen"
 
 #: src/components/SidebarMenu.tsx:67
 msgid "Show Room Code"
-msgstr ""
+msgstr "Kamercode Tonen"
 
-#: src/components/Game.tsx:756
+#: src/components/Game.tsx:758
 msgid "Skip"
 msgstr "Sla over"
 
@@ -321,7 +334,7 @@ msgstr "Start Spel"
 msgid "Start New Session"
 msgstr "Nieuwe Sessie Starten"
 
-#: src/components/Game.tsx:741
+#: src/components/Game.tsx:743
 msgid "Submit"
 msgstr "Verstuur"
 
@@ -342,7 +355,7 @@ msgid "The word is:"
 msgstr "Het woord is:"
 
 #: src/components/Game.tsx:456
-#: src/components/Game.tsx:635
+#: src/components/Game.tsx:637
 msgid "The word was:"
 msgstr "Het woord was:"
 
@@ -350,17 +363,21 @@ msgstr "Het woord was:"
 msgid "Unknown game phase"
 msgstr "Onbekende spelfase"
 
+#: src/components/Game.tsx:682
+msgid "Very Good!"
+msgstr "Zeer Goed!"
+
 #: src/components/Game.tsx:303
 msgid "Wait while others write clues for you..."
 msgstr "Wacht terwijl anderen hints voor je schrijven..."
 
-#: src/components/Game.tsx:786
+#: src/components/Game.tsx:788
 msgid "What's your guess?"
 msgstr "Wat is je gok?"
 
 #: src/components/WordListSelector.tsx:85
 msgid "Word List Selection"
-msgstr ""
+msgstr "Woordenlijst Selectie"
 
 #. placeholder {0}: gameState.users.find( (u) => u.id === gameState.currentGuesser, )?.name
 #: src/components/Game.tsx:319
