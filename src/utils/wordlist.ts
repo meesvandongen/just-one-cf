@@ -13,7 +13,7 @@ export interface WordListOption {
 // Load words from the included wordlist.txt file
 const loadDefaultWordList = async (): Promise<string[]> => {
 	try {
-		const response = await fetch("/wordlist.txt");
+		const response = await fetch("/nl.txt");
 		const text = await response.text();
 		return text
 			.trim()
